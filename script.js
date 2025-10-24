@@ -17,9 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function displayLeaderboard(data) {
         leaderboardBody.innerHTML = "";
-
-        const sortedData = data.sort((a, b) => b.questionsSolved - a.questionsSolved);
-
+        const sortedData = data.sort((a, b) => a.name.localeCompare(b.name));
         sortedData.forEach((user, index) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
