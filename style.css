@@ -2,6 +2,8 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f0f2f5;
     display: flex;
+    flex-direction: column;
+    /* Changed to column to stack elements nicely */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -17,6 +19,8 @@ body {
     padding: 24px;
     box-sizing: border-box;
     overflow-x: auto;
+    margin-bottom: 20px;
+    /* Add some space below the leaderboard */
 }
 
 h1 {
@@ -85,4 +89,130 @@ h1 {
 
 .profile-button:hover {
     background-color: #0056b3;
+}
+
+
+/* New and Updated CSS for the Contact Section and Social Links */
+
+.contact {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 650px;
+    padding: 24px;
+    box-sizing: border-box;
+    margin-top: 20px;
+    /* Space above the contact section */
+    text-align: center;
+}
+
+.contact h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    /* Space between the buttons */
+    margin-top: 15px;
+}
+
+.social-links a {
+    display: inline-flex;
+    /* Use flex for icon and potential text alignment */
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    /* Fixed width for button */
+    height: 50px;
+    /* Fixed height for button */
+    border-radius: 50%;
+    /* Make them round */
+    color: #ffffff;
+    /* White icon color */
+    font-size: 1.6em;
+    /* Size of the icon */
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    /* Subtle shadow for depth */
+}
+
+
+/* Specific colors for each social media button */
+
+.social-links a:nth-child(1) {
+    /* WhatsApp */
+    background-color: #25D366;
+}
+
+.social-links a:nth-child(2) {
+    /* LinkedIn */
+    background-color: #0A66C2;
+}
+
+.social-links a:nth-child(3) {
+    /* Gmail/Email */
+    background-color: #EA4335;
+}
+
+.social-links a:hover {
+    transform: translateY(-3px) scale(1.05);
+    /* Lift and slightly enlarge on hover */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    /* More prominent shadow on hover */
+}
+
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    .leaderboard-container,
+    .contact {
+        width: 95%;
+        padding: 15px;
+    }
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .contact h3 {
+        font-size: 1em;
+    }
+    .social-links a {
+        width: 45px;
+        height: 45px;
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+    h1 {
+        font-size: 1.5em;
+    }
+    .contact h3 {
+        font-size: 0.9em;
+    }
+    .social-links {
+        gap: 10px;
+    }
+    .social-links a {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2em;
+    }
 }
