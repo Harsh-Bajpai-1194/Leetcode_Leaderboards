@@ -1,17 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
     const leaderboardBody = document.getElementById("leaderboard-body");
-    const leaderboardData = [
-        { name: "Harsh_Bajpai1", url: "https://leetcode.com/u/Harsh_Bajpai1/" },
-        { name: "Hani_Dwivedi", url: "https://leetcode.com/u/Hani_Dwivedi/" },
-        { name: "onyx_harsh", url: "https://leetcode.com/u/onyx_harsh/" },
-        { name: "suryansh_singh_", url: "https://leetcode.com/u/suryansh_singh_/" },
-        { name: "bh00mika", url: "https://leetcode.com/u/bh00mika/" },
-        { name: "_shubhimishra_", url: "https://leetcode.com/u/_shubhimishra_/" }
-    ];
 
-    function displayLeaderboard() {
+    async function loadLeaderboard() {
+        try {
+            const response = await fetch('profiles.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const leaderboardData = await response.json();
+            displayLeaderboard(leaderboardData);
+        } catch (error) {
+            console.error("Failed to load leaderboard data:", error);
+            leaderboardBody.innerHTML = `<tr><td colspan="3">Error loading leaderboard.</td></tr>`;
+        }
+    }
+
+    function displayLeaderboard(data) {
         leaderboardBody.innerHTML = "";
-        const sortedData = leaderboardData.sort((a, b) => b.questionsSolved - a.questionsSolved);
+
+        const sortedData = data.sort((a, b) => b.questionsSolved - a.questionsSolved);
+
         sortedData.forEach((user, index) => {
             const tr = document.createElement("tr");
             tr.innerHTML = `
@@ -21,9 +29,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     <a href="${user.url}" target="_blank" class="profile-button">View</a>
                 </td>
             `;
-
             leaderboardBody.appendChild(tr);
         });
     }
-    displayLeaderboard();
+
+    loadLeaderboard();
 });
