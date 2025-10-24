@@ -1,1 +1,113 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
 
+.leaderboard-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 650px;
+    /* Made wider for the new column */
+    padding: 24px;
+    box-sizing: border-box;
+    overflow-x: auto;
+    /* Allows table to scroll on small screens */
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+}
+
+
+/* New Table Styles */
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    /* Cleans up table borders */
+    margin: 20px 0;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    white-space: nowrap;
+    /* Prevents names from wrapping */
+}
+
+
+/* Table Header Style */
+
+.leaderboard-table th {
+    background-color: #f4f6f8;
+    font-weight: 600;
+    color: #333;
+}
+
+
+/* Zebra-striping for rows */
+
+.leaderboard-table tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.leaderboard-table tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+
+/* Center-align rank and button columns */
+
+.leaderboard-table th:first-child,
+.leaderboard-table td:first-child,
+.leaderboard-table th:last-child,
+.leaderboard-table td:last-child {
+    text-align: center;
+}
+
+
+/* Name column style */
+
+.leaderboard-table td:nth-child(2) {
+    font-weight: 500;
+    color: #222;
+}
+
+
+/* Questions solved column style */
+
+.leaderboard-table td:nth-child(3) {
+    font-weight: 600;
+    color: #0056b3;
+}
+
+
+/* Profile Button Style */
+
+.profile-button {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.profile-button:hover {
+    background-color: #0056b3;
+}
