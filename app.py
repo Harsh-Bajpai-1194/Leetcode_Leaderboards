@@ -7,9 +7,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
 import json
+from datetime import datetime
 
 def get_solved_count(text):
     try:
+        # Splits '197/918' and takes the first number
         return int(text.split('/')[0])
     except:
         return 0
@@ -17,12 +19,12 @@ def get_solved_count(text):
 def scrape_user_total(url, driver):
     try:
         driver.get(url)
-        # Use Explicit Wait to wait for the "Easy" label to appear (up to 20 seconds)
+        # Wait for the statistics section to appear
         wait = WebDriverWait(driver, 20)
         wait.until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Easy')]")))
         
-        # Additional small buffer for the numbers to catch up
-        time.sleep(2) 
+        # Buffer to ensure numbers are fully populated in the UI
+        time.sleep(3) 
         
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         lines = soup.get_text(separator='\n', strip=True).split('\n')
@@ -36,19 +38,25 @@ def scrape_user_total(url, driver):
             elif lines[i] == "Hard":
                 hard = get_solved_count(lines[i+1])
         
-        return easy + med + hard
+        total = easy + med + hard
+        print(f"Captured: {total}")
+        return total
     except Exception as e:
         print(f"Error scraping {url}: {e}")
         return 0
 
 def update_leaderboard():
+    # Load profile list (expects the simple array format initially)
     with open('profiles.json', 'r') as f:
-        profiles = json.load(f)
+        data = json.load(f)
+    
+    # Handle both old array format and new dictionary format
+    profiles = data["users"] if isinstance(data, dict) else data
 
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
-    options.add_argument('--no-sandbox') # Required for many Linux environments
-    options.add_argument('--disable-dev-shm-usage') # Prevents memory issues in containers
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
     
@@ -61,9 +69,15 @@ def update_leaderboard():
     
     driver.quit()
 
+    # Create new JSON structure with timestamp
+    final_data = {
+        "last_updated": datetime.now().strftime("%d/%m/%Y, %I:%M %p"),
+        "users": profiles
+    }
+
     with open('profiles.json', 'w') as f:
-        json.dump(profiles, f, indent=2)
-    print("profiles.json updated successfully!")
+        json.dump(final_data, f, indent=2)
+    print(f"Updated at {final_data['last_updated']}")
 
 if __name__ == "__main__":
     update_leaderboard()

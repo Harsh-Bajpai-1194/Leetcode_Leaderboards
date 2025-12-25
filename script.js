@@ -4,30 +4,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadLeaderboard() {
         try {
-            // Fetch the JSON data
             const response = await fetch('profiles.json');
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) throw new Error("Failed to load JSON");
 
-            // Get the Last-Modified date from HTTP headers
-            const lastModified = response.headers.get('Last-Modified');
-            if (lastModified) {
-                const dateObj = new Date(lastModified);
-                lastUpdatedElement.innerText = `Last updated: ${dateObj.toLocaleString()}`;
+            const data = await response.json();
+
+            // 1. Update the timestamp from JSON key
+            if (data.last_updated) {
+                lastUpdatedElement.innerText = `Last updated: ${data.last_updated}`;
             }
 
-            const leaderboardData = await response.json();
-            displayLeaderboard(leaderboardData);
+            // 2. Pass the user array to display function
+            displayLeaderboard(data.users);
         } catch (error) {
-            console.error("Failed to load leaderboard data:", error);
-            leaderboardBody.innerHTML = `<tr><td colspan="4">Error loading leaderboard.</td></tr>`;
+            console.error("Error loading leaderboard:", error);
+            leaderboardBody.innerHTML = `<tr><td colspan="4">Error loading data.</td></tr>`;
         }
     }
 
-    function displayLeaderboard(data) {
+    function displayLeaderboard(users) {
         leaderboardBody.innerHTML = "";
 
-        // SORT by total_solved (highest to lowest)
-        const sortedData = data.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
+        // Sort by solved count (highest first)
+        const sortedData = users.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
 
         sortedData.forEach((user, index) => {
             const tr = document.createElement("tr");
