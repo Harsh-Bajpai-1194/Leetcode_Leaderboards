@@ -1,7 +1,7 @@
 import os
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -69,8 +69,10 @@ def update_leaderboard():
     
     driver.quit()
 
+    ist_time = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
+
     final_data = {
-        "last_updated": datetime.now().strftime("%d/%m/%Y, %I:%M %p"),
+        "last_updated": ist_time.strftime("%d/%m/%Y, %I:%M %p"),
         "users": profiles
     }
 
