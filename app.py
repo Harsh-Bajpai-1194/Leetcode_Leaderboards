@@ -46,17 +46,22 @@ def scrape_user_total(url, driver):
         return 0
 
 def update_leaderboard():
-    # 1. Load profiles.json
+    # 1. Load profiles.json safely
     try:
         with open('profiles.json', 'r') as f:
             data = json.load(f)
-        # Handle dictionary format (with last_updated) or raw list format
-        profiles = data["users"] if isinstance(data, dict) else data
-    except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: profiles.json not found or invalid.")
+        
+        # This part is the fix: It handles both old and new formats
+        if isinstance(data, dict) and "users" in data:
+            profiles = data["users"]
+        else:
+            profiles = data
+            
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"File error: {e}")
         return
 
-    # 2. Configure Chrome Options for GitHub Actions
+    # 2. Configure Chrome
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
@@ -67,15 +72,15 @@ def update_leaderboard():
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    # 3. Scrape data for all users
-    print(f"Starting update at {datetime.now().strftime('%H:%M:%S')}...")
+    # 3. Scrape data
+    print(f"Starting update...")
     for user in profiles:
         print(f"Fetching: {user['name']}...")
         user['total_solved'] = scrape_user_total(user['url'], driver)
     
     driver.quit()
 
-    # 4. Save updated data with timestamp
+    # 4. Save with timestamp
     final_data = {
         "last_updated": datetime.now().strftime("%d/%m/%Y, %I:%M %p"),
         "users": profiles
@@ -83,7 +88,4 @@ def update_leaderboard():
 
     with open('profiles.json', 'w') as f:
         json.dump(final_data, f, indent=2)
-    print(f"Successfully updated profiles.json at {final_data['last_updated']}")
-
-if __name__ == "__main__":
-    update_leaderboard()
+    print("Success!")
