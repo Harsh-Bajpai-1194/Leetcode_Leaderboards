@@ -11,19 +11,20 @@ from datetime import datetime
 
 def get_solved_count(text):
     try:
-        # Splits '197/918' and takes the first number
+        # Extracts '389' from '389/3312'
         return int(text.split('/')[0])
-    except:
+    except (ValueError, IndexError, AttributeError):
         return 0
 
 def scrape_user_total(url, driver):
     try:
         driver.get(url)
-        # Wait for the statistics section to appear
-        wait = WebDriverWait(driver, 20)
+        # Explicitly wait for the dynamic content to load
+        wait = WebDriverWait(driver, 15)
+        # We wait for the 'Easy' label which signifies the stats grid is present
         wait.until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Easy')]")))
         
-        # Buffer to ensure numbers are fully populated in the UI
+        # A 3-second buffer ensures the numbers inside the grid are populated
         time.sleep(3) 
         
         soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -39,37 +40,42 @@ def scrape_user_total(url, driver):
                 hard = get_solved_count(lines[i+1])
         
         total = easy + med + hard
-        print(f"Captured: {total}")
         return total
     except Exception as e:
         print(f"Error scraping {url}: {e}")
         return 0
 
 def update_leaderboard():
-    # Load profile list (expects the simple array format initially)
-    with open('profiles.json', 'r') as f:
-        data = json.load(f)
-    
-    # Handle both old array format and new dictionary format
-    profiles = data["users"] if isinstance(data, dict) else data
+    # 1. Load profiles.json
+    try:
+        with open('profiles.json', 'r') as f:
+            data = json.load(f)
+        # Handle dictionary format (with last_updated) or raw list format
+        profiles = data["users"] if isinstance(data, dict) else data
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: profiles.json not found or invalid.")
+        return
 
+    # 2. Configure Chrome Options for GitHub Actions
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
+    options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    print(f"Starting scrape for {len(profiles)} users...")
+    # 3. Scrape data for all users
+    print(f"Starting update at {datetime.now().strftime('%H:%M:%S')}...")
     for user in profiles:
-        print(f"Scraping {user['name']}...")
+        print(f"Fetching: {user['name']}...")
         user['total_solved'] = scrape_user_total(user['url'], driver)
     
     driver.quit()
 
-    # Create new JSON structure with timestamp
+    # 4. Save updated data with timestamp
     final_data = {
         "last_updated": datetime.now().strftime("%d/%m/%Y, %I:%M %p"),
         "users": profiles
@@ -77,7 +83,7 @@ def update_leaderboard():
 
     with open('profiles.json', 'w') as f:
         json.dump(final_data, f, indent=2)
-    print(f"Updated at {final_data['last_updated']}")
+    print(f"Successfully updated profiles.json at {final_data['last_updated']}")
 
 if __name__ == "__main__":
     update_leaderboard()
