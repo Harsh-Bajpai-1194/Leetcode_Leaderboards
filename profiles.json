@@ -1,28 +1,132 @@
 [
-  { "name": "Harsh_Bajpai1", "url": "https://leetcode.com/u/Harsh_Bajpai1/" },
-  { "name": "Hani_Dwivedi", "url": "https://leetcode.com/u/Hani_Dwivedi/" },
-  { "name": "onyx_harsh", "url": "https://leetcode.com/u/onyx_harsh/" },
-  { "name": "suryansh_singh_", "url": "https://leetcode.com/u/suryansh_singh_/" },
-  { "name": "bh00mika", "url": "https://leetcode.com/u/bh00mika/" },
-  { "name": "_shubhimishra_", "url": "https://leetcode.com/u/_shubhimishra_/" },
-  { "name": "sahibxsingh", "url": "https://leetcode.com/u/sahibxsingh/" },
-  { "name": "Himanshusingh_08", "url": "https://leetcode.com/u/Himanshusingh_08/" },
-  { "name": "ShivOlogn", "url": "https://leetcode.com/u/ShivOlogn/" },
-  { "name": "csai_093", "url": "https://leetcode.com/u/csai_093/" },
-  { "name": "iN3YWMYYeP", "url": "https://leetcode.com/u/iN3YWMYYeP/" },
-  { "name": "UGNcRVE0dv", "url": "https://leetcode.com/u/UGNcRVE0dv/" },
-  { "name": "Himesh_Mishra_", "url": "https://leetcode.com/u/Himesh_Mishra_/" },
-  { "name": "poly-30", "url": "https://leetcode.com/u/poly-30/" },
-  { "name": "lh1IDahwod", "url": "https://leetcode.com/u/lh1IDahwod/" },
-  { "name": "gauranshsharma1", "url": "https://leetcode.com/u/gauranshsharma21" },
-  { "name": "09XDIXyjMQ", "url": "https://leetcode.com/u/09XDIXyjMQ/" },
-  { "name": "GaureshDwivedi11", "url": "https://leetcode.com/u/GaureshDwivedi11/" },
-  { "name": "AmberHasan", "url": "https://leetcode.com/u/AmberHasan/" },
-  { "name": "khushahal_07", "url": "https://leetcode.com/u/khushahal_07/" },
-  { "name": "gaurav_yadav_2413580", "url": "https://leetcode.com/u/gaurav_yadav_2413580/" },
-  { "name": "mudit_2904", "url": "https://leetcode.com/u/mudit_2904/" },
-  { "name": "MayankSingh5306", "url": "https://leetcode.com/u/MayankSingh5306/" },
-  { "name": "Ishan_Dwivedi1210", "url": "https://leetcode.com/u/Ishan_Dwivedi1210/" },
-  { "name": "ABHINAV_LATC", "url": "https://leetcode.com/u/ABHINAV_LATC/" },
-  { "name": "anil_rathod", "url": "https://leetcode.com/u/anil_rathod/" }
+  {
+    "name": "Harsh_Bajpai1",
+    "url": "https://leetcode.com/u/Harsh_Bajpai1/",
+    "total_solved": 389
+  },
+  {
+    "name": "Hani_Dwivedi",
+    "url": "https://leetcode.com/u/Hani_Dwivedi/",
+    "total_solved": 84
+  },
+  {
+    "name": "onyx_harsh",
+    "url": "https://leetcode.com/u/onyx_harsh/",
+    "total_solved": 46
+  },
+  {
+    "name": "suryansh_singh_",
+    "url": "https://leetcode.com/u/suryansh_singh_/",
+    "total_solved": 56
+  },
+  {
+    "name": "bh00mika",
+    "url": "https://leetcode.com/u/bh00mika/",
+    "total_solved": 0
+  },
+  {
+    "name": "_shubhimishra_",
+    "url": "https://leetcode.com/u/_shubhimishra_/",
+    "total_solved": 319
+  },
+  {
+    "name": "sahibxsingh",
+    "url": "https://leetcode.com/u/sahibxsingh/",
+    "total_solved": 110
+  },
+  {
+    "name": "Himanshusingh_08",
+    "url": "https://leetcode.com/u/Himanshusingh_08/",
+    "total_solved": 24
+  },
+  {
+    "name": "ShivOlogn",
+    "url": "https://leetcode.com/u/ShivOlogn/",
+    "total_solved": 389
+  },
+  {
+    "name": "csai_093",
+    "url": "https://leetcode.com/u/csai_093/",
+    "total_solved": 258
+  },
+  {
+    "name": "iN3YWMYYeP",
+    "url": "https://leetcode.com/u/iN3YWMYYeP/",
+    "total_solved": 50
+  },
+  {
+    "name": "UGNcRVE0dv",
+    "url": "https://leetcode.com/u/UGNcRVE0dv/",
+    "total_solved": 0
+  },
+  {
+    "name": "Himesh_Mishra_",
+    "url": "https://leetcode.com/u/Himesh_Mishra_/",
+    "total_solved": 4
+  },
+  {
+    "name": "poly-30",
+    "url": "https://leetcode.com/u/poly-30/",
+    "total_solved": 194
+  },
+  {
+    "name": "lh1IDahwod",
+    "url": "https://leetcode.com/u/lh1IDahwod/",
+    "total_solved": 98
+  },
+  {
+    "name": "gauranshsharma1",
+    "url": "https://leetcode.com/u/gauranshsharma21",
+    "total_solved": 76
+  },
+  {
+    "name": "09XDIXyjMQ",
+    "url": "https://leetcode.com/u/09XDIXyjMQ/",
+    "total_solved": 8
+  },
+  {
+    "name": "GaureshDwivedi11",
+    "url": "https://leetcode.com/u/GaureshDwivedi11/",
+    "total_solved": 18
+  },
+  {
+    "name": "AmberHasan",
+    "url": "https://leetcode.com/u/AmberHasan/",
+    "total_solved": 1167
+  },
+  {
+    "name": "khushahal_07",
+    "url": "https://leetcode.com/u/khushahal_07/",
+    "total_solved": 500
+  },
+  {
+    "name": "gaurav_yadav_2413580",
+    "url": "https://leetcode.com/u/gaurav_yadav_2413580/",
+    "total_solved": 163
+  },
+  {
+    "name": "mudit_2904",
+    "url": "https://leetcode.com/u/mudit_2904/",
+    "total_solved": 1752
+  },
+  {
+    "name": "MayankSingh5306",
+    "url": "https://leetcode.com/u/MayankSingh5306/",
+    "total_solved": 217
+  },
+  {
+    "name": "Ishan_Dwivedi1210",
+    "url": "https://leetcode.com/u/Ishan_Dwivedi1210/",
+    "total_solved": 413
+  },
+  {
+    "name": "ABHINAV_LATC",
+    "url": "https://leetcode.com/u/ABHINAV_LATC/",
+    "total_solved": 525
+  },
+  {
+    "name": "anil_rathod",
+    "url": "https://leetcode.com/u/anil_rathod/",
+    "total_solved": 1044
+  }
 ]

@@ -1,63 +1,68 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
+import json
 
 def get_solved_count(text):
-    """Helper to extract the '4' from '4/918'"""
     try:
         return int(text.split('/')[0])
-    except (ValueError, IndexError, AttributeError):
+    except:
         return 0
 
-def scrape_leetcode_stats(url):
+def scrape_user_total(url, driver):
+    try:
+        driver.get(url)
+        # Use Explicit Wait to wait for the "Easy" label to appear (up to 20 seconds)
+        wait = WebDriverWait(driver, 20)
+        wait.until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Easy')]")))
+        
+        # Additional small buffer for the numbers to catch up
+        time.sleep(2) 
+        
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        lines = soup.get_text(separator='\n', strip=True).split('\n')
+        
+        easy = med = hard = 0
+        for i in range(len(lines)):
+            if lines[i] == "Easy":
+                easy = get_solved_count(lines[i+1])
+            elif lines[i] == "Med.":
+                med = get_solved_count(lines[i+1])
+            elif lines[i] == "Hard":
+                hard = get_solved_count(lines[i+1])
+        
+        return easy + med + hard
+    except Exception as e:
+        print(f"Error scraping {url}: {e}")
+        return 0
+
+def update_leaderboard():
+    with open('profiles.json', 'r') as f:
+        profiles = json.load(f)
+
     options = webdriver.ChromeOptions()
     options.add_argument('--headless') 
+    # Important: Set a window size so elements are rendered correctly
+    options.add_argument('--window-size=1920,1080')
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    print(f"Starting scrape for {len(profiles)} users...")
+    for user in profiles:
+        print(f"Scraping {user['name']}...")
+        user['total_solved'] = scrape_user_total(user['url'], driver)
     
-    try:
-        driver.get(url)
-        time.sleep(10) 
-        
-        html = driver.page_source
-        soup = BeautifulSoup(html, 'html.parser')
-        
-        raw_text = soup.get_text(separator='\n', strip=True)
-        lines = raw_text.split('\n')
+    driver.quit()
 
-        easy_val = med_val = hard_val = "0/0"
-        found = False
+    with open('profiles.json', 'w') as f:
+        json.dump(profiles, f, indent=2)
+    print("profiles.json updated successfully!")
 
-        for i in range(len(lines)):
-            if lines[i] == "Easy":
-                easy_val = lines[i+1] if i+1 < len(lines) else "0/0"
-                found = True
-            elif lines[i] == "Med.":
-                med_val = lines[i+1] if i+1 < len(lines) else "0/0"
-            elif lines[i] == "Hard":
-                hard_val = lines[i+1] if i+1 < len(lines) else "0/0"
-
-        if found:
-            # Calculate Total
-            total_solved = get_solved_count(easy_val) + get_solved_count(med_val) + get_solved_count(hard_val)
-            
-            # Print Individual Stats
-            print(f"Easy\n{easy_val}")
-            print(f"Med.\n{med_val}")
-            print(f"Hard\n{hard_val}")
-            
-            # Print Combined Total
-            print("-" * 20)
-            print(f"Total Solved: {total_solved}")
-        else:
-            print("No stats found. The page might be blocking the bot.")
-
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        driver.quit()
-
-scrape_leetcode_stats('https://leetcode.com/u/Harsh_Bajpai1')
+if __name__ == "__main__":
+    update_leaderboard()
