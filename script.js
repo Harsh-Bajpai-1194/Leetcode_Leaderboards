@@ -1,10 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
     const leaderboardBody = document.getElementById("leaderboard-body");
+    const lastUpdatedElement = document.getElementById("last-updated");
 
     async function loadLeaderboard() {
         try {
+            // Fetch the JSON data
             const response = await fetch('profiles.json');
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+            // Get the Last-Modified date from HTTP headers
+            const lastModified = response.headers.get('Last-Modified');
+            if (lastModified) {
+                const dateObj = new Date(lastModified);
+                lastUpdatedElement.innerText = `Last updated: ${dateObj.toLocaleString()}`;
+            }
 
             const leaderboardData = await response.json();
             displayLeaderboard(leaderboardData);
