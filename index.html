@@ -1,27 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leetcode Leaderboard</title>
     <link rel="stylesheet" href="style.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <style>
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 80%;
+            max-width: 400px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #searchInput:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="leaderboard-container">
         <h1>LEETCODE LEADERBOARD</h1>
+        
         <div id="last-updated" style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 15px;">
             Last updated: --
         </div>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Search for names...">
+        </div>
+
         <table class="leaderboard-table">
             <thead>
-                <div class="search-container">
-    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Search for names...">
-</div>
                 <tr>
                     <th>S.no.</th>
                     <th>NAME</th>
@@ -52,9 +78,34 @@
     </div>
 
     <script src="script.js"></script>
+
+    <script>
+        function filterTable() {
+            // 1. Get what the user typed
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toUpperCase();
+            
+            // 2. Get the table body (ID corrected to match HTML)
+            var table = document.getElementById("leaderboard-body");
+            var tr = table.getElementsByTagName("tr");
+
+            // 3. Loop through all rows
+            for (var i = 0; i < tr.length; i++) {
+                // Get the Name cell (2nd column, index 1)
+                var td = tr[i].getElementsByTagName("td")[1]; 
+                
+                if (td) {
+                    var txtValue = td.textContent || td.innerText;
+                    
+                    // 4. Check if the name contains the search text
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = ""; // Show
+                    } else {
+                        tr[i].style.display = "none"; // Hide
+                    }
+                }
+            }
+        }
+    </script>
 </body>
-
-
 </html>
-
-
