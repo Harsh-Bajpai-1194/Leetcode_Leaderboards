@@ -43,4 +43,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     loadLeaderboard();
+    function filterTable() {
+        // 1. Get what the user typed
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        
+        // 2. Get the table and all rows
+        var table = document.getElementById("leaderboardBody"); // Make sure your tbody has this ID
+        var tr = table.getElementsByTagName("tr");
+
+        // 3. Loop through all rows
+        for (var i = 0; i < tr.length; i++) {
+            // Get the Name cell (usually the 2nd column, index 1)
+            // Adjust index if your Name is in a different column!
+            var td = tr[i].getElementsByTagName("td")[1]; 
+            
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                
+                // 4. Check if the name contains the search text
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = ""; // Show
+                } else {
+                    tr[i].style.display = "none"; // Hide
+                }
+            }
+        }
+    }
 });
