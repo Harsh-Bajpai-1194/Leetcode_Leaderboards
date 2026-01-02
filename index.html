@@ -8,16 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* --- Logo Styling --- */
-        .leetcode-img {
-            position: absolute; 
-            top: 20px;            
-            left: 20px;        
-            width: 70px;
-            height: auto;
+        .leetcode-img
+        {
+            top: 2%;
+            left: 2%;
         }
-
-        /* --- Search Bar Styling --- */
         .search-container {
             text-align: center;
             margin-bottom: 20px;
@@ -40,60 +35,17 @@
             border-color: #4CAF50;
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
         }
-
-        /* --- NEW: Activity Feed Styling --- */
-        #activity-container {
-            width: 80%;
-            max-width: 600px;
-            margin: 0 auto 20px auto; /* Centered */
-            background-color: #f0fdf4; /* Light Green Background */
-            border: 1px solid #bbf7d0;
-            border-radius: 10px;
-            padding: 15px;
-            display: none; /* Hidden by default if empty */
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        
-        .activity-header {
-            font-weight: bold;
-            color: #15803d;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .activity-item {
-            font-size: 0.95em;
-            color: #166534;
-            margin: 5px 0;
-            padding: 5px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 
 <body>
     <img src="leetcode.jpg" alt="LEETCODE" class="leetcode-img"/>
-    
     <div class="leaderboard-container">
         <h1>LEETCODE LEADERBOARD</h1>
         
         <div id="last-updated" style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 15px;">
             Last updated: --
         </div>
-
-        <div id="activity-container">
-            </div>
 
         <div class="search-container">
             <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Search for names...">
@@ -109,7 +61,7 @@
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
-                </tbody>
+            </tbody>
         </table>
     </div>
 
@@ -130,84 +82,31 @@
         </div>
     </div>
 
+    <script src="script.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Fetch the JSON data
-            fetch('profiles.json')
-                .then(response => response.json())
-                .then(data => {
-                    // --- Update Last Updated Time ---
-                    const lastUpdatedDiv = document.getElementById('last-updated');
-                    if (data.last_updated) {
-                        lastUpdatedDiv.innerText = `Last updated: ${data.last_updated}`;
-                    }
-
-                    // --- NEW: Render Activity Feed ---
-                    const activityContainer = document.getElementById('activity-container');
-                    // Check if 'activities' exists and has items
-                    if (data.activities && data.activities.length > 0) {
-                        activityContainer.style.display = 'block'; // Show the box
-                        
-                        let htmlContent = '<span class="activity-header">🔥 Recent Updates</span>';
-                        
-                        data.activities.forEach(activity => {
-                            htmlContent += `
-                                <div class="activity-item">
-                                    ${activity.text} 
-                                    <span style="font-size:0.8em; color:#666; margin-left:5px;">
-                                        (${activity.time})
-                                    </span>
-                                </div>
-                            `;
-                        });
-                        activityContainer.innerHTML = htmlContent;
-                    }
-
-                    // --- Render Leaderboard Table ---
-                    const tableBody = document.getElementById('leaderboard-body');
-                    // Handle case where users array might be nested or direct
-                    const users = data.users ? data.users : data;
-                    
-                    // Sort users by total_solved (highest first)
-                    const sortedUsers = users.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
-
-                    sortedUsers.forEach((user, index) => {
-                        const row = document.createElement('tr');
-                        const solvedCount = user.total_solved !== undefined ? user.total_solved : 'N/A';
-                        
-                        row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${user.name || user.username}</td>
-                            <td>${solvedCount}</td>
-                            <td>
-                                <a href="${user.url}" target="_blank" style="text-decoration: none; color: #007bff;">
-                                    View <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
-                                </a>
-                            </td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        });
-
-        // --- Search Function ---
         function filterTable() {
+            // 1. Get what the user typed
             var input = document.getElementById("searchInput");
             var filter = input.value.toUpperCase();
+            
+            // 2. Get the table body (ID corrected to match HTML)
             var table = document.getElementById("leaderboard-body");
             var tr = table.getElementsByTagName("tr");
 
+            // 3. Loop through all rows
             for (var i = 0; i < tr.length; i++) {
-                // Name is in the 2nd column (index 1)
+                // Get the Name cell (2nd column, index 1)
                 var td = tr[i].getElementsByTagName("td")[1]; 
                 
                 if (td) {
                     var txtValue = td.textContent || td.innerText;
+                    
+                    // 4. Check if the name contains the search text
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
+                        tr[i].style.display = ""; // Show
                     } else {
-                        tr[i].style.display = "none";
+                        tr[i].style.display = "none"; // Hide
                     }
                 }
             }
@@ -215,3 +114,4 @@
     </script>
 </body>
 </html>
+
