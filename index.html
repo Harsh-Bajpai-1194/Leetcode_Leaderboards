@@ -8,45 +8,74 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        .leetcode-img 
-        {
-        position: absolute; 
-        top: 20px;           
-        left: 20px;        
+        /* Logo & Body Logic */
+        .leetcode-img {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 70px;
+            height: auto;
         }
+        body { padding-top: 20px; }
+
+        /* Search Bar */
         .search-container {
             text-align: center;
             margin-bottom: 20px;
         }
-
         #searchInput {
             width: 80%;
             max-width: 400px;
             padding: 12px 20px;
             margin: 8px 0;
-            box-sizing: border-box;
             border: 2px solid #ccc;
             border-radius: 25px;
             font-size: 16px;
             outline: none;
             transition: 0.3s;
         }
-
         #searchInput:focus {
             border-color: #4CAF50;
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+        }
+
+        /* --- NEW: NOTIFICATION ACTIVITY FEED --- */
+        #activity-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            background-color: #f0fdf4; /* Light Green Background */
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 10px;
+            display: none; /* Hidden by default if empty */
+            text-align: center;
+        }
+        .activity-item {
+            font-size: 0.95em;
+            color: #166534;
+            margin: 5px 0;
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 
 <body>
     <img src="leetcode.jpg" alt="LEETCODE" class="leetcode-img"/>
+    
     <div class="leaderboard-container">
         <h1>LEETCODE LEADERBOARD</h1>
         
         <div id="last-updated" style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 15px;">
             Last updated: --
         </div>
+
+        <div id="activity-container">
+            </div>
 
         <div class="search-container">
             <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Search for names...">
@@ -69,52 +98,64 @@
     <div class="contact">
         <h3>If you want your name in the leaderboard, send your Leetcode Profile link here 👇</h3>
         <div class="social-links">
-            <a href="https://wa.me/+918081605775?text=Hello%2C%20I%20also%20want%20my%20name%20to%20be%20listed%20in%20Leetcode%20Leaderboards.%20%0A%0AHere's%20my%20Leetcode%20profile%20link%0Ahttps%3A%2F%2Fleetcode.com%2Fu%2Fusername%2F" target="_blank" aria-label="Chat on WhatsApp">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-
-            <a href="https://www.linkedin.com/in/Harsh-Bajpai1194" target="_blank" aria-label="View LinkedIn Profile">
-                <i class="fab fa-linkedin"></i>
-            </a>
-
-            <a href="mailto:harshbajpai1194@gmail.com?subject=Leetcode Leaderboards&body=Hello, I also want my name to be listed in Leetcode Leaderboards.%0AHere's my Leetcode profile link%F0%9F%91%89https://leetcode.com/u/username/">
-                <i class="fas fa-envelope"></i>
-            </a>
+            <a href="https://wa.me/+918081605775?text=Hello" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.linkedin.com/in/Harsh-Bajpai1194" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="mailto:harshbajpai1194@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
         </div>
     </div>
 
-    <script src="script.js"></script>
-
     <script>
+        // 1. Fetch JSON Data
+        fetch('profiles.json')
+            .then(response => response.json())
+            .then(data => {
+                // Update Time
+                document.getElementById('last-updated').innerText = `Last updated: ${data.last_updated}`;
+
+                // --- NEW: Render Activity Feed ---
+                const activityContainer = document.getElementById('activity-container');
+                if (data.activities && data.activities.length > 0) {
+                    activityContainer.style.display = 'block'; // Show if data exists
+                    activityContainer.innerHTML = "<strong>🔥 Recent Updates:</strong><br>";
+                    
+                    data.activities.forEach(activity => {
+                        const item = document.createElement('div');
+                        item.className = 'activity-item';
+                        item.innerHTML = `${activity.text} <span style="font-size:0.8em; color:#666">(${activity.time})</span>`;
+                        activityContainer.appendChild(item);
+                    });
+                }
+
+                // Render Table
+                const sortedUsers = data.users.sort((a, b) => b.total_solved - a.total_solved);
+                const tableBody = document.getElementById('leaderboard-body');
+                
+                sortedUsers.forEach((user, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${user.name}</td>
+                        <td>${user.total_solved}</td>
+                        <td><a href="${user.url}" target="_blank">View</a></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+
+        // Search Function
         function filterTable() {
-            // 1. Get what the user typed
             var input = document.getElementById("searchInput");
             var filter = input.value.toUpperCase();
-            
-            // 2. Get the table body (ID corrected to match HTML)
             var table = document.getElementById("leaderboard-body");
             var tr = table.getElementsByTagName("tr");
-
-            // 3. Loop through all rows
             for (var i = 0; i < tr.length; i++) {
-                // Get the Name cell (2nd column, index 1)
-                var td = tr[i].getElementsByTagName("td")[1]; 
-                
+                var td = tr[i].getElementsByTagName("td")[1];
                 if (td) {
                     var txtValue = td.textContent || td.innerText;
-                    
-                    // 4. Check if the name contains the search text
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = ""; // Show
-                    } else {
-                        tr[i].style.display = "none"; // Hide
-                    }
+                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
                 }
             }
         }
     </script>
 </body>
 </html>
-
-
-
