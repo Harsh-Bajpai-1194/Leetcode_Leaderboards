@@ -1,71 +1,34 @@
 name: Daily LeetCode Leaderboard Update
 
-
-
 on:
-
   schedule:
-
-    - cron: '*/5 * * * *' # Runs every 30 minutes (5 mins is too aggressive for GitHub free tier)
-
+    - cron: '*/10 * * * *' # Runs every 10 minutes
   workflow_dispatch:       # Allows manual trigger
 
-
-
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
-
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
 
-
-
       - name: Set up Python
-
         uses: actions/setup-python@v5
-
         with:
-
           python-version: '3.10'
 
-
-
       - name: Install dependencies
-
-        # We install 'requests' directly to be faster and ignore old requirements.txt clutter
-
         run: |
-
           pip install requests
 
-
-
       - name: Run Scraper
-
-        # Make sure your python file is named 'update_leaderboard.py'
-
         run: python update_leaderboard.py
 
-
-
       - name: Commit and Push changes
-
         run: |
-
           git config --global user.name "github-actions[bot]"
-
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
           git add profiles.json
-
           git commit -m "Automated update of LeetCode stats" || exit 0
-
           git push
