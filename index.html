@@ -8,55 +8,73 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* Logo & Body Logic */
+        /* --- Logo Styling --- */
         .leetcode-img {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+            position: absolute; 
+            top: 20px;            
+            left: 20px;        
             width: 70px;
             height: auto;
         }
-        body { padding-top: 20px; }
 
-        /* Search Bar */
+        /* --- Search Bar Styling --- */
         .search-container {
             text-align: center;
             margin-bottom: 20px;
         }
+
         #searchInput {
             width: 80%;
             max-width: 400px;
             padding: 12px 20px;
             margin: 8px 0;
+            box-sizing: border-box;
             border: 2px solid #ccc;
             border-radius: 25px;
             font-size: 16px;
             outline: none;
             transition: 0.3s;
         }
+
         #searchInput:focus {
             border-color: #4CAF50;
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
         }
 
-        /* --- NEW: NOTIFICATION ACTIVITY FEED --- */
+        /* --- NEW: Activity Feed Styling --- */
         #activity-container {
             width: 80%;
             max-width: 600px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 20px auto; /* Centered */
             background-color: #f0fdf4; /* Light Green Background */
             border: 1px solid #bbf7d0;
             border-radius: 10px;
-            padding: 10px;
+            padding: 15px;
             display: none; /* Hidden by default if empty */
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
+        
+        .activity-header {
+            font-weight: bold;
+            color: #15803d;
+            margin-bottom: 10px;
+            display: block;
+        }
+
         .activity-item {
             font-size: 0.95em;
             color: #166534;
             margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             animation: fadeIn 0.5s ease-in;
         }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
@@ -91,68 +109,106 @@
                 </tr>
             </thead>
             <tbody id="leaderboard-body">
-            </tbody>
+                </tbody>
         </table>
     </div>
 
     <div class="contact">
         <h3>If you want your name in the leaderboard, send your Leetcode Profile link here 👇</h3>
         <div class="social-links">
-            <a href="https://wa.me/+918081605775?text=Hello" target="_blank"><i class="fab fa-whatsapp"></i></a>
-            <a href="https://www.linkedin.com/in/Harsh-Bajpai1194" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="mailto:harshbajpai1194@gmail.com" target="_blank"><i class="fas fa-envelope"></i></a>
+            <a href="https://wa.me/+918081605775?text=Hello%2C%20I%20also%20want%20my%20name%20to%20be%20listed%20in%20Leetcode%20Leaderboards.%20%0A%0AHere's%20my%20Leetcode%20profile%20link%0Ahttps%3A%2F%2Fleetcode.com%2Fu%2Fusername%2F" target="_blank" aria-label="Chat on WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+
+            <a href="https://www.linkedin.com/in/Harsh-Bajpai1194" target="_blank" aria-label="View LinkedIn Profile">
+                <i class="fab fa-linkedin"></i>
+            </a>
+
+            <a href="mailto:harshbajpai1194@gmail.com?subject=Leetcode Leaderboards&body=Hello, I also want my name to be listed in Leetcode Leaderboards.%0AHere's my Leetcode profile link%F0%9F%91%89https://leetcode.com/u/username/">
+                <i class="fas fa-envelope"></i>
+            </a>
         </div>
     </div>
 
     <script>
-        // 1. Fetch JSON Data
-        fetch('profiles.json')
-            .then(response => response.json())
-            .then(data => {
-                // Update Time
-                document.getElementById('last-updated').innerText = `Last updated: ${data.last_updated}`;
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Fetch the JSON data
+            fetch('profiles.json')
+                .then(response => response.json())
+                .then(data => {
+                    // --- Update Last Updated Time ---
+                    const lastUpdatedDiv = document.getElementById('last-updated');
+                    if (data.last_updated) {
+                        lastUpdatedDiv.innerText = `Last updated: ${data.last_updated}`;
+                    }
 
-                // --- NEW: Render Activity Feed ---
-                const activityContainer = document.getElementById('activity-container');
-                if (data.activities && data.activities.length > 0) {
-                    activityContainer.style.display = 'block'; // Show if data exists
-                    activityContainer.innerHTML = "<strong>🔥 Recent Updates:</strong><br>";
+                    // --- NEW: Render Activity Feed ---
+                    const activityContainer = document.getElementById('activity-container');
+                    // Check if 'activities' exists and has items
+                    if (data.activities && data.activities.length > 0) {
+                        activityContainer.style.display = 'block'; // Show the box
+                        
+                        let htmlContent = '<span class="activity-header">🔥 Recent Updates</span>';
+                        
+                        data.activities.forEach(activity => {
+                            htmlContent += `
+                                <div class="activity-item">
+                                    ${activity.text} 
+                                    <span style="font-size:0.8em; color:#666; margin-left:5px;">
+                                        (${activity.time})
+                                    </span>
+                                </div>
+                            `;
+                        });
+                        activityContainer.innerHTML = htmlContent;
+                    }
+
+                    // --- Render Leaderboard Table ---
+                    const tableBody = document.getElementById('leaderboard-body');
+                    // Handle case where users array might be nested or direct
+                    const users = data.users ? data.users : data;
                     
-                    data.activities.forEach(activity => {
-                        const item = document.createElement('div');
-                        item.className = 'activity-item';
-                        item.innerHTML = `${activity.text} <span style="font-size:0.8em; color:#666">(${activity.time})</span>`;
-                        activityContainer.appendChild(item);
+                    // Sort users by total_solved (highest first)
+                    const sortedUsers = users.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
+
+                    sortedUsers.forEach((user, index) => {
+                        const row = document.createElement('tr');
+                        const solvedCount = user.total_solved !== undefined ? user.total_solved : 'N/A';
+                        
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${user.name || user.username}</td>
+                            <td>${solvedCount}</td>
+                            <td>
+                                <a href="${user.url}" target="_blank" style="text-decoration: none; color: #007bff;">
+                                    View <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
+                                </a>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
                     });
-                }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
 
-                // Render Table
-                const sortedUsers = data.users.sort((a, b) => b.total_solved - a.total_solved);
-                const tableBody = document.getElementById('leaderboard-body');
-                
-                sortedUsers.forEach((user, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${user.name}</td>
-                        <td>${user.total_solved}</td>
-                        <td><a href="${user.url}" target="_blank">View</a></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            });
-
-        // Search Function
+        // --- Search Function ---
         function filterTable() {
             var input = document.getElementById("searchInput");
             var filter = input.value.toUpperCase();
             var table = document.getElementById("leaderboard-body");
             var tr = table.getElementsByTagName("tr");
+
             for (var i = 0; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[1];
+                // Name is in the 2nd column (index 1)
+                var td = tr[i].getElementsByTagName("td")[1]; 
+                
                 if (td) {
                     var txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
         }
