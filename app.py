@@ -16,16 +16,24 @@ def get_solved_count(text):
     except:
         return 0
 
-def scrape_user_total(url, driver):
+def scrape_user_data(driver, url):
+    """
+    Scrapes both the Real Name and Total Solved count from a LeetCode profile.
+    Returns: (real_name, total_solved)
+    """
+    print(f"   -> Processing: {url}")
     try:
         driver.get(url)
-        wait = WebDriverWait(driver, 15)
-        wait.until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Easy')]")))
-        time.sleep(3) 
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
-        lines = soup.get_text(separator='\n', strip=True).split('\n')
+        # Wait for dynamic content (Essential for LeetCode)
+        time.sleep(5) 
         
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        
+        # --- PART 1: SCRAPE SOLVED COUNT ---
+        # Look for the 'Easy', 'Med.', 'Hard' labels to find the counts
+        lines = soup.get_text(separator='\n', strip=True).split('\n')
         easy = med = hard = 0
+        
         for i in range(len(lines)):
             if lines[i] == "Easy":
                 easy = get_solved_count(lines[i+1])
@@ -33,17 +41,45 @@ def scrape_user_total(url, driver):
                 med = get_solved_count(lines[i+1])
             elif lines[i] == "Hard":
                 hard = get_solved_count(lines[i+1])
-        return easy + med + hard
+        
+        total_solved = easy + med + hard
+
+        # --- PART 2: SCRAPE REAL NAME ---
+        target_username = url.strip('/').split('/')[-1]
+        all_text = list(soup.stripped_strings)
+        
+        real_name = target_username # Default to username
+        
+        # Find where the username appears in the text list
+        index = -1
+        for i, text in enumerate(all_text):
+            if text.lower() == target_username.lower():
+                index = i
+                break
+        
+        if index > 0:
+            candidate_name = all_text[index - 1]
+            
+            # Filter out "Junk" words that appear if no Real Name is set
+            junk_words = ["Premium", "Store", "Redeem", "Assessment", 
+                          "Register", "Sign in", "Log in", "Explore", "Problems"]
+            
+            if candidate_name not in junk_words:
+                real_name = candidate_name
+
+        print(f"      Found: Name='{real_name}', Solved={total_solved}")
+        return real_name, total_solved
+
     except Exception as e:
-        print(f"  ⚠️ Error scraping {url}: {e}")
-        return 0
+        print(f"      ⚠️ Error scraping {url}: {e}")
+        return None, 0
 
 def update_leaderboard():
-    # Ensure we use the correct file path for GitHub Actions
+    # File setup
     file_path = os.path.join(os.getcwd(), 'profiles.json')
-    
     print(f"--- Starting Update: {datetime.now()} ---")
     
+    # Load JSON
     try:
         with open(file_path, 'r') as f:
             data = json.load(f)
@@ -53,24 +89,31 @@ def update_leaderboard():
         print(f"❌ Failed to load JSON: {e}")
         return
 
+    # Setup Driver (Single instance for all users)
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--window-size=1920,1080')
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
     
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
+    # Loop through users
     for user in profiles:
-        print(f"🔍 Scraping {user['name']}...")
-        user['total_solved'] = scrape_user_total(user['url'], driver)
-        print(f"   -> Solved: {user['total_solved']}")
-    
+        real_name, total_solved = scrape_user_data(driver, user['url'])
+        
+        # Update JSON object
+        if real_name:
+            user['name'] = real_name 
+        
+        # Only update score if we got a valid number (prevent resetting to 0 on error)
+        if total_solved > 0:
+            user['total_solved'] = total_solved
+
     driver.quit()
 
+    # Save Updates
     ist_time = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
-
     final_data = {
         "last_updated": ist_time.strftime("%d/%m/%Y, %I:%M %p"),
         "users": profiles
