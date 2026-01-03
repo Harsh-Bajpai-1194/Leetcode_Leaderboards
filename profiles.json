@@ -1,15 +1,15 @@
 {
-  "last_updated": "03/01/2026, 09:24 PM",
+  "last_updated": "03/01/2026, 09:46 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
       "url": "https://leetcode.com/u/Harsh_Bajpai1/",
-      "total_solved": 409
+      "total_solved": 412
     },
     {
       "name": "Hani_Dwivedi",
       "url": "https://leetcode.com/u/Hani_Dwivedi/",
-      "total_solved": 106
+      "total_solved": 107
     },
     {
       "name": "Harsh Tripathi",
@@ -99,7 +99,7 @@
     {
       "name": "Mudit Anand",
       "url": "https://leetcode.com/u/mudit_2904/",
-      "total_solved": 1757
+      "total_solved": 1759
     },
     {
       "name": "Mayank Singh",
@@ -109,12 +109,12 @@
     {
       "name": "Ishan Dwivedi",
       "url": "https://leetcode.com/u/Ishan_Dwivedi1210/",
-      "total_solved": 428
+      "total_solved": 431
     },
     {
       "name": "ABHINAV SINGH BHADOURIA",
       "url": "https://leetcode.com/u/ABHINAV_LATC/",
-      "total_solved": 537
+      "total_solved": 538
     },
     {
       "name": "Anil Rathod",
@@ -124,7 +124,7 @@
     {
       "name": "Peng Cao",
       "url": "https://leetcode.com/u/cpcs/",
-      "total_solved": 3793
+      "total_solved": 3797
     },
     {
       "name": "akshara_gupta15",
@@ -139,7 +139,7 @@
     {
       "name": "ArmanSaini",
       "url": "https://leetcode.com/u/ArmanSaini/",
-      "total_solved": 449
+      "total_solved": 451
     },
     {
       "name": "Knockcat",
@@ -149,7 +149,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3067
+      "total_solved": 3071
     },
     {
       "name": "Sung Jinwoo",
@@ -159,7 +159,7 @@
     {
       "name": "Andrey",
       "url": "https://leetcode.com/u/Artgor/",
-      "total_solved": 1443
+      "total_solved": 1444
     },
     {
       "name": "eunice",
@@ -184,58 +184,58 @@
     {
       "url": "https://leetcode.com/u/chandanagrawal23/",
       "name": "Chandan Agrawal",
-      "total_solved": 2224
+      "total_solved": 2227
     }
   ],
   "activities": [
     {
-      "text": "Hani_Dwivedi solved +1 questions",
-      "time": "09:16 PM",
+      "text": "Chandan Agrawal solved +3 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Hani_Dwivedi solved +1 questions",
-      "time": "09:03 PM",
+      "text": "Andrey solved +1 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "05:58 PM",
+      "text": "Nikhil Agrawal solved +4 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Chandan Agrawal solved +1 questions",
-      "time": "05:26 PM",
+      "text": "ArmanSaini solved +2 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "05:10 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "04:41 PM",
+      "text": "Peng Cao solved +4 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
       "text": "ABHINAV SINGH BHADOURIA solved +1 questions",
-      "time": "04:41 PM",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Shivendra pratap Srivastava solved +1 questions",
-      "time": "04:41 PM",
+      "text": "Ishan Dwivedi solved +3 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "04:10 PM",
+      "text": "Mudit Anand solved +2 questions",
+      "time": "09:46 PM",
       "type": "up"
     },
     {
-      "text": "Ishan Dwivedi solved +1 questions",
-      "time": "03:48 PM",
+      "text": "Hani_Dwivedi solved +1 questions",
+      "time": "09:46 PM",
+      "type": "up"
+    },
+    {
+      "text": "HARSH BAJPAI solved +3 questions",
+      "time": "09:46 PM",
       "type": "up"
     }
   ]
