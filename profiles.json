@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 01:17 AM",
+  "last_updated": "04/01/2026, 01:24 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -144,7 +144,7 @@
     {
       "name": "Knockcat",
       "url": "https://leetcode.com/u/knockcat/",
-      "total_solved": 1794
+      "total_solved": 1795
     },
     {
       "name": "Nikhil Agrawal",
@@ -244,6 +244,11 @@
   ],
   "activities": [
     {
+      "text": "Knockcat solved +1 questions",
+      "time": "01:24 AM",
+      "type": "up"
+    },
+    {
       "text": "MoRyan_786 solved +1 questions",
       "time": "12:16 AM",
       "type": "up"
@@ -286,11 +291,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "10:12 PM",
-      "type": "up"
-    },
-    {
-      "text": "Chandan Agrawal solved +3 questions",
-      "time": "09:46 PM",
       "type": "up"
     }
   ]
