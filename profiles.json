@@ -1,5 +1,5 @@
 {
-  "last_updated": "03/01/2026, 10:43 PM",
+  "last_updated": "03/01/2026, 11:03 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -9,7 +9,7 @@
     {
       "name": "Hani_Dwivedi",
       "url": "https://leetcode.com/u/Hani_Dwivedi/",
-      "total_solved": 107
+      "total_solved": 108
     },
     {
       "name": "Harsh Tripathi",
@@ -69,7 +69,7 @@
     {
       "name": "gauransh_sharma_21",
       "url": "https://leetcode.com/u/gauranshsharma21",
-      "total_solved": 78
+      "total_solved": 79
     },
     {
       "name": "Deependra Singh Chandel",
@@ -149,7 +149,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3074
+      "total_solved": 3075
     },
     {
       "name": "Sung Jinwoo",
@@ -245,6 +245,21 @@
   "activities": [
     {
       "text": "Nikhil Agrawal solved +1 questions",
+      "time": "11:03 PM",
+      "type": "up"
+    },
+    {
+      "text": "gauransh_sharma_21 solved +1 questions",
+      "time": "11:03 PM",
+      "type": "up"
+    },
+    {
+      "text": "Hani_Dwivedi solved +1 questions",
+      "time": "11:03 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
       "time": "10:43 PM",
       "type": "up"
     },
@@ -275,21 +290,6 @@
     },
     {
       "text": "ArmanSaini solved +2 questions",
-      "time": "09:46 PM",
-      "type": "up"
-    },
-    {
-      "text": "Peng Cao solved +4 questions",
-      "time": "09:46 PM",
-      "type": "up"
-    },
-    {
-      "text": "ABHINAV SINGH BHADOURIA solved +1 questions",
-      "time": "09:46 PM",
-      "type": "up"
-    },
-    {
-      "text": "Ishan Dwivedi solved +3 questions",
       "time": "09:46 PM",
       "type": "up"
     }
