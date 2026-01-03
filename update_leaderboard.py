@@ -87,8 +87,8 @@ def update_leaderboard():
         
         time.sleep(0.2)
 
-    # 3. TRIM LOG (Keep only last 5 events to save space)
-    activity_log = activity_log[:5]
+    # 3. TRIM LOG (Keep only last 10 events to save space)
+    activity_log = activity_log[:10]
 
     # 4. SAVE EVERYTHING
     ist_time = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
