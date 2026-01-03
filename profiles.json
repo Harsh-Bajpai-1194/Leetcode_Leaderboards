@@ -1,5 +1,5 @@
 {
-  "last_updated": "03/01/2026, 05:23 AM",
+  "last_updated": "03/01/2026, 06:33 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -124,7 +124,7 @@
     {
       "name": "Peng Cao",
       "url": "https://leetcode.com/u/cpcs/",
-      "total_solved": 3792
+      "total_solved": 3793
     },
     {
       "name": "akshara_gupta15",
@@ -164,7 +164,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1373
+      "total_solved": 1375
     },
     {
       "name": "Yunxian Ding",
@@ -189,6 +189,16 @@
   ],
   "activities": [
     {
+      "text": "eunice solved +2 questions",
+      "time": "06:33 AM",
+      "type": "up"
+    },
+    {
+      "text": "Peng Cao solved +1 questions",
+      "time": "06:33 AM",
+      "type": "up"
+    },
+    {
       "text": "eunice solved +1 questions",
       "time": "05:23 AM",
       "type": "up"
@@ -201,16 +211,6 @@
     {
       "text": "eunice solved +1 questions",
       "time": "05:01 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "04:43 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "03:45 AM",
       "type": "up"
     }
   ]
