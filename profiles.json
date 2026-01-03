@@ -1,5 +1,5 @@
 {
-  "last_updated": "03/01/2026, 11:51 AM",
+  "last_updated": "03/01/2026, 12:21 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -29,7 +29,7 @@
     {
       "name": "SAHIBJOT SINGH",
       "url": "https://leetcode.com/u/sahibxsingh/",
-      "total_solved": 124
+      "total_solved": 125
     },
     {
       "name": "himanshusingh_08",
@@ -149,7 +149,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3057
+      "total_solved": 3058
     },
     {
       "name": "Sung Jinwoo",
@@ -159,7 +159,7 @@
     {
       "name": "Andrey",
       "url": "https://leetcode.com/u/Artgor/",
-      "total_solved": 1442
+      "total_solved": 1443
     },
     {
       "name": "eunice",
@@ -188,6 +188,21 @@
     }
   ],
   "activities": [
+    {
+      "text": "Andrey solved +1 questions",
+      "time": "12:21 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "12:21 PM",
+      "type": "up"
+    },
+    {
+      "text": "SAHIBJOT SINGH solved +1 questions",
+      "time": "12:21 PM",
+      "type": "up"
+    },
     {
       "text": "Nikhil Agrawal solved +2 questions",
       "time": "11:51 AM",
@@ -221,11 +236,6 @@
     {
       "text": "Anil Rathod solved +1 questions",
       "time": "08:25 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +2 questions",
-      "time": "06:33 AM",
       "type": "up"
     }
   ]
