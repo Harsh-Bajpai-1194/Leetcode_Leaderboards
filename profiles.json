@@ -1,5 +1,5 @@
 {
-  "last_updated": "03/01/2026, 04:23 PM",
+  "last_updated": "03/01/2026, 04:41 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -39,7 +39,7 @@
     {
       "name": "Shivendra pratap Srivastava",
       "url": "https://leetcode.com/u/ShivOlogn/",
-      "total_solved": 396
+      "total_solved": 397
     },
     {
       "name": "csai_093",
@@ -114,7 +114,7 @@
     {
       "name": "ABHINAV SINGH BHADOURIA",
       "url": "https://leetcode.com/u/ABHINAV_LATC/",
-      "total_solved": 536
+      "total_solved": 537
     },
     {
       "name": "Anil Rathod",
@@ -149,7 +149,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3064
+      "total_solved": 3065
     },
     {
       "name": "Sung Jinwoo",
@@ -190,6 +190,21 @@
   "activities": [
     {
       "text": "Nikhil Agrawal solved +1 questions",
+      "time": "04:41 PM",
+      "type": "up"
+    },
+    {
+      "text": "ABHINAV SINGH BHADOURIA solved +1 questions",
+      "time": "04:41 PM",
+      "type": "up"
+    },
+    {
+      "text": "Shivendra pratap Srivastava solved +1 questions",
+      "time": "04:41 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
       "time": "04:10 PM",
       "type": "up"
     },
@@ -221,21 +236,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "01:02 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "12:44 PM",
-      "type": "up"
-    },
-    {
-      "text": "Andrey solved +1 questions",
-      "time": "12:21 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "12:21 PM",
       "type": "up"
     }
   ]
