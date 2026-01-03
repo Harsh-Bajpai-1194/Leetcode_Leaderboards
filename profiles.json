@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 02:43 AM",
+  "last_updated": "04/01/2026, 03:02 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -164,7 +164,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1375
+      "total_solved": 1376
     },
     {
       "name": "Yunxian Ding",
@@ -188,7 +188,7 @@
     },
     {
       "url": "https://leetcode.com/u/SwastikAwasthi/",
-      "total_solved": 146,
+      "total_solved": 147,
       "name": "SwastikAwasthi"
     },
     {
@@ -244,6 +244,16 @@
   ],
   "activities": [
     {
+      "text": "SwastikAwasthi solved +1 questions",
+      "time": "03:01 AM",
+      "type": "up"
+    },
+    {
+      "text": "eunice solved +1 questions",
+      "time": "03:01 AM",
+      "type": "up"
+    },
+    {
       "text": "Knockcat solved +1 questions",
       "time": "01:24 AM",
       "type": "up"
@@ -281,16 +291,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "10:43 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "10:26 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "10:12 PM",
       "type": "up"
     }
   ]
