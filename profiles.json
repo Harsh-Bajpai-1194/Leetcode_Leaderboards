@@ -1,5 +1,5 @@
 {
-  "last_updated": "03/01/2026, 09:46 PM",
+  "last_updated": "03/01/2026, 10:13 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -149,7 +149,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3071
+      "total_solved": 3072
     },
     {
       "name": "Sung Jinwoo",
@@ -187,40 +187,67 @@
       "total_solved": 2227
     },
     {
-      "url": "https://leetcode.com/u/SwastikAwasthi/"
+      "url": "https://leetcode.com/u/SwastikAwasthi/",
+      "total_solved": 146,
+      "name": "SwastikAwasthi"
     },
     {
-      "url": "https://leetcode.com/u/raghavrathore7415/"
+      "url": "https://leetcode.com/u/raghavrathore7415/",
+      "total_solved": 1649,
+      "name": "Raghvendra Singh Rathore"
     },
     {
-      "url": "https://leetcode.com/u/gyan_ganga/"
+      "url": "https://leetcode.com/u/gyan_ganga/",
+      "total_solved": 605,
+      "name": "Gyan Ganga Singh"
     },
     {
-      "url": "https://leetcode.com/u/vishal_0002/"
+      "url": "https://leetcode.com/u/vishal_0002/",
+      "total_solved": 384,
+      "name": "Vishal_Yadav"
     },
     {
-      "url": "https://leetcode.com/u/ScofieldMind/"
+      "url": "https://leetcode.com/u/ScofieldMind/",
+      "total_solved": 361,
+      "name": "Mike"
     },
     {
-      "url": "https://leetcode.com/u/mayank_chaudharyy/"
+      "url": "https://leetcode.com/u/mayank_chaudharyy/",
+      "total_solved": 339,
+      "name": "Mayank Choudhary"
     },
     {
-      "url": "https://leetcode.com/u/Ritik_81066/"
+      "url": "https://leetcode.com/u/Ritik_81066/",
+      "total_solved": 597,
+      "name": "Ritik Goyal"
     },
     {
-      "url": "https://leetcode.com/u/project27/"
+      "url": "https://leetcode.com/u/project27/",
+      "total_solved": 11,
+      "name": "project27"
     },
     {
-      "url": "https://leetcode.com/u/me_ayush_912/"
+      "url": "https://leetcode.com/u/me_ayush_912/",
+      "total_solved": 263,
+      "name": "ayush sharma"
     },
     {
-      "url": "https://leetcode.com/u/AakashDkap/"
+      "url": "https://leetcode.com/u/AakashDkap/",
+      "total_solved": 93,
+      "name": "Adarsh Kashyap"
     },
     {
-      "url": "https://leetcode.com/u/bnilesh25/"
+      "url": "https://leetcode.com/u/bnilesh25/",
+      "total_solved": 854,
+      "name": "Nilesh Bhutda"
     }
   ],
   "activities": [
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "10:12 PM",
+      "type": "up"
+    },
     {
       "text": "Chandan Agrawal solved +3 questions",
       "time": "09:46 PM",
@@ -263,11 +290,6 @@
     },
     {
       "text": "Hani_Dwivedi solved +1 questions",
-      "time": "09:46 PM",
-      "type": "up"
-    },
-    {
-      "text": "HARSH BAJPAI solved +3 questions",
       "time": "09:46 PM",
       "type": "up"
     }
