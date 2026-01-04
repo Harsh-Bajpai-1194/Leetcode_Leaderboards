@@ -5,331 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leetcode Leaderboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet " href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css ">
 
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px 0;
-            box-sizing: border-box;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #ffa116;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .leaderboard-container,
-        .contact {
-            background-color: #2c2c2c;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 650px;
-            padding: 24px;
-            box-sizing: border-box;
-            overflow-x: auto;
-        }
-        
-        .leaderboard-container {
-            margin-bottom: 25px;
-        }
-        
-        .contact {
-            margin-top: 25px;
-        }
-        
-        .leaderboard-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0 10px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .leaderboard-table th,
-        .leaderboard-table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid #444;
-            text-align: left;
-            white-space: nowrap;
-            transition: background-color 0.3s ease;
-        }
-        
-        .leaderboard-table th {
-            background-color: #ffa116;
-            font-weight: 700;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .leaderboard-table tbody tr {
-            border-bottom: 1px solid #444;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(even) {
-            background-color: transparent;
-        }
-        
-        .leaderboard-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .leaderboard-table tbody tr:hover {
-            background-color: #3a3a3a;
-        }
-        
-        .leaderboard-table th:first-child,
-        .leaderboard-table td:first-child,
-        .leaderboard-table th:last-child,
-        .leaderboard-table td:last-child {
-            text-align: center;
-        }
-        
-        .leaderboard-table td:first-child {
-            font-weight: 700;
-            color: #ffa116;
-            font-size: 1.1em;
-        }
-        
-        .leaderboard-table td:nth-child(2) {
-            font-weight: 600;
-            color: #ffffff;
-            font-size: 1.05em;
-        }
-        
-        .profile-button {
-            display: inline-block;
-            padding: 8px 14px;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #1a1a1a;
-            background-color: #ffa116;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-        }
-        
-        .profile-button:hover {
-            background-color: #e08e00;
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(255, 161, 22, 0.2);
-        }
-        
-        .contact {
-            text-align: center;
-        }
-        
-        .contact h3 {
-            margin-top: 0;
-            color: #f0f0f0;
-            font-size: 1.1em;
-            margin-bottom: 20px;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            color: #ffffff;
-            font-size: 1.6em;
-            text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        .social-links a:nth-child(1) {
-            background-color: #25D366;
-        }
-        
-        .social-links a:nth-child(2) {
-            background-color: #0A66C2;
-        }
-        
-        .social-links a:nth-child(3) {
-            background-color: #EA4335;
-        }
-        
-        .social-links a:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 10px 0;
-            }
-            .leaderboard-container,
-            .contact {
-                width: 95%;
-                padding: 15px;
-            }
-            .leaderboard-table th,
-            .leaderboard-table td {
-                padding: 10px 12px;
-                font-size: 0.9em;
-            }
-            h1 {
-                font-size: 2em;
-                margin-bottom: 20px;
-            }
-            .contact h3 {
-                font-size: 1em;
-            }
-            .social-links a {
-                width: 45px;
-                height: 45px;
-                font-size: 1.4em;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .leaderboard-table th,
-            .leaderboard-table td {
-                padding: 8px 10px;
-                font-size: 0.85em;
-            }
-            h1 {
-                font-size: 1.7em;
-            }
-            .contact h3 {
-                font-size: 0.9em;
-            }
-            .social-links {
-                gap: 10px;
-            }
-            .social-links a {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2em;
-            }
-        }
-        
-        .main-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            /* Align tops of both boxes */
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            flex-wrap: wrap;
-            /* Stacks vertically on mobile */
-        }
-        
-        .leetcode-img {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-        
-        .search-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        #searchInput {
-            width: 80%;
-            max-width: 400px;
-            padding: 12px 20px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 2px solid #ccc;
-            border-radius: 25px;
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-        }
-        
-        #searchInput:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
-        }
-        
-        .activity-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            flex: 1;
-            /* Takes up 1 part of space */
-            min-width: 250px;
-            background-color: #1a1a1a;
-            /* Match Leaderboard Card */
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ffa116;
-            /* LeetCode Orange Border */
-            text-align: center;
-            height: 90%;
-            /* Only as tall as needed */
-        }
-        
-        .activity-title {
-            color: #ffa116;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-        
-        #activity-content {
-            color: #888;
-            font-style: italic;
-            min-height: 100px;
-            /* Gives it some height even when empty */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
 </head>
 
 <body>
-    <img src="leetcode.jpg" alt="LEETCODE" class="leetcode-img" />
-    <div class="leaderboard-container">
+    <img src="leetcode.jpg " alt="LEETCODE " class="leetcode-img " />
+    <div class="leaderboard-container ">
         <h1>LEETCODE LEADERBOARD</h1>
 
-        <div id="last-updated" style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 15px;">
+        <div id="last-updated " style="text-align: center; color: #888; font-size: 0.9em; margin-bottom: 15px; ">
             Last updated: --
         </div>
 
-        <div class="search-container">
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="🔍 Search for names...">
+        <div class="search-container ">
+            <input type="text " id="searchInput " onkeyup="filterTable() " placeholder="🔍 Search for names... ">
         </div>
 
-        <table class="leaderboard-table">
+        <table class="leaderboard-table ">
             <thead>
                 <tr>
                     <th>S.no.</th>
@@ -338,21 +32,21 @@
                     <th>Profile</th>
                 </tr>
             </thead>
-            <tbody id="leaderboard-body">
+            <tbody id="leaderboard-body ">
             </tbody>
         </table>
-        <div class="activity-container">
-            <div class="activity-title">Activity Feed</div>
-            <div id="activity-content">
+        <div class="activity-container ">
+            <div class="activity-title ">Activity Feed</div>
+            <div id="activity-content ">
                 NO ACTIVITY CURRENTLY
             </div>
         </div>
     </div>
 
-    <div class="contact">
+    <div class="contact ">
         <h3>If you want your name in the leaderboard, send your Leetcode Profile link here 👇</h3>
-        <div class="social-links">
-            <a href="https://wa.me/+918081605775?text=Hello%2C%20I%20also%20want%20my%20name%20to%20be%20listed%20in%20Leetcode%20Leaderboards.%20%0A%0AHere's%20my%20Leetcode%20profile%20link%0Ahttps%3A%2F%2Fleetcode.com%2Fu%2Fusername%2F" target="_blank" aria-label="Chat on WhatsApp">
+        <div class="social-links ">
+            <a href="https://wa.me/+918081605775?text=Hello%2C%20I%20also%20want%20my%20name%20to%20be%20listed%20in%20Leetcode%20Leaderboards.%20%0A%0AHere 's%20my%20Leetcode%20profile%20link%0Ahttps%3A%2F%2Fleetcode.com%2Fu%2Fusername%2F" target="_blank" aria-label="Chat on WhatsApp">
                 <i class="fab fa-whatsapp"></i>
             </a>
 
@@ -360,13 +54,13 @@
                 <i class="fab fa-linkedin"></i>
             </a>
 
-            <a href="mailto:harshbajpai1194@gmail.com?subject=Leetcode Leaderboards&body=Hello, I also want my name to be listed in Leetcode Leaderboards.%0AHere's my Leetcode profile link%F0%9F%91%89https://leetcode.com/u/username/">
-                <i class="fas fa-envelope"></i>
+            <a href="mailto:harshbajpai1194@gmail.com?subject=Leetcode Leaderboards&body=Hello, I also want my name to be listed in Leetcode Leaderboards.%0AHere's my Leetcode profile link%F0%9F%91%89https://leetcode.com/u/username/ ">
+                <i class="fas fa-envelope "></i>
             </a>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js "></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -378,47 +72,47 @@
                         document.getElementById('last-updated').innerText = `Last updated: ${data.last_updated}`;
                     }
 
-                    // 2. Activity Feed (Checks for data, but defaults to "NO ACTIVITY" if empty)
+                    // 2. Activity Feed (Checks for data, but defaults to "NO ACTIVITY " if empty)
                     const activityContent = document.getElementById('activity-content');
                     if (data.activities && data.activities.length > 0) {
-                        let html = '<div style="text-align:left; width:100%;">';
+                        let html = '<div style="text-align:left; width:100%; ">';
                         data.activities.forEach(act => {
                             html += `
-                                <div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                                    <span style="color:white; font-weight:bold;">${act.text}</span>
+                                <div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px; ">
+                                    <span style="color:white; font-weight:bold; ">${act.text}</span>
                                     <br>
-                                    <span style="font-size:0.8em; color:#666;">${act.time}</span>
+                                    <span style="font-size:0.8em; color:#666; ">${act.time}</span>
                                 </div>`;
                         });
                         html += '</div>';
                         activityContent.innerHTML = html;
                     }
-                    // else: It stays as "NO ACTIVITY CURRENTLY"
+                    // else: It stays as "NO ACTIVITY CURRENTLY "
                 });
         });
 
         function filterTable() {
             // 1. Get what the user typed
-            var input = document.getElementById("searchInput");
+            var input = document.getElementById("searchInput ");
             var filter = input.value.toUpperCase();
 
             // 2. Get the table body (ID corrected to match HTML)
-            var table = document.getElementById("leaderboard-body");
-            var tr = table.getElementsByTagName("tr");
+            var table = document.getElementById("leaderboard-body ");
+            var tr = table.getElementsByTagName("tr ");
 
             // 3. Loop through all rows
             for (var i = 0; i < tr.length; i++) {
                 // Get the Name cell (2nd column, index 1)
-                var td = tr[i].getElementsByTagName("td")[1];
+                var td = tr[i].getElementsByTagName("td ")[1];
 
                 if (td) {
                     var txtValue = td.textContent || td.innerText;
 
                     // 4. Check if the name contains the search text
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = ""; // Show
+                        tr[i].style.display = " "; // Show
                     } else {
-                        tr[i].style.display = "none"; // Hide
+                        tr[i].style.display = "none "; // Hide
                     }
                 }
             }
