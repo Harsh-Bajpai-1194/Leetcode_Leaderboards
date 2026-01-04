@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 01:24 PM",
+  "last_updated": "04/01/2026, 01:48 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -124,7 +124,7 @@
     {
       "name": "ABHINAV SINGH BHADOURIA",
       "url": "https://leetcode.com/u/ABHINAV_LATC/",
-      "total_solved": 540
+      "total_solved": 541
     },
     {
       "name": "Anil Rathod",
@@ -248,7 +248,7 @@
     },
     {
       "url": "https://leetcode.com/u/bnilesh25/",
-      "total_solved": 855,
+      "total_solved": 856,
       "name": "Nilesh Bhutda"
     },
     {
@@ -263,6 +263,16 @@
     }
   ],
   "activities": [
+    {
+      "text": "Nilesh Bhutda solved +1 questions",
+      "time": "01:48 PM",
+      "type": "up"
+    },
+    {
+      "text": "ABHINAV SINGH BHADOURIA solved +1 questions",
+      "time": "01:48 PM",
+      "type": "up"
+    },
     {
       "text": "Raghvendra Singh Rathore solved +1 questions",
       "time": "01:24 PM",
@@ -301,16 +311,6 @@
     {
       "text": "HARSH BAJPAI solved +1 questions",
       "time": "12:45 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nilesh Bhutda solved +1 questions",
-      "time": "12:23 PM",
-      "type": "up"
-    },
-    {
-      "text": "Andrey solved +1 questions",
-      "time": "11:51 AM",
       "type": "up"
     }
   ]
