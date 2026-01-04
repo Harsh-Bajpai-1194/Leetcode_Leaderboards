@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 05:24 AM",
+  "last_updated": "04/01/2026, 06:44 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -119,7 +119,7 @@
     {
       "name": "Anil Rathod",
       "url": "https://leetcode.com/u/anil_rathod/",
-      "total_solved": 1050
+      "total_solved": 1051
     },
     {
       "name": "Peng Cao",
@@ -244,6 +244,11 @@
   ],
   "activities": [
     {
+      "text": "Anil Rathod solved +1 questions",
+      "time": "06:44 AM",
+      "type": "up"
+    },
+    {
       "text": "eunice solved +1 questions",
       "time": "04:05 AM",
       "type": "up"
@@ -285,11 +290,6 @@
     },
     {
       "text": "Nikhil Agrawal solved +1 questions",
-      "time": "11:03 PM",
-      "type": "up"
-    },
-    {
-      "text": "gauransh_sharma_21 solved +1 questions",
       "time": "11:03 PM",
       "type": "up"
     }
