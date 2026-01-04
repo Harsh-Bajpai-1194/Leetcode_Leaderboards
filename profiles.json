@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 07:27 PM",
+  "last_updated": "04/01/2026, 07:47 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -47,7 +47,9 @@
       "total_solved": 24
     },
     {
-      "url": "https://leetcode.com/u/aradhy2005/"
+      "url": "https://leetcode.com/u/aradhy2005/",
+      "total_solved": 281,
+      "name": "Aradhy Bajpai"
     },
     {
       "name": "Shivendra pratap Srivastava",
@@ -57,7 +59,7 @@
     {
       "name": "csai_093",
       "url": "https://leetcode.com/u/csai_093/",
-      "total_solved": 267
+      "total_solved": 268
     },
     {
       "name": "Arpit Soni",
@@ -267,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "csai_093 solved +1 questions",
+      "time": "07:47 PM",
+      "type": "up"
+    },
+    {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "07:27 PM",
       "type": "up"
@@ -309,11 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "04:44 PM",
-      "type": "up"
-    },
-    {
-      "text": "Chandan Agrawal solved +1 questions",
-      "time": "04:19 PM",
       "type": "up"
     }
   ]
