@@ -223,3 +223,83 @@ h1 {
         font-size: 1.2em;
     }
 }
+
+.main-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align tops of both boxes */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    flex-wrap: wrap;
+    /* Stacks vertically on mobile */
+}
+
+.leetcode-img {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.search-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    width: 80%;
+    max-width: 400px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+#searchInput:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.activity-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    flex: 1;
+    /* Takes up 1 part of space */
+    min-width: 250px;
+    background-color: #1a1a1a;
+    /* Match Leaderboard Card */
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ffa116;
+    /* LeetCode Orange Border */
+    text-align: center;
+    height: 90%;
+    /* Only as tall as needed */
+}
+
+.activity-title {
+    color: #ffa116;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+#activity-content {
+    color: #888;
+    font-style: italic;
+    min-height: 100px;
+    /* Gives it some height even when empty */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
