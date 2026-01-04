@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 11:52 AM",
+  "last_updated": "04/01/2026, 12:23 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -238,7 +238,7 @@
     },
     {
       "url": "https://leetcode.com/u/bnilesh25/",
-      "total_solved": 854,
+      "total_solved": 855,
       "name": "Nilesh Bhutda"
     },
     {
@@ -253,6 +253,11 @@
     }
   ],
   "activities": [
+    {
+      "text": "Nilesh Bhutda solved +1 questions",
+      "time": "12:23 PM",
+      "type": "up"
+    },
     {
       "text": "Andrey solved +1 questions",
       "time": "11:51 AM",
@@ -296,11 +301,6 @@
     {
       "text": "Shubhi Mishra solved +1 questions",
       "time": "11:07 AM",
-      "type": "up"
-    },
-    {
-      "text": "HARSH BAJPAI solved +2 questions",
-      "time": "11:06 AM",
       "type": "up"
     }
   ]
