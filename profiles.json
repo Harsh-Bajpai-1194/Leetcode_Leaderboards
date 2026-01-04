@@ -1,10 +1,10 @@
 {
-  "last_updated": "04/01/2026, 10:33 AM",
+  "last_updated": "04/01/2026, 11:07 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
       "url": "https://leetcode.com/u/Harsh_Bajpai1/",
-      "total_solved": 412
+      "total_solved": 414
     },
     {
       "name": "Hani_Dwivedi",
@@ -24,7 +24,7 @@
     {
       "name": "Shubhi Mishra",
       "url": "https://leetcode.com/u/_shubhimishra_/",
-      "total_solved": 320
+      "total_solved": 321
     },
     {
       "name": "SAHIBJOT SINGH",
@@ -99,7 +99,7 @@
     {
       "name": "Mudit Anand",
       "url": "https://leetcode.com/u/mudit_2904/",
-      "total_solved": 1760
+      "total_solved": 1762
     },
     {
       "name": "Mayank Singh",
@@ -124,7 +124,7 @@
     {
       "name": "Peng Cao",
       "url": "https://leetcode.com/u/cpcs/",
-      "total_solved": 3797
+      "total_solved": 3801
     },
     {
       "name": "akshara_gupta15",
@@ -139,7 +139,7 @@
     {
       "name": "ArmanSaini",
       "url": "https://leetcode.com/u/ArmanSaini/",
-      "total_solved": 452
+      "total_solved": 456
     },
     {
       "name": "Knockcat",
@@ -164,7 +164,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1378
+      "total_solved": 1382
     },
     {
       "name": "Yunxian Ding",
@@ -213,7 +213,7 @@
     },
     {
       "url": "https://leetcode.com/u/mayank_chaudharyy/",
-      "total_solved": 339,
+      "total_solved": 341,
       "name": "Mayank Choudhary"
     },
     {
@@ -244,6 +244,41 @@
   ],
   "activities": [
     {
+      "text": "Mayank Choudhary solved +2 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "eunice solved +4 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "ArmanSaini solved +4 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "Peng Cao solved +4 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "Mudit Anand solved +2 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "Shubhi Mishra solved +1 questions",
+      "time": "11:07 AM",
+      "type": "up"
+    },
+    {
+      "text": "HARSH BAJPAI solved +2 questions",
+      "time": "11:06 AM",
+      "type": "up"
+    },
+    {
       "text": "gauransh_sharma_21 solved +1 questions",
       "time": "10:32 AM",
       "type": "up"
@@ -256,41 +291,6 @@
     {
       "text": "Kevin Saigon solved +1 questions",
       "time": "10:00 AM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +3 questions",
-      "time": "10:00 AM",
-      "type": "up"
-    },
-    {
-      "text": "Mudit Anand solved +1 questions",
-      "time": "08:49 AM",
-      "type": "up"
-    },
-    {
-      "text": "SAHIBJOT SINGH solved +1 questions",
-      "time": "08:49 AM",
-      "type": "up"
-    },
-    {
-      "text": "Anil Rathod solved +1 questions",
-      "time": "06:44 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "04:05 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "03:23 AM",
-      "type": "up"
-    },
-    {
-      "text": "SwastikAwasthi solved +1 questions",
-      "time": "03:01 AM",
       "type": "up"
     }
   ]
