@@ -1,5 +1,5 @@
 {
-  "last_updated": "04/01/2026, 12:46 PM",
+  "last_updated": "04/01/2026, 01:04 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -17,10 +17,14 @@
       "total_solved": 46
     },
     {
-      "url": "https://leetcode.com/u/Sanyam_coder/"
+      "url": "https://leetcode.com/u/Sanyam_coder/",
+      "total_solved": 1013,
+      "name": "Sanyam Jain"
     },
     {
-      "url": "https://leetcode.com/u/apurvdwivedi518/"
+      "url": "https://leetcode.com/u/apurvdwivedi518/",
+      "total_solved": 1203,
+      "name": "Apurv Dwivedi"
     },
     {
       "name": "suryansh_singh_",
@@ -155,7 +159,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3080
+      "total_solved": 3081
     },
     {
       "name": "Sung Jinwoo",
@@ -190,7 +194,7 @@
     {
       "url": "https://leetcode.com/u/chandanagrawal23/",
       "name": "Chandan Agrawal",
-      "total_solved": 2227
+      "total_solved": 2228
     },
     {
       "url": "https://leetcode.com/u/SwastikAwasthi/",
@@ -260,6 +264,16 @@
   ],
   "activities": [
     {
+      "text": "Chandan Agrawal solved +1 questions",
+      "time": "01:04 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "01:04 PM",
+      "type": "up"
+    },
+    {
       "text": "Nikhil Agrawal solved +2 questions",
       "time": "12:46 PM",
       "type": "up"
@@ -296,16 +310,6 @@
     },
     {
       "text": "Mayank Choudhary solved +2 questions",
-      "time": "11:07 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +4 questions",
-      "time": "11:07 AM",
-      "type": "up"
-    },
-    {
-      "text": "ArmanSaini solved +4 questions",
       "time": "11:07 AM",
       "type": "up"
     }
