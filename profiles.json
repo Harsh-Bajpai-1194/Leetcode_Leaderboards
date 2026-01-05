@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 04:44 AM",
+  "last_updated": "06/01/2026, 05:04 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -179,7 +179,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1397
+      "total_solved": 1398
     },
     {
       "name": "Yunxian Ding",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "eunice solved +1 questions",
+      "time": "05:04 AM",
+      "type": "up"
+    },
+    {
       "text": "Peng Cao solved +1 questions",
       "time": "02:28 AM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +2 questions",
       "time": "11:11 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "10:47 PM",
       "type": "up"
     }
   ]
