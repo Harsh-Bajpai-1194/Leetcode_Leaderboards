@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 08:52 AM",
+  "last_updated": "05/01/2026, 10:09 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -18,7 +18,7 @@
     },
     {
       "url": "https://leetcode.com/u/Sanyam_coder/",
-      "total_solved": 1013,
+      "total_solved": 1014,
       "name": "Sanyam Jain"
     },
     {
@@ -39,7 +39,7 @@
     {
       "name": "SAHIBJOT SINGH",
       "url": "https://leetcode.com/u/sahibxsingh/",
-      "total_solved": 126
+      "total_solved": 127
     },
     {
       "name": "himanshusingh_08",
@@ -228,7 +228,7 @@
     },
     {
       "url": "https://leetcode.com/u/mayank_chaudharyy/",
-      "total_solved": 342,
+      "total_solved": 343,
       "name": "Mayank Choudhary"
     },
     {
@@ -269,6 +269,21 @@
   ],
   "activities": [
     {
+      "text": "Mayank Choudhary solved +1 questions",
+      "time": "10:09 AM",
+      "type": "up"
+    },
+    {
+      "text": "SAHIBJOT SINGH solved +1 questions",
+      "time": "10:09 AM",
+      "type": "up"
+    },
+    {
+      "text": "Sanyam Jain solved +1 questions",
+      "time": "10:09 AM",
+      "type": "up"
+    },
+    {
       "text": "Kevin Saigon solved +1 questions",
       "time": "06:43 AM",
       "type": "up"
@@ -301,21 +316,6 @@
     {
       "text": "eunice solved +2 questions",
       "time": "02:07 AM",
-      "type": "up"
-    },
-    {
-      "text": "SwastikAwasthi solved +1 questions",
-      "time": "01:45 AM",
-      "type": "up"
-    },
-    {
-      "text": "SwastikAwasthi solved +1 questions",
-      "time": "12:16 AM",
-      "type": "up"
-    },
-    {
-      "text": "Amber Hasan solved +1 questions",
-      "time": "12:16 AM",
       "type": "up"
     }
   ]
