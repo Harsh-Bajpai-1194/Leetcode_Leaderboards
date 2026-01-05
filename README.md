@@ -43,7 +43,7 @@ A fully automated, self-updating leaderboard to track LeetCode progress among fr
 
 ## 🤝 How to Join
 If you want your name added to the leaderboard:
-1.  Send your **LeetCode Profile Link** to me.
+1.  Send your **LeetCode Profile Link** to me. 
 2.  Or create a **Pull Request** adding your username to `profiles.json`.
 
 ---
@@ -52,3 +52,4 @@ If you want your name added to the leaderboard:
 **Harsh Bajpai**
 * Created on: 24-10-2025
 * [LinkedIn](https://www.linkedin.com/in/Harsh-Bajpai1194) | [GitHub](https://github.com/Harsh-Bajpai-1194)
+
