@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 08:22 PM",
+  "last_updated": "05/01/2026, 08:47 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -84,7 +84,7 @@
     {
       "name": "gauransh_sharma_21",
       "url": "https://leetcode.com/u/gauranshsharma21",
-      "total_solved": 80
+      "total_solved": 81
     },
     {
       "name": "Deependra Singh Chandel",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "gauransh_sharma_21 solved +1 questions",
+      "time": "08:46 PM",
+      "type": "up"
+    },
+    {
       "text": "Nilesh Bhutda solved +1 questions",
       "time": "08:22 PM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "04:17 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "03:47 PM",
       "type": "up"
     }
   ]
