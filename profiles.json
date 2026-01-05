@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 10:09 AM",
+  "last_updated": "05/01/2026, 10:53 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -59,7 +59,7 @@
     {
       "name": "csai_093",
       "url": "https://leetcode.com/u/csai_093/",
-      "total_solved": 268
+      "total_solved": 269
     },
     {
       "name": "Arpit Soni",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "csai_093 solved +1 questions",
+      "time": "10:52 AM",
+      "type": "up"
+    },
+    {
       "text": "Mayank Choudhary solved +1 questions",
       "time": "10:09 AM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "eunice solved +5 questions",
       "time": "02:19 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +2 questions",
-      "time": "02:07 AM",
       "type": "up"
     }
   ]
