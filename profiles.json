@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 02:12 AM",
+  "last_updated": "06/01/2026, 02:29 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -139,7 +139,7 @@
     {
       "name": "Peng Cao",
       "url": "https://leetcode.com/u/cpcs/",
-      "total_solved": 3801
+      "total_solved": 3802
     },
     {
       "name": "akshara_gupta15",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "Peng Cao solved +1 questions",
+      "time": "02:28 AM",
+      "type": "up"
+    },
+    {
       "text": "SwastikAwasthi solved +1 questions",
       "time": "01:03 AM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "10:47 PM",
-      "type": "up"
-    },
-    {
-      "text": "Raghvendra Singh Rathore solved +1 questions",
-      "time": "09:12 PM",
       "type": "up"
     }
   ]
