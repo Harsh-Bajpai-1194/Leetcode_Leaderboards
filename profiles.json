@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 11:58 AM",
+  "last_updated": "05/01/2026, 12:33 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -164,7 +164,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3094
+      "total_solved": 3095
     },
     {
       "name": "Sung Jinwoo",
@@ -179,7 +179,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1395
+      "total_solved": 1396
     },
     {
       "name": "Yunxian Ding",
@@ -208,7 +208,7 @@
     },
     {
       "url": "https://leetcode.com/u/raghavrathore7415/",
-      "total_solved": 1653,
+      "total_solved": 1654,
       "name": "Raghvendra Singh Rathore"
     },
     {
@@ -233,7 +233,7 @@
     },
     {
       "url": "https://leetcode.com/u/Ritik_81066/",
-      "total_solved": 598,
+      "total_solved": 599,
       "name": "Ritik Goyal"
     },
     {
@@ -269,6 +269,26 @@
   ],
   "activities": [
     {
+      "text": "Ritik Goyal solved +1 questions",
+      "time": "12:33 PM",
+      "type": "up"
+    },
+    {
+      "text": "Raghvendra Singh Rathore solved +1 questions",
+      "time": "12:33 PM",
+      "type": "up"
+    },
+    {
+      "text": "eunice solved +1 questions",
+      "time": "12:32 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "12:32 PM",
+      "type": "up"
+    },
+    {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "11:58 AM",
       "type": "up"
@@ -296,26 +316,6 @@
     {
       "text": "Sanyam Jain solved +1 questions",
       "time": "10:09 AM",
-      "type": "up"
-    },
-    {
-      "text": "Kevin Saigon solved +1 questions",
-      "time": "06:43 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "06:43 AM",
-      "type": "up"
-    },
-    {
-      "text": "SwastikAwasthi solved +1 questions",
-      "time": "03:15 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "03:15 AM",
       "type": "up"
     }
   ]
