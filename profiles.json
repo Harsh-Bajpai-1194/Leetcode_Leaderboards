@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 07:02 PM",
+  "last_updated": "05/01/2026, 07:29 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -184,7 +184,7 @@
     {
       "name": "Yunxian Ding",
       "url": "https://leetcode.com/u/yunxianding/",
-      "total_solved": 310
+      "total_solved": 311
     },
     {
       "name": "Kevin Saigon",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "Yunxian Ding solved +1 questions",
+      "time": "07:29 PM",
+      "type": "up"
+    },
+    {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "07:02 PM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Vishal_Yadav solved +1 questions",
       "time": "02:55 PM",
-      "type": "up"
-    },
-    {
-      "text": "Mayank Choudhary solved +2 questions",
-      "time": "01:53 PM",
       "type": "up"
     }
   ]
