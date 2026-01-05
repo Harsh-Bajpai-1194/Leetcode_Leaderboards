@@ -1,5 +1,5 @@
 {
-  "last_updated": "05/01/2026, 01:23 PM",
+  "last_updated": "05/01/2026, 01:53 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -228,7 +228,7 @@
     },
     {
       "url": "https://leetcode.com/u/mayank_chaudharyy/",
-      "total_solved": 343,
+      "total_solved": 345,
       "name": "Mayank Choudhary"
     },
     {
@@ -268,6 +268,11 @@
     }
   ],
   "activities": [
+    {
+      "text": "Mayank Choudhary solved +2 questions",
+      "time": "01:53 PM",
+      "type": "up"
+    },
     {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "01:23 PM",
@@ -311,11 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "11:58 AM",
-      "type": "up"
-    },
-    {
-      "text": "HARSH BAJPAI solved +1 questions",
-      "time": "11:57 AM",
       "type": "up"
     }
   ]
