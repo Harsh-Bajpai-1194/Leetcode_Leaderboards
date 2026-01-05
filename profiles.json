@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 12:24 AM",
+  "last_updated": "06/01/2026, 12:46 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -233,7 +233,7 @@
     },
     {
       "url": "https://leetcode.com/u/Ritik_81066/",
-      "total_solved": 599,
+      "total_solved": 600,
       "name": "Ritik Goyal"
     },
     {
@@ -268,6 +268,11 @@
     }
   ],
   "activities": [
+    {
+      "text": "Ritik Goyal solved +1 questions",
+      "time": "12:46 AM",
+      "type": "up"
+    },
     {
       "text": "Amber Hasan solved +1 questions",
       "time": "12:23 AM",
@@ -311,11 +316,6 @@
     {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "09:12 PM",
-      "type": "up"
-    },
-    {
-      "text": "gauransh_sharma_21 solved +1 questions",
-      "time": "08:46 PM",
       "type": "up"
     }
   ]
