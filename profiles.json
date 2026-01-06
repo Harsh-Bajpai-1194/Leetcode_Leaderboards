@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 03:15 PM",
+  "last_updated": "06/01/2026, 03:27 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -223,7 +223,7 @@
     },
     {
       "url": "https://leetcode.com/u/ScofieldMind/",
-      "total_solved": 362,
+      "total_solved": 363,
       "name": "Mike"
     },
     {
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "Mike solved +1 questions",
+      "time": "03:27 PM",
+      "type": "up"
+    },
+    {
       "text": "Shivendra pratap Srivastava solved +1 questions",
       "time": "03:14 PM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "11:59 AM",
-      "type": "up"
-    },
-    {
-      "text": "Srinivasa Pradeep solved +1 questions",
-      "time": "11:27 AM",
       "type": "up"
     }
   ]
