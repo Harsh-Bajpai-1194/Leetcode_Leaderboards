@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 10:19 AM",
+  "last_updated": "06/01/2026, 10:44 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -149,7 +149,7 @@
     {
       "name": "Srinivasa Pradeep",
       "url": "https://leetcode.com/u/srinivasa_pradeep_/",
-      "total_solved": 1018
+      "total_solved": 1019
     },
     {
       "name": "ArmanSaini",
@@ -270,6 +270,11 @@
   "activities": [
     {
       "text": "Srinivasa Pradeep solved +1 questions",
+      "time": "10:43 AM",
+      "type": "up"
+    },
+    {
+      "text": "Srinivasa Pradeep solved +1 questions",
       "time": "10:19 AM",
       "type": "up"
     },
@@ -311,11 +316,6 @@
     {
       "text": "SwastikAwasthi solved +1 questions",
       "time": "01:03 AM",
-      "type": "up"
-    },
-    {
-      "text": "Ritik Goyal solved +1 questions",
-      "time": "12:46 AM",
       "type": "up"
     }
   ]
