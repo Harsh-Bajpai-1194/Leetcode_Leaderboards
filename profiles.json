@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 10:48 PM",
+  "last_updated": "06/01/2026, 11:13 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -39,7 +39,7 @@
     {
       "name": "SAHIBJOT SINGH",
       "url": "https://leetcode.com/u/sahibxsingh/",
-      "total_solved": 128
+      "total_solved": 129
     },
     {
       "name": "himanshusingh_08",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "SAHIBJOT SINGH solved +1 questions",
+      "time": "11:12 PM",
+      "type": "up"
+    },
+    {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "10:48 PM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "Gyan Ganga Singh solved +1 questions",
       "time": "07:46 PM",
-      "type": "up"
-    },
-    {
-      "text": "ayush sharma solved +1 questions",
-      "time": "07:22 PM",
       "type": "up"
     }
   ]
