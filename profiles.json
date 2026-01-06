@@ -1,5 +1,5 @@
 {
-  "last_updated": "06/01/2026, 06:50 PM",
+  "last_updated": "06/01/2026, 07:22 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -89,7 +89,7 @@
     {
       "name": "Deependra Singh Chandel",
       "url": "https://leetcode.com/u/09XDIXyjMQ/",
-      "total_solved": 10
+      "total_solved": 11
     },
     {
       "name": "Gauresh dwivedi",
@@ -243,7 +243,7 @@
     },
     {
       "url": "https://leetcode.com/u/me_ayush_912/",
-      "total_solved": 263,
+      "total_solved": 264,
       "name": "ayush sharma"
     },
     {
@@ -268,6 +268,16 @@
     }
   ],
   "activities": [
+    {
+      "text": "ayush sharma solved +1 questions",
+      "time": "07:22 PM",
+      "type": "up"
+    },
+    {
+      "text": "Deependra Singh Chandel solved +1 questions",
+      "time": "07:21 PM",
+      "type": "up"
+    },
     {
       "text": "Vishal_Yadav solved +1 questions",
       "time": "04:49 PM",
@@ -305,16 +315,6 @@
     },
     {
       "text": "Chandan Agrawal solved +1 questions",
-      "time": "12:57 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "12:57 PM",
-      "type": "up"
-    },
-    {
-      "text": "Srinivasa Pradeep solved +1 questions",
       "time": "12:57 PM",
       "type": "up"
     }
