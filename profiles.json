@@ -1,10 +1,10 @@
 {
-  "last_updated": "07/01/2026, 09:38 AM",
+  "last_updated": "07/01/2026, 10:21 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
       "url": "https://leetcode.com/u/Harsh_Bajpai1/",
-      "total_solved": 417
+      "total_solved": 418
     },
     {
       "name": "Hani_Dwivedi",
@@ -164,7 +164,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3112
+      "total_solved": 3113
     },
     {
       "name": "Sung Jinwoo",
@@ -269,6 +269,16 @@
   ],
   "activities": [
     {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "10:21 AM",
+      "type": "up"
+    },
+    {
+      "text": "HARSH BAJPAI solved +1 questions",
+      "time": "10:20 AM",
+      "type": "up"
+    },
+    {
       "text": "Sanyam Jain solved +1 questions",
       "time": "09:37 AM",
       "type": "up"
@@ -306,16 +316,6 @@
     {
       "text": "gauransh_sharma_21 solved +1 questions",
       "time": "05:15 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "02:10 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "01:46 AM",
       "type": "up"
     }
   ]
