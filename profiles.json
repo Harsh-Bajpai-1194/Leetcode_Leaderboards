@@ -1,5 +1,5 @@
 {
-  "last_updated": "07/01/2026, 07:48 PM",
+  "last_updated": "07/01/2026, 08:15 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -59,7 +59,7 @@
     {
       "name": "csai_093",
       "url": "https://leetcode.com/u/csai_093/",
-      "total_solved": 269
+      "total_solved": 270
     },
     {
       "name": "Arpit Soni",
@@ -223,7 +223,7 @@
     },
     {
       "url": "https://leetcode.com/u/ScofieldMind/",
-      "total_solved": 363,
+      "total_solved": 364,
       "name": "Mike"
     },
     {
@@ -238,7 +238,7 @@
     },
     {
       "url": "https://leetcode.com/u/project27/",
-      "total_solved": 11,
+      "total_solved": 12,
       "name": "project27"
     },
     {
@@ -268,6 +268,21 @@
     }
   ],
   "activities": [
+    {
+      "text": "project27 solved +1 questions",
+      "time": "08:15 PM",
+      "type": "up"
+    },
+    {
+      "text": "Mike solved +1 questions",
+      "time": "08:15 PM",
+      "type": "up"
+    },
+    {
+      "text": "csai_093 solved +1 questions",
+      "time": "08:15 PM",
+      "type": "up"
+    },
     {
       "text": "Nilesh Bhutda solved +1 questions",
       "time": "07:48 PM",
@@ -301,21 +316,6 @@
     {
       "text": "Srinivasa Pradeep solved +1 questions",
       "time": "05:19 PM",
-      "type": "up"
-    },
-    {
-      "text": "Srinivasa Pradeep solved +1 questions",
-      "time": "04:52 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "04:18 PM",
-      "type": "up"
-    },
-    {
-      "text": "Ishan Dwivedi solved +1 questions",
-      "time": "03:56 PM",
       "type": "up"
     }
   ]
