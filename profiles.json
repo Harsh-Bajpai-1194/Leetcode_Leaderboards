@@ -1,5 +1,5 @@
 {
-  "last_updated": "07/01/2026, 08:34 AM",
+  "last_updated": "07/01/2026, 09:38 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -18,7 +18,7 @@
     },
     {
       "url": "https://leetcode.com/u/Sanyam_coder/",
-      "total_solved": 1015,
+      "total_solved": 1016,
       "name": "Sanyam Jain"
     },
     {
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "Sanyam Jain solved +1 questions",
+      "time": "09:37 AM",
+      "type": "up"
+    },
+    {
       "text": "SwastikAwasthi solved +1 questions",
       "time": "08:34 AM",
       "type": "up"
@@ -311,11 +316,6 @@
     {
       "text": "eunice solved +1 questions",
       "time": "01:46 AM",
-      "type": "up"
-    },
-    {
-      "text": "ayush sharma solved +1 questions",
-      "time": "01:01 AM",
       "type": "up"
     }
   ]
