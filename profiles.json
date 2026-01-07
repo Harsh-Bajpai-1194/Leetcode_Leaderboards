@@ -1,5 +1,5 @@
 {
-  "last_updated": "07/01/2026, 11:27 AM",
+  "last_updated": "07/01/2026, 11:58 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -189,7 +189,7 @@
     {
       "name": "Kevin Saigon",
       "url": "https://leetcode.com/u/ksaigon/",
-      "total_solved": 1844
+      "total_solved": 1845
     },
     {
       "name": "MoRyan_786",
@@ -269,6 +269,11 @@
   ],
   "activities": [
     {
+      "text": "Kevin Saigon solved +1 questions",
+      "time": "11:58 AM",
+      "type": "up"
+    },
+    {
       "text": "Ritik Goyal solved +1 questions",
       "time": "11:15 AM",
       "type": "up"
@@ -310,11 +315,6 @@
     },
     {
       "text": "eunice solved +1 questions",
-      "time": "06:37 AM",
-      "type": "up"
-    },
-    {
-      "text": "Sung Jinwoo solved +1 questions",
       "time": "06:37 AM",
       "type": "up"
     }
