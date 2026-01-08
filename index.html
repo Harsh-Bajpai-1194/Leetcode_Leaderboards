@@ -270,11 +270,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // REPLACE THIS:
-            // fetch('http://localhost:5000/api/leaderboard')
-
-            // WITH THIS (Use your actual Render link):
-            fetch('https://leetcode-leaderboards-xxxx.onrender.com/api/leaderboard') // <-- KEEP YOUR RENDER URL HERE
+            fetch('https://leetcode-leaderboards.onrender.com') 
                 .then(response => {
                     if (!response.ok) throw new Error("Failed to load API data");
                     return response.json();
