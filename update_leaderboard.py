@@ -19,6 +19,7 @@ try:
     db = client["leetcode_db"]
     users_col = db["users"]
     activities_col = db["activities"]
+    metadata_col = db["metadata"]  # <--- ADD THIS LINE
     print("✅ Connected to MongoDB")
 except Exception as e:
     print(f"❌ Connection failed: {e}")
@@ -131,8 +132,17 @@ def update_leaderboard():
             {"$set": user_doc}, 
             upsert=True
         )
-        
+
         time.sleep(0.5) # Be nice to LeetCode API
+    
+    # E. Update Global "Last Updated" Time
+    current_ist = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%d/%m/%Y, %I:%M %p")
+    metadata_col.update_one(
+        {"type": "last_updated"},
+        {"$set": {"date_string": current_ist}},
+        upsert=True
+    )
+    print(f"🕒 Updated timestamp to: {current_ist}")
 
     print("✅ MongoDB Update Complete")
 
