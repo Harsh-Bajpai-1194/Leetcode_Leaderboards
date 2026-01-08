@@ -1,5 +1,5 @@
 {
-  "last_updated": "08/01/2026, 01:51 PM",
+  "last_updated": "08/01/2026, 02:22 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -169,7 +169,7 @@
     {
       "name": "Sung Jinwoo",
       "url": "https://leetcode.com/u/LeadingTheAbyss/",
-      "total_solved": 1096
+      "total_solved": 1097
     },
     {
       "name": "Andrey",
@@ -243,7 +243,7 @@
     },
     {
       "url": "https://leetcode.com/u/me_ayush_912/",
-      "total_solved": 265,
+      "total_solved": 266,
       "name": "ayush sharma"
     },
     {
@@ -268,6 +268,16 @@
     }
   ],
   "activities": [
+    {
+      "text": "ayush sharma solved +1 questions",
+      "time": "02:22 PM",
+      "type": "up"
+    },
+    {
+      "text": "Sung Jinwoo solved +1 questions",
+      "time": "02:22 PM",
+      "type": "up"
+    },
     {
       "text": "SwastikAwasthi solved +1 questions",
       "time": "01:51 PM",
@@ -306,16 +316,6 @@
     {
       "text": "HARSH BAJPAI solved +1 questions",
       "time": "10:19 AM",
-      "type": "up"
-    },
-    {
-      "text": "eunice solved +1 questions",
-      "time": "06:37 AM",
-      "type": "up"
-    },
-    {
-      "text": "Srinivasa Pradeep solved +1 questions",
-      "time": "06:37 AM",
       "type": "up"
     }
   ]
