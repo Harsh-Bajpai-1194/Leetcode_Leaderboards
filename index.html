@@ -270,49 +270,59 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('profiles.json')
-                .then(response => response.json())
+            // REPLACE THIS:
+            // fetch('http://localhost:5000/api/leaderboard')
+
+            // WITH THIS (Use your actual Render link):
+            fetch('https://leetcode-leaderboards-xxxx.onrender.com/api/leaderboard') // <-- KEEP YOUR RENDER URL HERE
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to load API data");
+                    return response.json();
+                })
                 .then(data => {
-                    // 1. UPDATE TIMESTAMP
+                    // 1. Update "Last Updated" Time
                     if (data.last_updated) {
                         document.getElementById('last-updated').innerText = `Last updated: ${data.last_updated}`;
                     }
 
-                    // 2. POPULATE ACTIVITY FEED
+                    // 2. Populate Activity Feed
                     const activityContent = document.getElementById('activity-content');
                     if (data.activities && data.activities.length > 0) {
                         let html = '<div style="text-align:left; width:100%;">';
                         data.activities.forEach(act => {
                             html += `
-                                <div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                                    <span style="color:white; font-weight:bold;">${act.text}</span>
-                                    <br>
-                                    <span style="font-size:0.8em; color:#666;">${act.time}</span>
-                                </div>`;
+                        <div style="margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
+                            <span style="color:white; font-weight:bold;">${act.text}</span>
+                            <br>
+                            <span style="font-size:0.8em; color:#666;">${act.time}</span>
+                        </div>`;
                         });
                         html += '</div>';
                         activityContent.innerHTML = html;
                     }
 
-                    // 3. POPULATE LEADERBOARD TABLE (This was missing in your code!)
-                    const users = data.users ? data.users : data;
-                    const sortedUsers = users.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
-                    const tableBody = document.getElementById('leaderboard-body');
+                    // 3. Populate Leaderboard Table
+                    const leaderboardBody = document.getElementById("leaderboard-body");
+                    leaderboardBody.innerHTML = "";
 
-                    sortedUsers.forEach((user, index) => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${user.name || user.username}</td>
-                            <td>${user.total_solved || 'N/A'}</td>
-                            <td><a href="${user.url}" target="_blank">View</a></td>
-                        `;
-                        tableBody.appendChild(row);
+                    // Note: data.users is the list now
+                    const sortedData = data.users.sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
+
+                    sortedData.forEach((user, index) => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.name || user.username}</td>
+                    <td style="font-weight: bold; color: #ffa116;">${user.total_solved || 0}</td>
+                    <td>
+                        <a href="${user.url}" target="_blank" style="text-decoration: none; color: #ffa116;">View</a>
+                    </td>
+                `;
+                        leaderboardBody.appendChild(tr);
                     });
                 })
-                .catch(error => console.error("Error fetching data:", error));
+                .catch(error => console.error("Error:", error));
         });
-
         // SEARCH FUNCTION
         function filterTable() {
             var input = document.getElementById("searchInput");
