@@ -19,7 +19,7 @@ A fully automated, self-updating leaderboard to track LeetCode progress among fr
 * **⚡ Real-Time Search:** Instantly filter users by name using the search bar.
 * **📈 Activity Feed:** Tracks recent activity and displays a live feed of who solved questions recently (keeps history of last 10 updates).
 * **🌙 Dark Mode UI:** A clean, responsive dark-themed interface with side-by-side layout for Desktop and stacked layout for Mobile.
-* **📊 Smart Ranking:** Automatically sorts users based on total problems solved.
+* **📊 Smart Ranking:** Automatically sorts users based on total problems solved and gives ranks to them.
 
 ---
 
@@ -52,4 +52,5 @@ If you want your name added to the leaderboard:
 **Harsh Bajpai**
 * Created on: 24-10-2025
 * [LinkedIn](https://www.linkedin.com/in/Harsh-Bajpai1194) | [GitHub](https://github.com/Harsh-Bajpai-1194)
+
 
