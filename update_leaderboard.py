@@ -3,7 +3,28 @@ import json
 import requests
 import time
 from datetime import datetime, timedelta, timezone
+from pymongo import MongoClient
+from dotenv import load_dotenv
 
+# 1. SETUP MONGODB
+load_dotenv()
+mongo_uri = os.getenv("MONGO_URI")
+
+if not mongo_uri:
+    print("⚠️ Error: MONGO_URI not found!")
+    exit()
+
+try:
+    client = MongoClient(mongo_uri)
+    db = client["leetcode_db"]
+    users_col = db["users"]
+    activities_col = db["activities"]
+    print("✅ Connected to MongoDB")
+except Exception as e:
+    print(f"❌ Connection failed: {e}")
+    exit()
+
+# 2. THE SCRAPER FUNCTION (Unchanged)
 def get_leetcode_data(username):
     url = "https://leetcode.com/graphql"
     query = """
@@ -40,68 +61,80 @@ def get_leetcode_data(username):
     except:
         return None, 0
 
+# 3. THE UPDATE LOOP
 def update_leaderboard():
+    # We read profiles.json ONLY to know WHO to track
     file_path = os.path.join(os.getcwd(), 'profiles.json')
-    
-    # 1. LOAD OLD DATA (To compare progress)
-    old_stats = {}
-    activity_log = []
     
     try:
         with open(file_path, 'r') as f:
-            data = json.load(f)
-            # Create a dictionary of { "url": 100 } (Old Solved Counts)
-            for u in data.get("users", []):
-                old_stats[u['url']] = u.get('total_solved', 0)
-            
-            # Keep existing activities (so we don't wipe history every run)
-            activity_log = data.get("activities", [])
-    except:
-        pass # If file doesn't exist yet
+            config_data = json.load(f)
+            # Handle both formats (list or dict)
+            profile_list = config_data.get("users", []) if isinstance(config_data, dict) else config_data
+    except FileNotFoundError:
+        print("❌ profiles.json not found! I need a list of users to track.")
+        return
 
-    profiles = data["users"] if "users" in data else data
+    print(f"Checking stats for {len(profile_list)} users...")
 
-    # 2. FETCH NEW DATA
-    for user in profiles:
-        username = user['url'].strip('/').split('/')[-1]
-        real_name, total_solved = get_leetcode_data(username)
+    for user_config in profile_list:
+        # Extract username from URL
+        url = user_config.get('url', '')
+        username = url.strip('/').split('/')[-1]
         
-        if total_solved > 0:
-            # CHECK FOR PROGRESS
-            previous_score = old_stats.get(user['url'], 0)
-            if total_solved > previous_score and previous_score > 0:
-                diff = total_solved - previous_score
-                print(f"🔥 {real_name} solved +{diff}!")
-                
-                # Add to Activity Log
-                new_activity = {
-                    "text": f"{real_name} solved +{diff} questions",
-                    "time": datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p"),
-                    "type": "up" # reliable flag for CSS styling
-                }
-                activity_log.insert(0, new_activity) # Add to TOP of list
+        if not username: continue
             
-            # Update User Data
-            user['total_solved'] = total_solved
-            if real_name: user['name'] = real_name
+        # A. Get NEW data from LeetCode
+        real_name, current_solved = get_leetcode_data(username)
         
-        time.sleep(0.2)
+        if current_solved == 0: 
+            print(f"⚠️ Could not fetch data for {username}")
+            continue 
 
-    # 3. TRIM LOG (Keep only last 10 events to save space)
-    activity_log = activity_log[:10]
+        # B. Get OLD data from MongoDB
+        # We check the database to see what their score was last time
+        existing_user = users_col.find_one({"username": username})
+        previous_solved = existing_user.get("total_solved", 0) if existing_user else 0
+        
+        # C. Calculate Progress
+        diff = current_solved - previous_solved
+        
+        if diff > 0 and previous_solved > 0:
+            print(f"🔥 {real_name} solved +{diff}!")
+            
+            # Create Activity Log
+            ist_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
+            new_activity = {
+                "text": f"{real_name} solved +{diff} questions",
+                "time": ist_time,
+                "type": "up",
+                "created_at": datetime.now() # Date object for sorting
+            }
+            # Insert into 'activities' collection
+            activities_col.insert_one(new_activity)
+            
+            # Optional: Keep only last 10 activities in DB to save space?
+            # For now, let's keep all history because MongoDB can handle it!
 
-    # 4. SAVE EVERYTHING
-    ist_time = datetime.now(timezone.utc) + timedelta(hours=5, minutes=30)
-    final_data = {
-        "last_updated": ist_time.strftime("%d/%m/%Y, %I:%M %p"),
-        "users": profiles,
-        "activities": activity_log # <--- New Section in JSON
-    }
+        # D. Update User in MongoDB
+        user_doc = {
+            "username": username,
+            "name": real_name,
+            "total_solved": current_solved,
+            "url": url,
+            "last_updated": datetime.now()
+        }
+        
+        # This saves the new score to the 'users' collection
+        users_col.update_one(
+            {"username": username}, 
+            {"$set": user_doc}, 
+            upsert=True
+        )
+        
+        time.sleep(0.5) # Be nice to LeetCode API
 
-    with open(file_path, 'w') as f:
-        json.dump(final_data, f, indent=2)
-    
-    print(f"✅ Updated at {final_data['last_updated']}")
+    print("✅ MongoDB Update Complete")
 
 if __name__ == "__main__":
     update_leaderboard()
