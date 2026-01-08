@@ -1,5 +1,5 @@
 {
-  "last_updated": "08/01/2026, 06:01 PM",
+  "last_updated": "08/01/2026, 06:55 PM",
   "users": [
     {
       "name": "HARSH BAJPAI",
@@ -124,7 +124,7 @@
     {
       "name": "Ishan Dwivedi",
       "url": "https://leetcode.com/u/Ishan_Dwivedi1210/",
-      "total_solved": 435
+      "total_solved": 436
     },
     {
       "name": "ABHINAV SINGH BHADOURIA",
@@ -164,7 +164,7 @@
     {
       "name": "Nikhil Agrawal",
       "url": "https://leetcode.com/u/agrawalji/",
-      "total_solved": 3121
+      "total_solved": 3122
     },
     {
       "name": "Sung Jinwoo",
@@ -179,7 +179,7 @@
     {
       "name": "eunice",
       "url": "https://leetcode.com/u/la_castille/",
-      "total_solved": 1407
+      "total_solved": 1410
     },
     {
       "name": "Yunxian Ding",
@@ -228,7 +228,7 @@
     },
     {
       "url": "https://leetcode.com/u/mayank_chaudharyy/",
-      "total_solved": 348,
+      "total_solved": 349,
       "name": "Mayank Choudhary"
     },
     {
@@ -269,6 +269,26 @@
   ],
   "activities": [
     {
+      "text": "Mayank Choudhary solved +1 questions",
+      "time": "06:55 PM",
+      "type": "up"
+    },
+    {
+      "text": "eunice solved +3 questions",
+      "time": "06:55 PM",
+      "type": "up"
+    },
+    {
+      "text": "Nikhil Agrawal solved +1 questions",
+      "time": "06:55 PM",
+      "type": "up"
+    },
+    {
+      "text": "Ishan Dwivedi solved +1 questions",
+      "time": "06:55 PM",
+      "type": "up"
+    },
+    {
       "text": "eunice solved +1 questions",
       "time": "06:01 PM",
       "type": "up"
@@ -296,26 +316,6 @@
     {
       "text": "ayush sharma solved +1 questions",
       "time": "02:22 PM",
-      "type": "up"
-    },
-    {
-      "text": "Sung Jinwoo solved +1 questions",
-      "time": "02:22 PM",
-      "type": "up"
-    },
-    {
-      "text": "SwastikAwasthi solved +1 questions",
-      "time": "01:51 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +2 questions",
-      "time": "01:13 PM",
-      "type": "up"
-    },
-    {
-      "text": "Nikhil Agrawal solved +1 questions",
-      "time": "12:28 PM",
       "type": "up"
     }
   ]
