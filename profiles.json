@@ -1,10 +1,10 @@
 {
-  "last_updated": "08/01/2026, 09:38 AM",
+  "last_updated": "08/01/2026, 10:20 AM",
   "users": [
     {
       "name": "HARSH BAJPAI",
       "url": "https://leetcode.com/u/Harsh_Bajpai1/",
-      "total_solved": 418
+      "total_solved": 419
     },
     {
       "name": "Hani_Dwivedi",
@@ -18,7 +18,7 @@
     },
     {
       "url": "https://leetcode.com/u/Sanyam_coder/",
-      "total_solved": 1016,
+      "total_solved": 1017,
       "name": "Sanyam Jain"
     },
     {
@@ -269,6 +269,16 @@
   ],
   "activities": [
     {
+      "text": "Sanyam Jain solved +1 questions",
+      "time": "10:19 AM",
+      "type": "up"
+    },
+    {
+      "text": "HARSH BAJPAI solved +1 questions",
+      "time": "10:19 AM",
+      "type": "up"
+    },
+    {
       "text": "eunice solved +1 questions",
       "time": "06:37 AM",
       "type": "up"
@@ -306,16 +316,6 @@
     {
       "text": "Nikhil Agrawal solved +1 questions",
       "time": "08:59 PM",
-      "type": "up"
-    },
-    {
-      "text": "project27 solved +1 questions",
-      "time": "08:15 PM",
-      "type": "up"
-    },
-    {
-      "text": "Mike solved +1 questions",
-      "time": "08:15 PM",
       "type": "up"
     }
   ]
