@@ -270,7 +270,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard') 
+            fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard')
                 .then(response => {
                     if (!response.ok) throw new Error("Failed to load API data");
                     return response.json();
@@ -311,7 +311,7 @@
                     <td>${user.name || user.username}</td>
                     <td style="font-weight: bold; color: #ffa116;">${user.total_solved || 0}</td>
                     <td>
-                        <a href="${user.url}" target="_blank" style="text-decoration: none; color: #ffa116;">View</a>
+                        <a href="${user.url}" target="_blank" style="text-decoration: none; background-color: #ffa116; color: black; padding: 5px 10px; border-radius: 5px; font-weight: bold;">View</a>
                     </td>
                 `;
                         leaderboardBody.appendChild(tr);
