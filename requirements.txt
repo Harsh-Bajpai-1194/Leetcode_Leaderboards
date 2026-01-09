@@ -2,5 +2,5 @@ selenium
 webdriver-manager
 beautifulsoup4
 requests
-pymongo
+pymongo[srv]
 python-dotenv
