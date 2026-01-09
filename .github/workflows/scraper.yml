@@ -20,8 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
-          pip install pymongo
+          pip install requests pymongo dotenv
 
       - name: Run Scraper
         run: python update_leaderboard.py
