@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
+          pip install pymongo
 
       - name: Run Scraper
         run: python update_leaderboard.py
