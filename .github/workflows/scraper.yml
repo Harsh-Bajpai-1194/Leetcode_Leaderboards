@@ -23,6 +23,8 @@ jobs:
           pip install requests pymongo dotenv
 
       - name: Run Scraper
+        env: 
+          MONGO_URI: ${{ secrets.MONGO_URI }}
         run: python update_leaderboard.py
 
       - name: Commit and Push changes
