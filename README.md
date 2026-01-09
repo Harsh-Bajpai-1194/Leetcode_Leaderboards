@@ -83,6 +83,4 @@ Harsh Bajpai
 
 Role: Full-Stack Developer & Automation Engineer
 
-LinkedIn | GitHub
-
-Built with ❤️ and Code.
+LinkedIn: [https://www.linkedin.com/in/harsh-bajpai1194/](https://www.linkedin.com/in/harsh-bajpai1194/)
