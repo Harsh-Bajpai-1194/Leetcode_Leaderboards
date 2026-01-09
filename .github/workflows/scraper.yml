@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests pymongo dotenv
+          pip install -r requirements.txt
 
       - name: Run Scraper
         env: 
