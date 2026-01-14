@@ -18,10 +18,9 @@ body {
     padding: 20px;
     flex-wrap: wrap;
 }
-
 /* --- LEFT SIDE: LEADERBOARD --- */
 .leaderboard-container {
-    flex: 3;
+    flex: 65; /* <--- CHANGED from 3 to 65 (Takes 65% portion) */
     min-width: 300px;
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -31,7 +30,7 @@ body {
 
 /* --- RIGHT SIDE: ACTIVITY FEED --- */
 .activity-container {
-    flex: 1;
+    flex: 25; /* <--- CHANGED from 1 to 25 (Takes 25% portion) */
     min-width: 250px;
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -141,11 +140,12 @@ a:hover {
 
 /* --- LOGO --- */
 .leetcode-img {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: 60px;
-    height: auto;
+    flex: 10;             /* Takes 10% portion */
+    width: 100%;          /* Fills its allotted space */
+    max-width: 150px;     /* Prevents it from getting too huge on wide screens */
+    height: auto;         /* Maintains aspect ratio */
+    align-self: flex-start; /* Sticks to the top */
+    border-radius: 12px;  /* Optional: matches other boxes */
 }
 
 /* --- FOOTER CONTACT --- */
