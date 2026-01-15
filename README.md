@@ -13,6 +13,7 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 
 ## 🚀 Live Demo
 👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)**
+⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)**
 
 ---
 
