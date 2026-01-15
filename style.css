@@ -30,14 +30,38 @@ body {
 
 /* --- RIGHT SIDE: ACTIVITY FEED --- */
 .activity-container {
-    flex: 25;            /* <--- This is already 25, keep it here */
+    flex: 25;
     min-width: 250px;
     background-color: #1a1a1a;
     border-radius: 12px;
     border: 1px solid #ffa116;
     padding: 20px;
     text-align: center;
-    height: fit-content;
+    
+    /* 👇 CHANGE THIS part: */
+    height: auto;           /* Let it grow... */
+    max-height: 650px;      /* ...but STOP growing at 600px (adjust this number if needed) */
+    overflow-y: auto;       /* ...and show a scrollbar! */
+}
+
+/* --- CUSTOM SCROLLBAR FOR ACTIVITY FEED --- */
+.activity-container::-webkit-scrollbar {
+    width: 8px;               /* Thin scrollbar */
+}
+
+.activity-container::-webkit-scrollbar-track {
+    background: #1a1a1a;      /* Dark background */
+    border-radius: 10px;
+}
+
+.activity-container::-webkit-scrollbar-thumb {
+    background-color: #555;   /* Grey handle */
+    border-radius: 10px;
+    border: 2px solid #1a1a1a;
+}
+
+.activity-container::-webkit-scrollbar-thumb:hover {
+    background-color: #ffa116; /* Turns ORANGE when you grab it! */
 }
 
 h1 {
