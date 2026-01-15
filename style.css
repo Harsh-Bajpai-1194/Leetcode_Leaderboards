@@ -20,7 +20,7 @@ body {
 }
 /* --- LEFT SIDE: LEADERBOARD --- */
 .leaderboard-container {
-    flex: 65; /* <--- CHANGED from 3 to 65 (Takes 65% portion) */
+    flex: 50;            /* <--- CHANGED to 50 */
     min-width: 300px;
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -30,7 +30,7 @@ body {
 
 /* --- RIGHT SIDE: ACTIVITY FEED --- */
 .activity-container {
-    flex: 25; /* <--- CHANGED from 1 to 25 (Takes 25% portion) */
+    flex: 25;            /* <--- This is already 25, keep it here */
     min-width: 250px;
     background-color: #1a1a1a;
     border-radius: 12px;
@@ -140,12 +140,16 @@ a:hover {
 
 /* --- LOGO --- */
 .leetcode-img {
-    flex: 10;             /* Takes 10% portion */
-    width: 100%;          /* Fills its allotted space */
-    max-width: 150px;     /* Prevents it from getting too huge on wide screens */
-    height: auto;         /* Maintains aspect ratio */
-    align-self: flex-start; /* Sticks to the top */
-    border-radius: 12px;  /* Optional: matches other boxes */
+    flex: 25;             /* <--- CHANGED to 25 */
+    width: 100%;          
+    
+    /* 👇 IMPORTANT: Increase this or remove it, otherwise it stays tiny! */
+    max-width: 400px;     /* Increased from 150px so it can fill the space */
+    
+    height: auto;         
+    align-self: flex-start; 
+    border-radius: 12px;
+    object-fit: contain;
 }
 
 /* --- FOOTER CONTACT --- */
