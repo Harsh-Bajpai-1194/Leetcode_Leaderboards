@@ -44,8 +44,8 @@ app.get('/api/leaderboard', async(req, res) => {
         // A. Fetch Users
         const users = await User.find().sort({ total_solved: -1 });
 
-        // B. Fetch Recent Activities (Limit to top 10, newest first)
-        const activities = await Activity.find().sort({ created_at: -1 }).limit(10);
+        // B. Fetch Recent Activities (Limit to top 15, newest first)
+        const activities = await Activity.find().sort({ created_at: -1 }).limit(15);
 
         // C. Fetch Last Updated Time
         const meta = await Metadata.findOne({ type: "last_updated" });
