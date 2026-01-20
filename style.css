@@ -242,3 +242,35 @@ a:hover {
         padding-top: 20px;
     }
 }
+/* --- LEADERBOARD SCROLLING 📜 --- */
+
+/* 1. The Scrollable Wrapper */
+.table-wrapper {
+    max-height: 600px;       /* Shows approx 10 users, then scrolls */
+    overflow-y: auto;        /* Adds the vertical scrollbar */
+    margin-top: 10px;
+    border-radius: 8px;      /* Optional: Rounds the corners */
+}
+
+/* 2. Sticky Headers (So you can always see column names) */
+.leaderboard-table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;             /* Ensures header floats above the list */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Adds a shadow line under header */
+}
+
+/* 3. Custom Scrollbar (Matches your theme) */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+.table-wrapper::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 10px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #ffa116; /* Orange on hover */
+}
