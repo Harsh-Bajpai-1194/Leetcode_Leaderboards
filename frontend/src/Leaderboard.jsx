@@ -8,6 +8,7 @@ const Leaderboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Keep this pointing to your Render backend for the live site
     fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard')
       .then((response) => {
         if (!response.ok) throw new Error("Failed to load API data");
@@ -34,16 +35,14 @@ const Leaderboard = () => {
     <div className="main-wrapper">
       <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" />
       
+      {/* --- CENTER COLUMN: LEADERBOARD --- */}
       <div className="leaderboard-container">
         <h1>LEETCODE LEADERBOARD</h1>
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
         </div>
 
-        <div style={{ marginBottom: '30px' }}>
-             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
-        </div>
-
+        {/* (Graph removed from here) */}
 
         <div className="search-container">
           <input
@@ -75,22 +74,17 @@ const Leaderboard = () => {
                     
                     <td>{user.name || user.username}</td>
                     
-                    {/* ✅ FIXED SOLVED COLUMN */}
+                    {/* Solved Column */}
                     <td className="solved-cell">
                       <div className="solved-wrapper">
-                        
-                        {/* 1. The Total (Visible by default) */}
                         <span className="main-stat">
                           {user.total_solved || 0}
                         </span>
-
-                        {/* 2. The Breakdown (Visible on Hover) */}
                         <div className="hover-stats">
                           <span className="easy" title="Easy">{user.easy_solved || 0}</span>
                           <span className="medium" title="Medium">{user.medium_solved || 0}</span>
                           <span className="hard" title="Hard">{user.hard_solved || 0}</span>
                         </div>
-
                       </div>
                     </td>
 
@@ -119,9 +113,12 @@ const Leaderboard = () => {
         </div>
       </div>
 
+      {/* --- RIGHT COLUMN: ACTIVITY & GRAPH --- */}
       <div className="activity-container">
         <div className="activity-title">Activity Feed</div>
-        <div id="activity-content">
+        
+        {/* 1. The Activity List */}
+        <div id="activity-content" style={{ marginBottom: '20px' }}>
           {data.activities && data.activities.length > 0 ? (
             data.activities.map((act, index) => (
               <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
@@ -134,6 +131,12 @@ const Leaderboard = () => {
             <div>NO ACTIVITY CURRENTLY</div>
           )}
         </div>
+
+        {/* 2. 📈 GRAPH MOVED HERE (Bottom of Sidebar) */}
+        <div style={{ borderTop: '1px solid #333', paddingTop: '15px' }}>
+             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
+        </div>
+
       </div>
 
       <div className="contact">
