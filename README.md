@@ -1,40 +1,39 @@
 # 🏆 Real-Time LeetCode Leaderboard (Full-Stack MERN)
 
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
-![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)
 
-A robust, full-stack automated leaderboard system that tracks LeetCode problem-solving progress in real-time. This project integrates a **Python automation script** for data scraping with a **MERN stack** (MongoDB, Express, Node.js) backend to serve live data to a responsive frontend.
+A robust, full-stack automated leaderboard system that tracks LeetCode problem-solving progress in real-time. This project integrates a **Python automation script** for data scraping with a **MERN stack** backend and a high-performance **React** frontend.
 
 ---
 
 ## 🚀 Live Demo
-👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)**  
-⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)**  
-
----
+👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)** ⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)** ---
 
 ## 🏗️ System Architecture
 
-This project moves beyond simple static files by using a **Cloud-Native Architecture**:
+This project uses a decoupled **Client-Server Architecture**:
 
-1.  **Data Ingestion (Python):** A custom Python script scrapes user metrics from LeetCode's GraphQL API and detects new problem solves.
-2.  **Database (MongoDB Atlas):** Data is stored in a scalable NoSQL database, separated into `users`, `activities`, and `metadata` collections.
-3.  **Backend API (Node.js & Express):** A RESTful API hosted on **Render** fetches data from MongoDB and serves it to the client.
-4.  **Frontend (Netlify):** A responsive dashboard fetches live JSON data from the API and renders the leaderboard and activity feed dynamically.
+1.  **Frontend (React + Vite):** A modern Single Page Application (SPA) hosted on **Netlify**. It handles client-side routing, state management, and real-time search filtering.
+2.  **Backend API (Node.js & Express):** A RESTful API hosted on **Render** that serves JSON data and handles database connections.
+3.  **Database (MongoDB Atlas):** Persistent cloud storage for User Profiles and Activity Logs.
+4.  **Automation (Python):** A scheduled script (GitHub Actions) that scrapes LeetCode GraphQL data and pushes updates to MongoDB.
 
 ---
 
 ## ✨ Features
 
-* **⚡ Automated Data Pipeline:** Python script intelligently updates only changed profiles to minimize API usage.
-* **📊 REST API Integrated:** Frontend is decoupled from data logic, communicating via a custom built JSON API (`/api/leaderboard`).
-* **🕒 Real-Time Activity Feed:** Logs specific "solve events" (e.g., "X solved +2 questions") with timestamps saved to the database.
-* **💾 Persistent History:** Unlike static files, MongoDB retains activity logs and historical data efficiently.
-* **🌙 Responsive Dark UI:** Optimized for both Desktop (side-by-side view) and Mobile (stacked view).
+* **🥇 Dynamic Trophy System:** Top 3 players are automatically highlighted with Gold, Silver, and Bronze styles.
+* **⚡ React Performance:** Built with Vite for blazing fast loading and instant interactions.
+* **📜 Smart Scrolling:** "Sticky" table headers and independent scrolling for the leaderboard and activity feed (clean UI).
+* **🔍 Instant Search:** Real-time filtering of users by name without reloading the page.
+* **🕒 Live Activity Feed:** Tracks and displays detailed solve history (e.g., "X solved +2 questions") with timestamps.
+* **🌙 Modern Dark UI:** A custom dark-themed interface with orange accents, fully responsive for Mobile and Desktop.
 
 ---
 
@@ -42,18 +41,18 @@ This project moves beyond simple static files by using a **Cloud-Native Architec
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Database** | **MongoDB Atlas** | Cloud NoSQL database storing Users & Activities |
+| **Frontend** | **React.js + Vite** | High-performance UI with Component-based architecture |
 | **Backend** | **Node.js & Express** | REST API handling data requests & CORS |
+| **Database** | **MongoDB Atlas** | Cloud NoSQL database storing Users & Activities |
 | **Automation** | **Python** | ETL script (Extract, Transform, Load) for LeetCode data |
 | **Hosting** | **Render (Backend) + Netlify (Frontend)** | CI/CD deployments for server and client |
-| **Frontend** | **HTML5 / CSS3 / JavaScript** | Vanilla JS for lightweight, fast rendering |
 
 ---
 
 ## ⚙️ How It Works
 
 ### 1. The Automation Logic (`update_leaderboard.py`)
-The script iterates through a list of users, fetches their latest stats, and compares them with the database.
+The script iterates through a list of users, fetches their latest stats via LeetCode's GraphQL API, and compares them with the database.
 ```python
 # Logic Snippet
 if current_solved > previous_solved:
@@ -65,22 +64,27 @@ if current_solved > previous_solved:
     # Pushes update to MongoDB 'activities' collection
 ```
 
-2. The API Layer (server.js)
-The Express server exposes a single endpoint that aggregates all necessary data.
+### 2. The React Frontend (Leaderboard.jsx)
 
-Endpoint: GET /api/leaderboard
+The frontend fetches data once and handles sorting/filtering locally for speed.
 
-Response: JSON object containing sorted users, last 10 activities, and sync timestamp.
+```JavaScript
+// React Logic Snippet
+useEffect(() => {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => setData(data));
+}, []);
+```
 
-🤝 How to Join
-If you want to be tracked on this leaderboard:
+###🤝 How to Join
+If you want to be tracked on this leaderboard:-
 
-Send your LeetCode Profile Link to the administrator.
+1. Send your LeetCode Profile Link to the administrator.
 
-Or submit a Pull Request adding your username to profiles.json (for local tracking).
+2. Or submit a Pull Request adding your username to profiles.json (for local tracking).
 
-👨‍💻 Author
-Harsh Bajpai
+**👨‍💻 Author - Harsh Bajpai**  
 
 Role: Full-Stack Developer & Automation Engineer
 
