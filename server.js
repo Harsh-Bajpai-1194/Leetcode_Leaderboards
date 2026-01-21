@@ -1,51 +1,55 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const { MongoClient } = require('mongodb');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 1. Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("✅ Server Connected to MongoDB"))
-    .catch(err => console.error("❌ Server Connection Error:", err));
+// MongoDB Connection String
+const MONGO_URI = process.env.MONGO_URI;
 
-// 2. Define Schemas (Shapes of data)
-const userSchema = new mongoose.Schema({
-    username: String,
-    name: String,
-    total_solved: Number,
-    url: String,
-    last_updated: Date
-});
+// --- GLOBAL VARIABLES (This fixes the "not defined" error) ---
+let db;
+let usersCollection;
+let activitiesCollection;
+let metadataCollection;
 
-const activitySchema = new mongoose.Schema({
-    text: String,
-    time: String,
-    type: String,
-    created_at: Date
-});
+// Connect to MongoDB
+const client = new MongoClient(MONGO_URI);
 
-const metadataSchema = new mongoose.Schema({
-    type: String,
-    date_string: String
-}, { collection: 'metadata' }); // Force it to look in 'metadata' collection
+async function connectDB() {
+    try {
+        await client.connect();
+        db = client.db("leetcode_db");
+        
+        // Assign collections to global variables
+        usersCollection = db.collection("users");
+        activitiesCollection = db.collection("activities");
+        metadataCollection = db.collection("metadata");
 
-// 3. Create Models
-const User = mongoose.model('User', userSchema);
-const Activity = mongoose.model('Activity', activitySchema);
-const Metadata = mongoose.model('Metadata', metadataSchema);
+        console.log("✅ Server Connected to MongoDB");
+    } catch (err) {
+        console.error("❌ MongoDB Connection Error:", err);
+    }
+}
+connectDB();
 
-// 4. API Route: Get EVERYTHING (Leaderboard + Activities + Time)
-// --- UPDATED API ENDPOINT ---
+// --- API 1: GET LEADERBOARD & GRAPH DATA ---
 app.get('/api/leaderboard', async (req, res) => {
     try {
+        if (!usersCollection) {
+            return res.status(503).json({ error: "Database not ready yet" });
+        }
+
         // 1. Fetch Users
         const users = await usersCollection.find().toArray();
 
-        // 2. Fetch Activities (Last 100 to ensure we cover 7 days)
+        // 2. Fetch Activities (Last 100 for graph calculation)
         const activities = await activitiesCollection
             .find()
             .sort({ created_at: -1 })
@@ -89,5 +93,48 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+// --- API 2: ADMIN ADD USER ---
+app.post('/api/add-user', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (password !== "admin123") { // Change this password if you want
+        return res.status(401).json({ error: "❌ Wrong Password" });
+    }
+
+    if (!username) {
+        return res.status(400).json({ error: "❌ Username is required" });
+    }
+
+    try {
+        if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
+
+        const existingUser = await usersCollection.findOne({ username: username });
+        if (existingUser) {
+            return res.status(400).json({ error: "⚠️ User already exists!" });
+        }
+
+        const newUser = {
+            username: username,
+            name: username,
+            total_solved: 0,
+            easy_solved: 0,
+            medium_solved: 0,
+            hard_solved: 0,
+            url: `https://leetcode.com/${username}/`,
+            last_updated: new Date()
+        };
+
+        await usersCollection.insertOne(newUser);
+        console.log(`✅ Added new user: ${username}`);
+        res.json({ message: `Successfully added ${username}! They will appear after the next update.` });
+
+    } catch (error) {
+        console.error("Error adding user:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Start Server
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
