@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './style.css'; 
+import ActivityGraph from './ActivityGraph';
 
 const Leaderboard = () => {
   const [data, setData] = useState({ users: [], activities: [], last_updated: '--' });
@@ -38,6 +39,11 @@ const Leaderboard = () => {
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
         </div>
+
+        <div style={{ marginBottom: '30px' }}>
+             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
+        </div>
+
 
         <div className="search-container">
           <input

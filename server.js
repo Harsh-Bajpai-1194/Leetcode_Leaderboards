@@ -39,27 +39,53 @@ const Activity = mongoose.model('Activity', activitySchema);
 const Metadata = mongoose.model('Metadata', metadataSchema);
 
 // 4. API Route: Get EVERYTHING (Leaderboard + Activities + Time)
-app.get('/api/leaderboard', async(req, res) => {
+// --- UPDATED API ENDPOINT ---
+app.get('/api/leaderboard', async (req, res) => {
     try {
-        // A. Fetch Users
-        const users = await User.find().sort({ total_solved: -1 });
+        // 1. Fetch Users
+        const users = await usersCollection.find().toArray();
 
-        // B. Fetch Recent Activities (Limit to top 15, newest first)
-        const activities = await Activity.find().sort({ created_at: -1 }).limit(20);
+        // 2. Fetch Activities (Last 100 to ensure we cover 7 days)
+        const activities = await activitiesCollection
+            .find()
+            .sort({ created_at: -1 })
+            .limit(100) 
+            .toArray();
 
-        // C. Fetch Last Updated Time
-        const meta = await Metadata.findOne({ type: "last_updated" });
-        const lastUpdated = meta ? meta.date_string : "Just now";
+        // 3. Get "Last Updated" Time
+        const metadata = await metadataCollection.findOne({ type: "last_updated" });
 
-        // D. Send it all together
-        res.json({
-            users: users,
-            activities: activities,
-            last_updated: lastUpdated
+        // 4. Calculate 7-Day Stats for the Graph 📊
+        const sevenDaysStats = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); // e.g., "Jan 20"
+            
+            // Filter activities for this specific day
+            const dailyCount = activities.filter(act => {
+                if (!act.created_at) return false;
+                const actDate = new Date(act.created_at);
+                return actDate.getDate() === d.getDate() && actDate.getMonth() === d.getMonth();
+            }).reduce((acc, act) => {
+                // Extract number from text "User solved +2 questions"
+                const match = act.text.match(/\+(\d+)/); 
+                return acc + (match ? parseInt(match[1]) : 0);
+            }, 0);
+
+            sevenDaysStats.push({ date: dateStr, solved: dailyCount });
+        }
+
+        res.json({ 
+            users, 
+            activities: activities.slice(0, 20), // Send only top 20 for the feed text
+            graph_data: sevenDaysStats,          // Send calculated graph data
+            last_updated: metadata ? metadata.date_string : '--' 
         });
 
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    } catch (error) {
+        console.error("Error fetching leaderboard:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
