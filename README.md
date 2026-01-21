@@ -13,7 +13,9 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 ---
 
 ## 🚀 Live Demo
-👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)** ⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)** ---
+👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)**  
+⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)**  
+---
 
 ## 🏗️ System Architecture
 
@@ -77,7 +79,7 @@ useEffect(() => {
 }, []);
 ```
 
-###🤝 How to Join
+### How to Join?  
 If you want to be tracked on this leaderboard:-
 
 1. Send your LeetCode Profile Link to the administrator.
