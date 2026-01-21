@@ -78,7 +78,56 @@ body {
 #activity-content::-webkit-scrollbar-thumb:hover {
     background-color: #ffa116;
 }
+/* --- 🏆 TROPHY SYSTEM (Gold, Silver, Bronze) --- */
 
+/* 🥇 Rank 1: GOLD */
+.leaderboard-table tbody tr:nth-child(1) {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent); /* Gold Glow */
+    border-left: 4px solid #FFD700;
+}
+.leaderboard-table tbody tr:nth-child(1) td:first-child {
+    font-size: 0; /* Hide the number "1" */
+}
+.leaderboard-table tbody tr:nth-child(1) td:first-child::before {
+    content: "🥇"; /* Add Medal Icon */
+    font-size: 1.5rem; /* Make it big */
+}
+
+/* 🥈 Rank 2: SILVER */
+.leaderboard-table tbody tr:nth-child(2) {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.25), transparent); /* Silver Glow */
+    border-left: 4px solid #C0C0C0;
+}
+.leaderboard-table tbody tr:nth-child(2) td:first-child {
+    font-size: 0; /* Hide the number "2" */
+}
+.leaderboard-table tbody tr:nth-child(2) td:first-child::before {
+    content: "🥈";
+    font-size: 1.4rem;
+}
+
+/* 🥉 Rank 3: BRONZE */
+.leaderboard-table tbody tr:nth-child(3) {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), transparent); /* Bronze Glow */
+    border-left: 4px solid #CD7F32;
+}
+.leaderboard-table tbody tr:nth-child(3) td:first-child {
+    font-size: 0; /* Hide the number "3" */
+}
+.leaderboard-table tbody tr:nth-child(3) td:first-child::before {
+    content: "🥉";
+    font-size: 1.3rem;
+}
+
+/* ✨ Pop-out Hover Effect for Champions */
+.leaderboard-table tbody tr:nth-child(1):hover,
+.leaderboard-table tbody tr:nth-child(2):hover,
+.leaderboard-table tbody tr:nth-child(3):hover {
+    transform: scale(1.02) translateX(5px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 10; /* Bring to front */
+}
 h1 {
     text-align: center;
     color: #ffa116;
