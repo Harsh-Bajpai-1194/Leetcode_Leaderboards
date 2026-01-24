@@ -1,4 +1,5 @@
 import React from 'react';
+// Fixed router for Netlify deployment
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Leaderboard from './Leaderboard';
 import AdminPanel from './AdminPanel';
