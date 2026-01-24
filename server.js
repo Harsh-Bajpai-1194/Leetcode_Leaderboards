@@ -82,7 +82,7 @@ app.get('/api/leaderboard', async (req, res) => {
 
         res.json({ 
             users, 
-            activities: activities.slice(0, 20), // Send only top 20 for the feed text
+            activities: activities.slice(0, 50), // Send only top 50 for the feed text
             graph_data: sevenDaysStats,          // Send calculated graph data
             last_updated: metadata ? metadata.date_string : '--' 
         });
