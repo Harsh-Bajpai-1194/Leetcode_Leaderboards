@@ -11,7 +11,7 @@ function App() {
           {/* Main Page */}
           <Route path="/" element={<Leaderboard />} />
           
-          {/* Hidden Admin Page */}
+          {/* Admin Page */}
           <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
