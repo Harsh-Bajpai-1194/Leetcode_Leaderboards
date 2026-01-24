@@ -8,6 +8,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <h1 style={{color: 'yellow', textAlign: 'center'}}>VERSION TEST: 2.0</h1>
         <Routes>
           {/* Main Page */}
           <Route path="/" element={<Leaderboard />} />
