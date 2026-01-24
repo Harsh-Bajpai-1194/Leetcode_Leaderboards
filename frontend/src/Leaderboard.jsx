@@ -8,7 +8,6 @@ const Leaderboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Keep this pointing to your Render backend for the live site
     fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard')
       .then((response) => {
         if (!response.ok) throw new Error("Failed to load API data");
@@ -42,8 +41,6 @@ const Leaderboard = () => {
           Last updated: {data.last_updated}
         </div>
 
-        {/* (Graph removed from here) */}
-
         <div className="search-container">
           <input
             type="text"
@@ -71,15 +68,11 @@ const Leaderboard = () => {
                 filteredUsers.map((user, index) => (
                   <tr key={index} data-rank={index + 1}>
                     <td>{index + 1}</td>
-                    
                     <td>{user.name || user.username}</td>
                     
-                    {/* Solved Column */}
                     <td className="solved-cell">
                       <div className="solved-wrapper">
-                        <span className="main-stat">
-                          {user.total_solved || 0}
-                        </span>
+                        <span className="main-stat">{user.total_solved || 0}</span>
                         <div className="hover-stats">
                           <span className="easy" title="Easy">{user.easy_solved || 0}</span>
                           <span className="medium" title="Medium">{user.medium_solved || 0}</span>
@@ -89,10 +82,7 @@ const Leaderboard = () => {
                     </td>
 
                     <td>
-                      <a
-                        href={user.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <a href={user.url} target="_blank" rel="noopener noreferrer" 
                         style={{
                           textDecoration: 'none',
                           backgroundColor: '#ffa116',
@@ -100,8 +90,7 @@ const Leaderboard = () => {
                           padding: '5px 10px',
                           borderRadius: '5px',
                           fontWeight: 'bold'
-                        }}
-                      >
+                        }}>
                         View
                       </a>
                     </td>
@@ -113,27 +102,31 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN: ACTIVITY & GRAPH --- */}
-      <div className="activity-container">
-        <div className="activity-title">Activity Feed</div>
+      {/* --- RIGHT COLUMN WRAPPER --- */}
+      <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
         
-        {/* 1. The Activity List */}
-        <div id="activity-content" style={{ marginBottom: '20px' }}>
-          {data.activities && data.activities.length > 0 ? (
-            data.activities.map((act, index) => (
-              <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
-                <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span>
-                <br />
-                <span style={{ fontSize: '0.8em', color: '#666' }}>{act.time}</span>
-              </div>
-            ))
-          ) : (
-            <div>NO ACTIVITY CURRENTLY</div>
-          )}
+        {/* BOX 1: Activity Feed (SCROLLABLE NOW) */}
+        <div className="activity-container" style={{ margin: 0 }}>
+          <div className="activity-title">Activity Feed</div>
+          
+          {/* 👇 Added Max Height & Scroll here */}
+          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
+            {data.activities && data.activities.length > 0 ? (
+              data.activities.map((act, index) => (
+                <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
+                  <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span>
+                  <br />
+                  <span style={{ fontSize: '0.8em', color: '#666' }}>{act.time}</span>
+                </div>
+              ))
+            ) : (
+              <div>NO ACTIVITY CURRENTLY</div>
+            )}
+          </div>
         </div>
 
-        {/* 2. 📈 GRAPH MOVED HERE (Bottom of Sidebar) */}
-        <div style={{ borderTop: '1px solid #333', paddingTop: '15px' }}>
+        {/* BOX 2: Graph (Outside & Separate) */}
+        <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
 

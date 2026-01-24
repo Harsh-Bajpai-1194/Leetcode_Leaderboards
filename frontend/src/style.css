@@ -38,7 +38,7 @@ body {
     text-align: center;
     
     /* 👇 THIS IS THE FIX 👇 */
-    height: 650px;          /* Fixed height (or use max-height: 80vh) */
+    height: 500px;          /* Fixed height (or use max-height: 80vh) */
     display: flex;          /* Turn on Flexbox layout */
     flex-direction: column; /* Stack items vertically */
     overflow: hidden;       /* STOP the main box from scrolling */

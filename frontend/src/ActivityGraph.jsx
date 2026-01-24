@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 const ActivityGraph = ({ data }) => {
   return (
     <div style={{ 
-      width: '100%', 
+      width: '250px', 
       height: '300px', 
       backgroundColor: '#1e1e1e', 
       borderRadius: '10px', 
