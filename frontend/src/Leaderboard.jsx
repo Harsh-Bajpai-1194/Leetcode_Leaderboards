@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // 👈 Added this for the button
 import './style.css'; 
 import ActivityGraph from './ActivityGraph';
 
@@ -105,12 +106,11 @@ const Leaderboard = () => {
       {/* --- RIGHT COLUMN WRAPPER --- */}
       <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
         
-        {/* BOX 1: Activity Feed (SCROLLABLE NOW) */}
+        {/* BOX 1: Activity Feed */}
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
           
-          {/* 👇 Added Max Height & Scroll here */}
-          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
+          <div id="activity-content" style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '5px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
@@ -125,7 +125,7 @@ const Leaderboard = () => {
           </div>
         </div>
 
-        {/* BOX 2: Graph (Outside & Separate) */}
+        {/* BOX 2: Graph */}
         <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
@@ -139,6 +139,14 @@ const Leaderboard = () => {
           <a href="#" target="_blank"><i className="fab fa-linkedin"></i></a>
           <a href="#" target="_blank"><i className="fas fa-envelope"></i></a>
         </div>
+        
+        {/* 👇 SECRET ADMIN BUTTON ADDED HERE */}
+        <div style={{ marginTop: '20px', opacity: 0.3 }}>
+          <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em' }}>
+             🔒
+          </Link>
+        </div>
+
       </div>
     </div>
   );
