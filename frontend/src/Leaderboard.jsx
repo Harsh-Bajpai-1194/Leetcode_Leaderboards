@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // 👈 Added this for the button
+import { Link } from 'react-router-dom';
 import './style.css'; 
 import ActivityGraph from './ActivityGraph';
 
@@ -33,7 +33,24 @@ const Leaderboard = () => {
 
   return (
     <div className="main-wrapper">
-      <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" />
+      
+      {/* --- LEFT COLUMN: IMAGE & LOCK --- */}
+      {/* We wrap them in a div so they stack vertically while keeping the layout intact */}
+      <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px' }}>
+          <img 
+            src="/leetcode.jpg" 
+            alt="LEETCODE" 
+            className="leetcode-img" 
+            style={{ width: '100%', display: 'block' }} // Ensure image fills the wrapper
+          />
+          
+          {/* 🔒 LOCK BUTTON (Placed immediately below image) */}
+          <div style={{ textAlign: 'center', marginTop: '10px', opacity: 0.3 }}>
+             <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em', textDecoration: 'none' }}>
+                🔒
+             </Link>
+          </div>
+      </div>
       
       {/* --- CENTER COLUMN: LEADERBOARD --- */}
       <div className="leaderboard-container">
@@ -110,7 +127,7 @@ const Leaderboard = () => {
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
           
-          <div id="activity-content" style={{ maxHeight: '600px', overflowY: 'auto', paddingRight: '5px' }}>
+          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
@@ -132,23 +149,11 @@ const Leaderboard = () => {
 
       </div>
 
-      <div className="contact">
-        <h3>If you want your name in the leaderboard, send your Leetcode Profile link here 👇</h3>
-        <div className="social-links">
-          <a href="#" target="_blank"><i className="fab fa-whatsapp"></i></a>
-          <a href="#" target="_blank"><i className="fab fa-linkedin"></i></a>
-          <a href="#" target="_blank"><i className="fas fa-envelope"></i></a>
+      <div className="contact" style={{ width: '100%' }}>
+        <h3>Thanks for visiting!</h3>
         </div>
-        
-        {/* 👇 SECRET ADMIN BUTTON ADDED HERE */}
-        <div style={{ marginTop: '20px', opacity: 0.3 }}>
-          <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em' }}>
-             🔒
-          </Link>
-        </div>
-
-      </div>
     </div>
   );
 };
-export default Leaderboard; 
+
+export default Leaderboard;
