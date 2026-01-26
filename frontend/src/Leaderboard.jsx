@@ -33,22 +33,20 @@ const Leaderboard = () => {
 
   return (
     <div className="main-wrapper">
-      
-      {/* --- LEFT COLUMN: IMAGE & LOCK --- */}
-      {/* We wrap them in a div so they stack vertically while keeping the layout intact */}
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px' }}>
-          <img 
-            src="/leetcode.jpg" 
-            alt="LEETCODE" 
-            className="leetcode-img" 
-            style={{ width: '100%', display: 'block' }} // Ensure image fills the wrapper
-          />
-          
-          {/* 🔒 LOCK BUTTON (Placed immediately below image) */}
-          <div style={{ textAlign: 'center', marginTop: '10px', opacity: 0.3 }}>
-             <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em', textDecoration: 'none' }}>
-                🔒
-             </Link>
+          <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block' }} />
+          <div style={{ textAlign: 'center', marginTop: '10px', opacity: 0.3 }}>   
+             <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em', textDecoration: 'none' }}
+                        style={{
+                          textDecoration: 'none',
+                          backgroundColor: 'green',
+                          color: 'black',
+                          padding: '5px 10px',
+                          borderRadius: '5px',
+                          fontWeight: 'bold'
+                        }}>
+                        Admin🔒
+              </Link>
           </div>
       </div>
       
