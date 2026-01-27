@@ -1,5 +1,4 @@
 import os
-import json
 import requests
 import time
 from datetime import datetime, timedelta, timezone
@@ -8,6 +7,7 @@ from dotenv import load_dotenv
 
 # 1. SETUP MONGODB
 load_dotenv()
+# Get URI from Environment (Local .env) or GitHub Secrets
 mongo_uri = os.getenv("MONGO_URI")
 
 if not mongo_uri:
@@ -25,7 +25,7 @@ except Exception as e:
     print(f"❌ Connection failed: {e}")
     exit()
 
-# 2. THE SCRAPER FUNCTION (UPDATED 🟢🟡🔴)
+# 2. THE SCRAPER FUNCTION
 def get_leetcode_data(username):
     url = "https://leetcode.com/graphql"
     query = """
@@ -52,9 +52,9 @@ def get_leetcode_data(username):
                 return None
 
             user_data = data["data"]["matchedUser"]
+            # Use Real Name if available, otherwise fallback to username
             real_name = user_data["profile"]["realName"] or user_data["username"]
             
-            # --- UPDATED PARSING LOGIC ---
             solved_stats = user_data["submitStats"]["acSubmissionNum"]
             
             stats = {
@@ -78,26 +78,15 @@ def get_leetcode_data(username):
         print(f"Error fetching {username}: {e}")
         return None
 
-# 3. THE UPDATE LOOP (UPDATED)
+# 3. THE UPDATE LOOP (FIXED TO READ FROM DB 🟢)
 def update_leaderboard():
-    # We read profiles.json ONLY to know WHO to track
-    file_path = os.path.join(os.getcwd(), 'profiles.json')
     
-    try:
-        with open(file_path, 'r') as f:
-            config_data = json.load(f)
-            # Handle both formats (list or dict)
-            profile_list = config_data.get("users", []) if isinstance(config_data, dict) else config_data
-    except FileNotFoundError:
-        print("❌ profiles.json not found! I need a list of users to track.")
-        return
+    # 👇 CHANGE: Get users directly from the Database instead of profiles.json
+    db_users = list(users_col.find())
+    print(f"Checking stats for {len(db_users)} users found in Database...")
 
-    print(f"Checking stats for {len(profile_list)} users...")
-
-    for user_config in profile_list:
-        # Extract username from URL
-        url = user_config.get('url', '')
-        username = url.strip('/').split('/')[-1]
+    for user_doc in db_users:
+        username = user_doc.get("username")
         
         if not username: continue
             
@@ -108,11 +97,8 @@ def update_leaderboard():
             print(f"⚠️ Could not fetch data for {username}")
             continue 
 
-        # B. Get OLD data from MongoDB
-        # We check the database to see what their score was last time
-        existing_user = users_col.find_one({"username": username})
-        previous_solved = existing_user.get("total_solved", 0) if existing_user else 0
-        
+        # B. Get OLD data (from the doc we just fetched)
+        previous_solved = user_doc.get("total_solved", 0)
         current_solved = stats["total"]
 
         # C. Calculate Progress
@@ -127,28 +113,22 @@ def update_leaderboard():
                 "text": f"{stats['real_name']} solved +{diff} questions",
                 "time": ist_time,
                 "type": "up",
-                "created_at": datetime.now() # Date object for sorting
+                "created_at": datetime.now()
             }
-            # Insert into 'activities' collection
             activities_col.insert_one(new_activity)
 
-        # D. Update User in MongoDB (WITH NEW FIELDS 🟢🟡🔴)
-        user_doc = {
-            "username": username,
-            "name": stats["real_name"],
-            "total_solved": stats["total"],
-            "easy_solved": stats["easy"],      # New Field
-            "medium_solved": stats["medium"],  # New Field
-            "hard_solved": stats["hard"],      # New Field
-            "url": url,
-            "last_updated": datetime.now()
-        }
-        
-        # This saves the new score to the 'users' collection
+        # D. Update User in MongoDB
+        # We ensure all fields (Easy/Med/Hard) are kept in sync
         users_col.update_one(
             {"username": username}, 
-            {"$set": user_doc}, 
-            upsert=True
+            {"$set": {
+                "name": stats["real_name"],
+                "total_solved": stats["total"],
+                "easy_solved": stats["easy"],
+                "medium_solved": stats["medium"],
+                "hard_solved": stats["hard"],
+                "last_updated": datetime.now()
+            }}
         )
 
         time.sleep(0.5) # Be nice to LeetCode API
