@@ -121,7 +121,7 @@ app.get('/api/leaderboard', async (req, res) => {
 
         res.json({ 
             users, 
-            activities: activities.slice(0, 50), 
+            activities: activities.slice(0,100), 
             graph_data: sevenDaysStats, 
             last_updated: metadata ? metadata.date_string : '--' 
         });
