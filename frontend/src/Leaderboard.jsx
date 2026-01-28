@@ -26,28 +26,25 @@ const Leaderboard = () => {
 
   // 👇 FUNCTION: Trigger Update from Main Page
   const handleForceUpdate = async () => {
-    const password = prompt("🔐 Enter Admin Password to Force Update:");
-    
-    if (!password) return; // User cancelled
-
-    if (password !== "admin123") {
-        alert("❌ Wrong Password!");
-        return;
+    // 1. Simple Yes/No check to prevent accidental clicks
+    if (!window.confirm("⚡ Are you sure you want to force an update?")) {
+        return; 
     }
 
     alert("⏳ Triggering Update... This takes about 30 seconds.");
 
     try {
+        // 2. Send request without a password
         const response = await fetch('https://leetcode-leaderboards.onrender.com/api/trigger-update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
+            body: JSON.stringify({}) // Empty body (no password needed)
         });
         
         const data = await response.json();
         if (response.ok) {
             alert(`✅ ${data.message}`);
-            window.location.reload(); // Refresh page to see changes
+            window.location.reload(); 
         } else {
             alert(`❌ Error: ${data.error}`);
         }
@@ -227,5 +224,6 @@ const Leaderboard = () => {
     </div>
   );
 };
+
 
 export default Leaderboard;
