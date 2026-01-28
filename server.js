@@ -100,9 +100,11 @@ app.get('/api/leaderboard', async (req, res) => {
 
         const metadata = await metadataCollection.findOne({ type: "last_updated" });
 
-        // Calculate 7-Day Graph Data
-        const sevenDaysStats = [];
-        for (let i = 6; i >= 0; i--) {
+        // 👇 UPDATED: Graph looks back 21 Days (3 Weeks)
+        const daysToLookBack = 21; 
+        const graphStats = [];
+        
+        for (let i = daysToLookBack - 1; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -116,13 +118,13 @@ app.get('/api/leaderboard', async (req, res) => {
                 return acc + (match ? parseInt(match[1]) : 0);
             }, 0);
 
-            sevenDaysStats.push({ date: dateStr, solved: dailyCount });
+            graphStats.push({ date: dateStr, solved: dailyCount });
         }
 
         res.json({ 
             users, 
             activities: activities.slice(0,100), 
-            graph_data: sevenDaysStats, 
+            graph_data: graphStats, 
             last_updated: metadata ? metadata.date_string : '--' 
         });
     } catch (error) {
@@ -131,7 +133,7 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
-// --- API 2: SMART ADD USER (UPDATED) ---
+// --- API 2: SMART ADD USER ---
 app.post('/api/add-user', async (req, res) => {
     const { username, password } = req.body;
 
@@ -174,13 +176,10 @@ app.post('/api/add-user', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-// --- API 3: TRIGGER UPDATE MANUALLY ---
+
 // --- API 3: TRIGGER UPDATE MANUALLY (NO PASSWORD) ---
 app.post('/api/trigger-update', async (req, res) => {
     
-    // ❌ DELETED: const { password } = req.body;
-    // ❌ DELETED: if (password !== "admin123") ...
-
     // 👇 VARIABLES
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const REPO_OWNER = "Harsh-Bajpai-1194"; 
@@ -215,6 +214,7 @@ app.post('/api/trigger-update', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 // Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);

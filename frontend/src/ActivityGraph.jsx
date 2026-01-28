@@ -18,7 +18,7 @@ const ActivityGraph = ({ data }) => {
       flexDirection: 'column'   /* 👈 ADDED: Vertical stacking */
     }}>
       <h3 style={{ color: 'white', textAlign: 'center', marginBottom: '5px', marginTop: 0 }}>
-        📈 Group Progress (7 Days)
+        📉 Group Progress (21 Days)
       </h3>
       <p style={{ color: '#888', textAlign: 'center', fontSize: '0.8em', marginBottom: '10px' }}>
         Total questions solved by everyone
