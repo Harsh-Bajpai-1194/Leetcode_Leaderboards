@@ -5,7 +5,7 @@ const ActivityGraph = ({ data }) => {
   return (
     <div style={{ 
       width: '100%', 
-      height: '250px', 
+      height: '300px', 
       backgroundColor: '#1e1e1e', 
       borderRadius: '10px', 
       padding: '20px', 

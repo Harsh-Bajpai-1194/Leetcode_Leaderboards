@@ -174,7 +174,48 @@ app.post('/api/add-user', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+// --- API 3: TRIGGER UPDATE MANUALLY ---
+app.post('/api/trigger-update', async (req, res) => {
+    const { password } = req.body;
 
+    if (password !== "admin123") {
+        return res.status(401).json({ error: "❌ Wrong Password" });
+    }
+
+    // 👇 VARIABLES (Update these if your username/repo is different!)
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const REPO_OWNER = "Harsh-Bajpai-1194"; 
+    const REPO_NAME = "Leetcode_Leaderboards";
+    const WORKFLOW_FILE = "scraper.yml"; // Ensure this matches your file in .github/workflows/
+
+    if (!GITHUB_TOKEN) {
+        return res.status(500).json({ error: "Server missing GitHub Token" });
+    }
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ref: 'main' // The branch to run on
+            })
+        });
+
+        if (response.status === 204) {
+            res.json({ message: "✅ Update Started! Refresh in ~30 seconds." });
+        } else {
+            const errText = await response.text();
+            res.status(500).json({ error: `GitHub Error: ${errText}` });
+        }
+    } catch (error) {
+        console.error("Trigger Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 // Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);

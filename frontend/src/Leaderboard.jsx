@@ -36,10 +36,11 @@ const Leaderboard = () => {
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block' }} />
           <div style={{ textAlign: 'center', marginTop: '10px', opacity: 0.3 }}>   
-             <Link to="/admin" title="Admin Login" style={{ color: '#555', fontSize: '1.2em', textDecoration: 'none' }}
+             <Link to="/admin" title="Admin Login" 
                         style={{
                           textDecoration: 'none',
                           backgroundColor: 'green',
+                          fontSize: '1.2em',
                           color: 'black',
                           padding: '5px 10px',
                           borderRadius: '5px',
