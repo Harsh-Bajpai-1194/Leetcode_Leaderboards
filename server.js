@@ -175,18 +175,17 @@ app.post('/api/add-user', async (req, res) => {
     }
 });
 // --- API 3: TRIGGER UPDATE MANUALLY ---
+// --- API 3: TRIGGER UPDATE MANUALLY (NO PASSWORD) ---
 app.post('/api/trigger-update', async (req, res) => {
-    const { password } = req.body;
+    
+    // ❌ DELETED: const { password } = req.body;
+    // ❌ DELETED: if (password !== "admin123") ...
 
-    if (password !== "admin123") {
-        return res.status(401).json({ error: "❌ Wrong Password" });
-    }
-
-    // 👇 VARIABLES (Update these if your username/repo is different!)
+    // 👇 VARIABLES
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const REPO_OWNER = "Harsh-Bajpai-1194"; 
     const REPO_NAME = "Leetcode_Leaderboards";
-    const WORKFLOW_FILE = "scraper.yml"; // Ensure this matches your file in .github/workflows/
+    const WORKFLOW_FILE = "scraper.yml"; 
 
     if (!GITHUB_TOKEN) {
         return res.status(500).json({ error: "Server missing GitHub Token" });
@@ -201,12 +200,12 @@ app.post('/api/trigger-update', async (req, res) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                ref: 'main' // The branch to run on
+                ref: 'main' 
             })
         });
 
         if (response.status === 204) {
-            res.json({ message: "✅ Update Started! Refresh in ~30 seconds." });
+            res.json({ message: "Update Started! Refresh in ~30 seconds." });
         } else {
             const errText = await response.text();
             res.status(500).json({ error: `GitHub Error: ${errText}` });
