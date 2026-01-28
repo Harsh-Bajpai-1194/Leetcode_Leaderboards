@@ -71,7 +71,7 @@ with ThreadPoolExecutor(max_workers=5) as executor:
     results = list(executor.map(process_user, db_users))
 ```
 
-##2. The Force Update Trigger  
+### 2. The Force Update Trigger  
 1️⃣When the "Force Update" button is clicked:
 
 2️⃣Frontend sends a request to Backend with the Admin Password.
@@ -82,13 +82,13 @@ with ThreadPoolExecutor(max_workers=5) as executor:
 
 The Frontend refreshes to show the new data.  
 
-##🤝 How to Join  
+### 🤝 How to Join  
 To be added to this leaderboard:
 Ask an Admin to add you via the Secure Admin Panel.
 
 (Developers) Submit a Pull Request if running a local instance.
 
-#👨‍💻 Author
-#**Harsh Bajpai Full-Stack Developer & Automation Engineer**
+## 👨‍💻 Author
+**Harsh Bajpai Full-Stack Developer & Automation Engineer**
 
 LinkedIn: [https://www.linkedin.com/in/harsh-bajpai1194/](https://www.linkedin.com/in/harsh-bajpai1194/)
