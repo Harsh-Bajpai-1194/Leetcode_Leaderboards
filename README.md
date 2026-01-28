@@ -13,7 +13,9 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 ---
 
 ## 🚀 Live Demo
-👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)** ⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)** ---
+👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)**  
+⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)**  
+---
 
 ## ✨ Key Features
 
@@ -69,7 +71,7 @@ with ThreadPoolExecutor(max_workers=5) as executor:
     results = list(executor.map(process_user, db_users))
 ```
 
-###2. The Force Update Trigger
+##2. The Force Update Trigger
 1️⃣When the "Force Update" button is clicked:
 
 2️⃣Frontend sends a request to Backend with the Admin Password.
@@ -80,7 +82,7 @@ with ThreadPoolExecutor(max_workers=5) as executor:
 
 The Frontend refreshes to show the new data.
 
-###🤝 How to Join
+##🤝 How to Join
 To be added to this leaderboard:
 Ask an Admin to add you via the Secure Admin Panel.
 
