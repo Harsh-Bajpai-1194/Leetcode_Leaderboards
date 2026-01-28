@@ -7,6 +7,9 @@ const Leaderboard = () => {
   const [data, setData] = useState({ users: [], activities: [], last_updated: '--' });
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  // 👇 NEW STATE: Controls button text (idle, loading, success, error)
+  const [updateStatus, setUpdateStatus] = useState('idle'); 
 
   useEffect(() => {
     fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard')
@@ -24,32 +27,32 @@ const Leaderboard = () => {
       });
   }, []);
 
-  // 👇 FUNCTION: Trigger Update from Main Page
+  // 👇 UPDATED: Silent Update (No Alerts)
   const handleForceUpdate = async () => {
-    // 1. Simple Yes/No check to prevent accidental clicks
-    if (!window.confirm("⚡ Are you sure you want to force an update?")) {
-        return; 
-    }
+    if (updateStatus !== 'idle') return; // Prevent double clicking
 
-    alert("⏳ Triggering Update... This takes about 30 seconds.");
+    setUpdateStatus('loading'); // Change button text immediately
 
     try {
-        // 2. Send request without a password
         const response = await fetch('https://leetcode-leaderboards.onrender.com/api/trigger-update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}) // Empty body (no password needed)
+            body: JSON.stringify({})
         });
         
-        const data = await response.json();
         if (response.ok) {
-            alert(`✅ ${data.message}`);
-            window.location.reload(); 
+            setUpdateStatus('success');
+            // Automatically reload page after 30 seconds to show results
+            setTimeout(() => {
+                window.location.reload();
+            }, 30000);
         } else {
-            alert(`❌ Error: ${data.error}`);
+            setUpdateStatus('error');
+            setTimeout(() => setUpdateStatus('idle'), 3000); // Reset after 3s
         }
     } catch (error) {
-        alert('❌ Network Error: Could not connect to server.');
+        setUpdateStatus('error');
+        setTimeout(() => setUpdateStatus('idle'), 3000);
     }
   };
 
@@ -60,6 +63,26 @@ const Leaderboard = () => {
     })
     .sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
 
+  // 👇 HELPER: Get Button Text based on Status
+  const getButtonText = () => {
+      switch(updateStatus) {
+          case 'loading': return '⏳ Requesting...';
+          case 'success': return '✅ Started (Wait 30s)';
+          case 'error': return '❌ Failed. Try Again.';
+          default: return '⚡ Force Update';
+      }
+  };
+
+  // 👇 HELPER: Get Button Color
+  const getButtonColor = () => {
+      switch(updateStatus) {
+          case 'loading': return '#f59e0b'; // Orange
+          case 'success': return '#10b981'; // Green
+          case 'error': return '#ef4444';   // Red
+          default: return '#ef4743';        // Default Red
+      }
+  };
+
   return (
     <div className="main-wrapper">
       
@@ -67,7 +90,6 @@ const Leaderboard = () => {
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
           
-          {/* 👇 NEW BUTTON GROUP (Admin + Force Update) */}
           <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '80%' }}>
               
               <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
@@ -86,25 +108,28 @@ const Leaderboard = () => {
                 </button>
               </Link>
 
+              {/* 👇 UPDATED BUTTON */}
               <button 
                 onClick={handleForceUpdate}
+                disabled={updateStatus !== 'idle'} // Disable while running
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#ef4743',
+                  backgroundColor: getButtonColor(), // Dynamic Color
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
-                  cursor: 'pointer',
+                  cursor: updateStatus === 'idle' ? 'pointer' : 'default',
                   fontWeight: 'bold',
                   fontSize: '1em',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '5px'
+                  gap: '5px',
+                  transition: 'background-color 0.3s ease'
                 }}
               >
-                ⚡ Force Update
+                {getButtonText()} 
               </button>
           </div>
       </div>
@@ -144,7 +169,6 @@ const Leaderboard = () => {
                   <tr key={index} data-rank={index + 1}>
                     <td>{index + 1}</td>
                     
-                    {/* 👇 NAME CELL WITH BADGE ICON */}
                     <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {user.badge_icon && (
                         <img 
@@ -224,6 +248,5 @@ const Leaderboard = () => {
     </div>
   );
 };
-
 
 export default Leaderboard;
