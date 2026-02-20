@@ -127,9 +127,10 @@ app.get('/api/leaderboard', async (req, res) => {
     }
 });
 
+// --- API 2: ADD USER (NO PASSWORD REQUIRED) ---
 app.post('/api/add-user', async (req, res) => {
-    const { username, password } = req.body;
-    if (password !== "admin123") return res.status(401).json({ error: "❌ Wrong Password" });
+    const { username } = req.body; // ❌ Password completely removed from here
+    
     if (!username) return res.status(400).json({ error: "❌ Username is required" });
 
     try {
@@ -149,6 +150,7 @@ app.post('/api/add-user', async (req, res) => {
     }
 });
 
+// --- API 3: TRIGGER UPDATE MANUALLY ---
 app.post('/api/trigger-update', async (req, res) => {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const REPO_OWNER = "Harsh-Bajpai-1194"; 
