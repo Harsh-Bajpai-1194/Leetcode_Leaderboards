@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 const AdminPanel = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,13 +16,13 @@ const AdminPanel = () => {
       const response = await fetch('https://leetcode-leaderboards.onrender.com/api/add-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username }) // ❌ Removed password from body
       });
 
       const data = await response.json();
       if (response.ok) {
         setMessage(`✅ Success: ${data.message}`);
-        setUsername(''); // Clear username field only
+        setUsername(''); 
       } else {
         setMessage(`❌ Error: ${data.error}`);
       }
@@ -32,15 +31,15 @@ const AdminPanel = () => {
     }
     setIsLoading(false);
   };
-return (
-    /* The outer div must have 100vw and 100vh to define the centering area */
+
+  return (
     <div style={{ 
       minHeight: '100vh', 
       width: '100vw', 
       backgroundColor: '#0d0d0d', 
       display: 'flex', 
-      alignItems: 'center',    /* Vertical centering */
-      justifyContent: 'center', /* Horizontal centering */
+      alignItems: 'center',    
+      justifyContent: 'center', 
       padding: '20px',
       boxSizing: 'border-box'
     }}>
@@ -66,10 +65,7 @@ return (
             type="text" placeholder="LeetCode Username" value={username} onChange={(e) => setUsername(e.target.value)} required
             style={{ padding: '12px', borderRadius: '5px', border: '1px solid #333', backgroundColor: '#2c2c2c', color: 'white', outline: 'none' }}
           />
-          <input 
-            type="password" placeholder="Admin Password" value={password} onChange={(e) => setPassword(e.target.value)} required
-            style={{ padding: '12px', borderRadius: '5px', border: '1px solid #333', backgroundColor: '#2c2c2c', color: 'white', outline: 'none' }}
-          />
+          {/* ❌ Password Input Removed */}
           <button 
             type="submit" 
             disabled={isLoading} 
