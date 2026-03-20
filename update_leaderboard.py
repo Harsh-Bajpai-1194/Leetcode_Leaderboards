@@ -95,6 +95,7 @@ def process_user(user_doc):
             {"username": username}, 
             {"$set": {
                 "name": real_name,
+                "url": f"https://leetcode.com/{username}/",
                 "total_solved": stats["total"],
                 "easy_solved": stats["easy"],
                 "medium_solved": stats["medium"],
@@ -117,7 +118,12 @@ def update_leaderboard():
         if scraped_users:
             for username in scraped_users:
                 if not users_col.find_one({"username": username}):
-                    users_col.insert_one({"username": username, "total_solved": 0})
+                    users_col.insert_one({
+                        "username": username, 
+                        "name": username, 
+                        "url": f"https://leetcode.com/{username}/", 
+                        "total_solved": 0
+                    })
                     print(f"Added new user to DB: {username}")
     except Exception as e:
         print(f"Follower sync error: {e}")
