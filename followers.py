@@ -8,6 +8,7 @@ import time
 URL = "https://leetcode.com/u/harsh_bajpai1/"
 
 def get_leetcode_data():
+    global_names = set()
     chrome_options = Options()
     chrome_options.add_argument("--headless=new") 
     chrome_options.add_argument("--window-size=1920,1080")
@@ -44,6 +45,7 @@ def get_leetcode_data():
                     username = href.split('/u/')[-1].strip('/')
                     if username and username != "harsh_bajpai1" and username not in all_names:
                         all_names.append(username)
+                        global_names.add(username)
                         print(f"Page {page_num}: Found {username}")
                         new_names_on_page += 1
 
@@ -91,6 +93,8 @@ def get_leetcode_data():
     finally:
         driver.quit()
         print("\nProcess finished.")
+        return list(global_names)
 
 if __name__ == "__main__":
-    get_leetcode_data()
+    names = get_leetcode_data()
+    print(f"Found {len(names)} unique followers/following:", names)
