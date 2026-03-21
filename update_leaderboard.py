@@ -132,7 +132,7 @@ def update_leaderboard():
     print(f"Checking stats for {len(db_users)} users using 5 parallel workers...")
 
     # 👇 Run 5 requests at the same time
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         results = list(executor.map(process_user, db_users))
 
     # Update Time
