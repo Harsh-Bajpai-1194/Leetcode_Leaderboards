@@ -129,7 +129,7 @@ def update_leaderboard():
         print(f"Follower sync error: {e}")
 
     db_users = list(users_col.find())
-    print(f"Checking stats for {len(db_users)} users using 5 parallel workers...")
+    print(f"Checking stats for {len(db_users)} users using 10 parallel workers...")
 
     # 👇 Run 5 requests at the same time
     with ThreadPoolExecutor(max_workers=10) as executor:
