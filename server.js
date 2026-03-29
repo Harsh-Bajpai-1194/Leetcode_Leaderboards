@@ -38,6 +38,8 @@ async function fetchLeetCodeData(username) {
                     query getUserProfile($username: String!) {
                         matchedUser(username: $username) {
                             profile { realName }
+                            activeBadge { displayName icon }
+                            badges { id displayName icon }
                             submitStats { acSubmissionNum { difficulty count } }
                         }
                     }
@@ -53,6 +55,8 @@ async function fetchLeetCodeData(username) {
         const stats = userData.submitStats.acSubmissionNum;
         const displayName = userData.profile.realName || username;
 
+        let activeBadge = userData.activeBadge;
+
         return {
             username: username,
             name: displayName,
@@ -61,6 +65,8 @@ async function fetchLeetCodeData(username) {
             medium_solved: stats.find(s => s.difficulty === 'Medium')?.count || 0,
             hard_solved: stats.find(s => s.difficulty === 'Hard')?.count || 0,
             url: `https://leetcode.com/${username}/`,
+            badge_icon: activeBadge ? activeBadge.icon : null,
+            badge_name: activeBadge ? activeBadge.displayName : null,
             last_updated: new Date()
         };
 
