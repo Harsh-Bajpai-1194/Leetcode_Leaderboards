@@ -38,6 +38,7 @@ def process_user(user_doc):
       matchedUser(username: $username) {
         username
         profile { realName }
+        activeBadge { displayName icon }
         badges { id displayName icon }
         submitStats { acSubmissionNum { difficulty count } }
       }
@@ -56,13 +57,7 @@ def process_user(user_doc):
         solved_stats = user_data["submitStats"]["acSubmissionNum"]
 
         # Badge Logic
-        active_badge = None
-        badges = user_data.get("badges", [])
-        for b in badges:
-            if "Guardian" in b["displayName"] or "Knight" in b["displayName"]:
-                active_badge = b
-                break
-        if not active_badge and badges: active_badge = badges[-1]
+        active_badge = user_data.get("activeBadge")
 
         # Stats Logic
         stats = {
