@@ -39,7 +39,7 @@ async function fetchLeetCodeData(username) {
                         matchedUser(username: $username) {
                             profile { realName }
                             activeBadge { displayName icon }
-                            badges { id displayName icon }
+                            badges { id displayName icon creationDate }
                             submitStats { acSubmissionNum { difficulty count } }
                         }
                     }
@@ -56,6 +56,18 @@ async function fetchLeetCodeData(username) {
         const displayName = userData.profile.realName || username;
 
         let activeBadge = userData.activeBadge;
+        let badgeIcon = activeBadge ? activeBadge.icon : null;
+        let badgeName = activeBadge ? activeBadge.displayName : null;
+
+        if (!activeBadge && userData.badges && userData.badges.length > 0) {
+            const sortedBadges = userData.badges.sort((a, b) => {
+                const dateA = a.creationDate || "";
+                const dateB = b.creationDate || "";
+                return dateB.localeCompare(dateA);
+            });
+            badgeIcon = sortedBadges[0].icon;
+            badgeName = sortedBadges[0].displayName;
+        }
 
         return {
             username: username,
@@ -65,8 +77,8 @@ async function fetchLeetCodeData(username) {
             medium_solved: stats.find(s => s.difficulty === 'Medium')?.count || 0,
             hard_solved: stats.find(s => s.difficulty === 'Hard')?.count || 0,
             url: `https://leetcode.com/${username}/`,
-            badge_icon: activeBadge ? activeBadge.icon : null,
-            badge_name: activeBadge ? activeBadge.displayName : null,
+            badge_icon: badgeIcon,
+            badge_name: badgeName,
             last_updated: new Date()
         };
 
