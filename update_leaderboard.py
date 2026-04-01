@@ -39,7 +39,7 @@ def process_user(user_doc):
         username
         profile { realName }
         activeBadge { displayName icon }
-        badges { id displayName icon }
+        badges { id displayName icon creationDate }
         submitStats { acSubmissionNum { difficulty count } }
       }
     }
@@ -58,12 +58,28 @@ def process_user(user_doc):
 
         # Badge Logic
         active_badge = user_data.get("activeBadge")
+        badges = user_data.get("badges") or []
+        
+        badge_icon = None
+        badge_name = None
+
+        if active_badge:
+            badge_icon = active_badge.get("icon")
+            badge_name = active_badge.get("displayName")
+        elif badges:
+            try:
+                latest_badge = max(badges, key=lambda b: b.get("creationDate") or "")
+                badge_icon = latest_badge.get("icon")
+                badge_name = latest_badge.get("displayName")
+            except Exception:
+                badge_icon = badges[-1].get("icon")
+                badge_name = badges[-1].get("displayName")
 
         # Stats Logic
         stats = {
             "total": 0, "easy": 0, "medium": 0, "hard": 0,
-            "badge_icon": active_badge["icon"] if active_badge else None,
-            "badge_name": active_badge["displayName"] if active_badge else None
+            "badge_icon": badge_icon,
+            "badge_name": badge_name
         }
         for item in solved_stats:
             if item["difficulty"] == "All": stats["total"] = item["count"]
@@ -124,10 +140,10 @@ def update_leaderboard():
         print(f"Follower sync error: {e}")
 
     db_users = list(users_col.find())
-    print(f"Checking stats for {len(db_users)} users using 10 parallel workers...")
+    print(f"Checking stats for {len(db_users)} users using 5 parallel workers...")
 
     # 👇 Run 5 requests at the same time
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor:
         results = list(executor.map(process_user, db_users))
 
     # Update Time
