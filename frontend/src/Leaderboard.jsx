@@ -131,7 +131,7 @@ const Leaderboard = () => {
                 {getButtonText()} 
               </button>
 
-              {/* 👇 SPONSOR BUTTON & QR CODE 👇 */}
+              {/* 👇 SPONSOR BUTTON (WITH GIF BORDER) & QR CODE 👇 */}
               <div style={{ 
                   marginTop: '10px', 
                   width: '100%', 
@@ -144,24 +144,36 @@ const Leaderboard = () => {
                   border: '1px solid #333',
                   boxSizing: 'border-box'
               }}>
-                <button style={{
+                
+                {/* ✨ ANIMATED BORDER WRAPPER ✨ */}
+                <div style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: '#ec4899', 
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontWeight: 'bold',
-                  fontSize: '1em',
-                  cursor: 'default',
                   marginBottom: '15px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '8px'
+                  padding: '4px', // This determines how thick the GIF border is
+                  borderRadius: '8px',
+                  backgroundImage: 'url("/border.gif")', // Loads your GIF
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxSizing: 'border-box'
                 }}>
-                  💖 SPONSORS
-                </button>
+                  <button style={{
+                    width: '100%',
+                    padding: '10px',
+                    backgroundColor: '#ec4899', // Pink sponsor color
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px', // slightly smaller than the 8px wrapper
+                    fontWeight: 'bold',
+                    fontSize: '1em',
+                    cursor: 'default',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    💖 SPONSORS
+                  </button>
+                </div>
                 
                 <img 
                   src="/QR.jpg" 
