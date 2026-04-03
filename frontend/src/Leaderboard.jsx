@@ -108,13 +108,14 @@ const Leaderboard = () => {
                 </button>
               </Link>
 
+              {/* 👇 UPDATED BUTTON */}
               <button 
                 onClick={handleForceUpdate}
-                disabled={updateStatus !== 'idle'} 
+                disabled={updateStatus !== 'idle'} // Disable while running
                 style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: getButtonColor(), 
+                  backgroundColor: getButtonColor(), // Dynamic Color
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
@@ -130,56 +131,86 @@ const Leaderboard = () => {
               >
                 {getButtonText()} 
               </button>
-
-              {/* 👇 NEW: SPONSOR BUTTON & QR CODE 👇 */}
-              <div style={{ 
-                  marginTop: '10px', 
-                  width: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  backgroundColor: '#1a1a1a', 
-                  padding: '15px', 
-                  borderRadius: '8px', 
-                  border: '1px solid #333',
-                  boxSizing: 'border-box'
-              }}>
-                <button style={{
-                  width: '100%',
-                  padding: '10px',
-                  backgroundColor: '#ec4899', // Pink sponsor color
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontWeight: 'bold',
-                  fontSize: '1em',
-                  cursor: 'default',
-                  marginBottom: '15px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}>
-                  💖 SPONSORS
-                </button>
-                
-                <img 
-                  src="/QR.jpg" 
-                  alt="Sponsor QR Code" 
-                  style={{ 
-                    width: '85%', 
-                    maxWidth: '180px', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
-                  }} 
-                />
-                <p style={{ color: '#888', fontSize: '0.8em', marginTop: '10px', textAlign: 'center', marginBottom: 0 }}>
-                  Scan to support the project!
-                </p>
-              </div>
-              {/* 👆 END SPONSOR SECTION 👆 */}
-
           </div>
+      </div>
+      
+      {/* --- CENTER COLUMN: LEADERBOARD --- */}
+      <div className="leaderboard-container">
+        <h1>LEETCODE LEADERBOARD</h1>
+        <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
+          Last updated: {data.last_updated}
+        </div>
+
+        <div className="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search for names..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="table-wrapper">
+          <table className="leaderboard-table">
+            <thead>
+              <tr>
+                <th>S.no.</th>
+                <th>NAME</th>
+                <th>Solved</th>
+                <th>Profile</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              {loading ? (
+                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>
+              ) : (
+                filteredUsers.map((user, index) => (
+                  <tr key={index} data-rank={index + 1}>
+                    <td>{index + 1}</td>
+                    
+                    <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {user.badge_icon && (
+                        <img 
+                          src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} 
+                          alt="Badge" 
+                          title={user.badge_name}
+                          style={{ width: '25px', height: '25px' }} 
+                        />
+                      )}
+                      <span>{user.name || user.username}</span>
+                    </td>
+                    
+                    <td className="solved-cell">
+                      <div className="solved-wrapper">
+                        <span className="main-stat">{user.total_solved || 0}</span>
+                        <div className="hover-stats">
+                          <span className="easy" title="Easy">{user.easy_solved || 0}</span>
+                          <span className="medium" title="Medium">{user.medium_solved || 0}</span>
+                          <span className="hard" title="Hard">{user.hard_solved || 0}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <a href={user.url} target="_blank" rel="noopener noreferrer" 
+                        style={{
+                          textDecoration: 'none',
+                          backgroundColor: '#ffa116',
+                          color: 'black',
+                          padding: '5px 10px',
+                          borderRadius: '5px',
+                          fontWeight: 'bold'
+                        }}>
+                        View
+                      </a>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* --- RIGHT COLUMN WRAPPER --- */}
