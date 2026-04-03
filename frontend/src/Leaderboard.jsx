@@ -131,6 +131,54 @@ const Leaderboard = () => {
               >
                 {getButtonText()} 
               </button>
+
+              {/* 👇 NEW: SPONSOR BUTTON & QR CODE 👇 */}
+              <div style={{ 
+                  marginTop: '10px', 
+                  width: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  backgroundColor: '#1a1a1a', 
+                  padding: '15px', 
+                  borderRadius: '8px', 
+                  border: '1px solid #333',
+                  boxSizing: 'border-box'
+              }}>
+                <button style={{
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: '#ec4899', // Pink sponsor color
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  fontWeight: 'bold',
+                  fontSize: '1em',
+                  cursor: 'default',
+                  marginBottom: '15px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  💖 SPONSORS
+                </button>
+                
+                <img 
+                  src="/QR.jpg" 
+                  alt="Sponsor QR Code" 
+                  style={{ 
+                    width: '85%', 
+                    maxWidth: '180px', 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
+                  }} 
+                />
+                <p style={{ color: '#888', fontSize: '0.8em', marginTop: '10px', textAlign: 'center', marginBottom: 0 }}>
+                  Scan to support the project!
+                </p>
+              </div>
+              {/* 👆 END SPONSOR SECTION 👆 */}
           </div>
       </div>
       
