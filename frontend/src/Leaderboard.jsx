@@ -8,7 +8,7 @@ const Leaderboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   
-  // 👇 NEW STATE: Controls button text (idle, loading, success, error)
+  // Controls button text (idle, loading, success, error)
   const [updateStatus, setUpdateStatus] = useState('idle'); 
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Leaderboard = () => {
       });
   }, []);
 
-  // 👇 UPDATED: Silent Update (No Alerts)
+  // Silent Update (No Alerts)
   const handleForceUpdate = async () => {
     if (updateStatus !== 'idle') return; // Prevent double clicking
 
@@ -63,7 +63,7 @@ const Leaderboard = () => {
     })
     .sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
 
-  // 👇 HELPER: Get Button Text based on Status
+  // Get Button Text based on Status
   const getButtonText = () => {
       switch(updateStatus) {
           case 'loading': return '⏳ Requesting...';
@@ -73,7 +73,7 @@ const Leaderboard = () => {
       }
   };
 
-  // 👇 HELPER: Get Button Color
+  // Get Button Color
   const getButtonColor = () => {
       switch(updateStatus) {
           case 'loading': return '#f59e0b'; // Orange
@@ -108,7 +108,6 @@ const Leaderboard = () => {
                 </button>
               </Link>
 
-              {/* 👇 UPDATED BUTTON */}
               <button 
                 onClick={handleForceUpdate}
                 disabled={updateStatus !== 'idle'} // Disable while running
@@ -132,7 +131,7 @@ const Leaderboard = () => {
                 {getButtonText()} 
               </button>
 
-              {/* 👇 NEW: SPONSOR BUTTON & QR CODE 👇 */}
+              {/* 👇 SPONSOR BUTTON & QR CODE 👇 */}
               <div style={{ 
                   marginTop: '10px', 
                   width: '100%', 
@@ -148,7 +147,7 @@ const Leaderboard = () => {
                 <button style={{
                   width: '100%',
                   padding: '10px',
-                  backgroundColor: '#ec4899', // Pink sponsor color
+                  backgroundColor: '#ec4899', 
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
@@ -287,6 +286,11 @@ const Leaderboard = () => {
         <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
+
+      </div>
+
+      <div className="contact" style={{ width: '100%' }}>
+        <h3>Thanks for visiting!</h3>
       </div>
     </div>
   );
