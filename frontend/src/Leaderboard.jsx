@@ -287,12 +287,7 @@ const Leaderboard = () => {
         <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
-
       </div>
-
-      <div className="contact" style={{ width: '100%' }}>
-        <h3>Thanks for visiting!</h3>
-        </div>
     </div>
   );
 };
