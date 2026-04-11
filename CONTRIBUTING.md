@@ -7,7 +7,7 @@ An automated, full-stack tracking system designed to monitor competitive program
 * **Automated Data Pipeline**: Daily synchronization powered by GitHub Actions and a multi-threaded Python scraper (10 parallel workers).
 * **Dynamic Leaderboard**: Real-time ranking with support for LeetCode badges (Guardian, Knight, etc.) and hover-based solve breakdowns.
 * **Activity Visualization**: Interactive 21-day progress graphs and a live activity feed.
-* **Admin Management**: A password-free administrative panel for seamless user management and manual update triggers.
+* **Admin Management**: An administrative panel for seamless user management and manual update triggers.
 * **Production Optimized**: Specifically configured for high availability on Render and Netlify with built-in Cloudflare connection fixes.
 
 ---

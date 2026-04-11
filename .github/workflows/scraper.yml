@@ -1,4 +1,4 @@
-name: Daily LeetCode Leaderboard Update
+name: LeetCode Leaderboard Update
 
 on:
   schedule:

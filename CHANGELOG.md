@@ -1,1 +1,32 @@
+# Changelog
 
+All notable changes to the LeetCode Leaderboard project will be documented in this file.
+
+## [5.2.0] - 2026-04-11
+### Added
+- Sponsorship section with QR code integration.
+- Animated borders for UI elements using `border.gif`.
+- Dynamic status feedback for the "Force Update" button.
+
+## [5.1.1] - 2026-04-05
+### Fixed
+- Port binding issues for Render deployment using `0.0.0.0`.
+- Missing alt tags in React components for accessibility compliance.
+
+## [5.1.0] - 2026-04-01
+### Added
+- Admin Panel for user management.
+- Activity Graph with 21-day historical look-back logic.
+
+## [5.0.0] - 2026-03-25
+### Changed
+- Major architectural shift to the MERN stack.
+- Migrated local JSON storage to MongoDB Atlas.
+- Refactored API layer to use Express.js.
+
+## [4.0.0] - 2026-01-15
+### Added
+- Automation via GitHub Actions for daily data syncing.
+- Multi-threaded Python scraper with 10 parallel workers.
+
+... (continue down to v1.0.0)

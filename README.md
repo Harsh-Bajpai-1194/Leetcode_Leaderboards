@@ -22,7 +22,7 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 ### 🎨 **Frontend Experience**
 * **🥇 Dynamic Rank System:** Top 3 players are highlighted with Gold, Silver, and Bronze trophies.
 * **🏅 Badge Support:** Automatically fetches and displays user badges (Guardian, Knight, Monthly Badges) next to names.
-* **📈 Activity Graph:** Visualizes the group's total problem-solving trend over the last 7 days.
+* **📈 Activity Graph:** Visualizes the group's total problem-solving trend over the last 21 days.
 * **⚡ Instant Search:** Real-time filtering of users by name.
 * **🌙 Modern Dark UI:** Fully responsive design with a custom dark theme and orange accents.
 
@@ -32,7 +32,7 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 * **📜 Live Activity Feed:** Logs real-time updates (e.g., *"X solved +2 questions"*) with timestamps.
 
 ### 🤖 **Automation & Performance**
-* **🚀 Parallel Processing:** Python script uses `ThreadPoolExecutor` (5 workers) to scrape 75+ users in under 30 seconds.
+* **🚀 Parallel Processing:** Python script uses `ThreadPoolExecutor` (10 workers) to scrape 75+ users in under 30 seconds.
 * **☁️ Zero Maintenance:** GitHub Actions runs the scraper automatically every 24 hours.
 
 ---
@@ -63,11 +63,11 @@ This project uses a decoupled **Client-Server Architecture**:
 ## ⚙️ How It Works
 
 ### 1. The Parallel Scraper (`update_leaderboard.py`)
-The script uses 5 parallel threads to fetch data simultaneously, reducing execution time by 80%.
+The script uses 10 parallel threads to fetch data simultaneously, reducing execution time by 80%.
 
 ```python
 # Parallel Execution Snippet
-with ThreadPoolExecutor(max_workers=5) as executor:
+with ThreadPoolExecutor(max_workers=10) as executor:
     results = list(executor.map(process_user, db_users))
 ```
 
