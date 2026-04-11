@@ -108,8 +108,11 @@ Contributions are welcome! To maintain the quality of the project, please follow
 
 ---
 
-## 📄 License
-This project is open-source and available under the MIT License.
+### **🚀 Roadmap for v6.0.0+**
+* **v6.0.0**: Introduction of a **Global Authentication** system using OAuth for user logins.
+* **v7.0.0**: Migration of the entire codebase from JavaScript to **TypeScript** for enterprise-grade type safety.
+
+The project is currently operating at a **v5.2.0** level of technical maturity! 🚀
 
 ## 💖 Support
 If this project helped you track your community's progress, consider supporting the development through the **Sponsors** section on the live dashboard.

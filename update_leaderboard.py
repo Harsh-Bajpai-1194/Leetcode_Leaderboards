@@ -53,7 +53,7 @@ def process_user(user_doc):
             return None
 
         user_data = data["data"]["matchedUser"]
-        real_name = user_data["profile"]["realName"] or user_data["username"]
+        real_name = user_data["profile"]["realName"] or user_data["username"].capitalize()
         solved_stats = user_data["submitStats"]["acSubmissionNum"]
 
         # Badge Logic
@@ -140,10 +140,10 @@ def update_leaderboard():
         print(f"Follower sync error: {e}")
 
     db_users = list(users_col.find())
-    print(f"Checking stats for {len(db_users)} users using 5 parallel workers...")
+    print(f"Checking stats for {len(db_users)} users using 10 parallel workers...")
 
-    # 👇 Run 5 requests at the same time
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    # 👇 Run 10 requests at the same time
+    with ThreadPoolExecutor(max_workers=10) as executor:
         results = list(executor.map(process_user, db_users))
 
     # Update Time
