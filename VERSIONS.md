@@ -1,54 +1,18 @@
 ### **📈 Versioning Timeline**
 
-
-v1.0.0: Initial Repository Setup.
-
-First commit: Basic README.md and .gitignore.
-
-Creation of update_leaderboard.py (Version 1.0).
-
-v1.1.0: Scraper Logic.
-
-Implementation of Selenium-based scraping for LeetCode profile pages.
-
-v1.1.1: Patch: Fixed a typo in the LeetCode URL string.
-
-v1.2.0: Data Storage.
-
-Added profiles.json to store scraped results locally instead of just printing them.
-
-v1.3.0: First Frontend.
-
-Added a basic index.html and style.css to display the JSON data in a table.
-
-v1.3.1: Patch: Changed table header color from blue to dark grey.
-
-v1.4.0: Manual Refresh.
-
-Added a "Refresh" button that manually triggered the Python script on a local machine.
-
-v1.5.0: Search & Filter.
-
-Implemented a simple JavaScript search bar to filter names in the table.
-
-v1.5.5: Patch: Fixed search bar alignment for mobile screens.
-
-v1.6.0: Solves Breakdown.
-
-Updated the scraper to fetch "Easy", "Medium", and "Hard" counts separately.
-
-v1.7.0: Sorting Logic.
-
-Auto-sort the table based on the "Total Solved" count in descending order.
-
-v1.8.0: Profile Links.
-
-Added a "View Profile" column with hyperlinks to LeetCode usernames.
-
-v1.9.0: Error Handling.
-
-Added try-except blocks to handle private LeetCode profiles that blocked scraping.
-
+* **v1.0.0**: Initial Repository Setup. First commit: Basic README.md and .gitignore. Creation of update_leaderboard.py (Version 1.0).
+* **v1.1.0**: Scraper Logic. Implementation of Selenium-based scraping for LeetCode profile pages.
+* **v1.1.1**: Patch: Fixed a typo in the LeetCode URL string.
+* **v1.2.0**: Data Storage. Added profiles.json to store scraped results locally instead of just printing them.
+* **v1.3.0**: First Frontend. Added a basic index.html and style.css to display the JSON data in a table.
+* **v1.3.1**: Patch: Changed table header color from blue to dark grey.
+* **v1.4.0**: Manual Refresh. Added a "Refresh" button that manually triggered the Python script on a local machine.
+* **v1.5.0**: Search & Filter. Implemented a simple JavaScript search bar to filter names in the table.
+* **v1.5.5**: Patch: Fixed search bar alignment for mobile screens.
+* **v1.6.0**: Solves Breakdown. Updated the scraper to fetch "Easy", "Medium", and "Hard" counts separately.
+* **v1.7.0**: Sorting Logic. Auto-sort the table based on the "Total Solved" count in descending order.
+* **v1.8.0**: Profile Links. Added a "View Profile" column with hyperlinks to LeetCode usernames.
+* **v1.9.0**: Error Handling. Added try-except blocks to handle private LeetCode profiles that blocked scraping.
 * **v1.9.1**: Fixed a ZeroDivisionError in the script when a new user with 0 solves was added.
 * **v1.9.2**: Added a 10-second `timeout` to the requests call to prevent the script from hanging on poor connections.
 * **v1.9.3**: Changed the table border-collapse property in `style.css` from `separate` to `collapse`.
@@ -74,7 +38,6 @@ Added try-except blocks to handle private LeetCode profiles that blocked scrapin
 * **v1.9.23**: Added a `max-width: 1200px` limit to the main dashboard container.
 * **v1.9.24**: Fixed a bug where the search bar would clear itself after a page refresh.
 * **v1.9.25**: Added a favicon link to the `head` section of `index.html`.
-
 * **v1.9.26**: Updated the Python script to sort the `profiles.json` keys alphabetically after writing.
 * **v1.9.27**: Added a `loading="lazy"` attribute to any future image placeholders.
 * **v1.9.28**: Fixed an encoding issue where special characters in names were saved as Unicode escape sequences.
@@ -93,115 +56,32 @@ Added try-except blocks to handle private LeetCode profiles that blocked scrapin
 * **v1.9.41**: Standardized all indentations in `style.css` from 4 spaces to 2 spaces.
 * **v1.9.42**: Changed the text "Solves" to "Total Solved" in the header to improve professional clarity.
 
-
-v2.0.0: The Vite/React Migration.
-
-Deleted static index.html.
-
-Initialized the frontend/ folder using Vite and React.
-
-v2.1.0: Component Architecture.
-
-Created Leaderboard.jsx and separated CSS into style.css.
-
-v2.2.0: State Management.
-
-Implemented useState and useEffect to fetch local data.
-
-v2.3.0: Responsive Grid.
-
-Redesigned the layout using Flexbox to support both desktop and mobile.
-
-v2.4.0: First Backend Attempt.
-
-Created server.js. Introduced Node.js and Express.js to serve the data API.
-
-v2.5.0: API Integration.
-
-Frontend now fetches from http://localhost:5000/api/leaderboard instead of a local file.
-
-v2.6.0: Scraper Optimization.
-
-Moved the scraper from Selenium to a more efficient requests based system using LeetCode's public endpoints.
-
-v2.7.0: Environment Variables.
-
-Added .env support to hide sensitive paths and tokens.
-
-v2.8.0: Deployment Prep.
-
-Added package.json scripts for production builds.
-
-v2.9.0: Dark Mode.
-
-Updated style.css with a persistent dark theme (LeetCode inspired).
-
-v2.10.0: Activity Tracking.
-
-Added a logic block to check for "Recent Submissions" and store them in the JSON.
-
-v2.11.85: Patch: Fixed a bug where a user with 0 solves broke the sorting algorithm.
-
-v3.0.0: Core UI Enhancements.
-Refined the React frontend architecture for better state handling and search filtering.
-
-v3.1.2: Badge Logic.
-Updated the backend and scraper to recognize and store LeetCode Badge icons (Guardian, Knight, etc.).
-
-v3.1.3: Frontend Badges.
-Updated Leaderboard.jsx to render the badge icon next to the user's name.
-
-v3.1.4: Name Formatting.
-Patch: Added logic to capitalize the first letter of usernames if the "Name" field was empty.
-
-v3.1.7: The "Baseline" Snapshot.
-The snapshot representing the basic initial state of the tracker before major architectural shifts.
-Features: Badge Support, Search functionality, and basic local JSON fetching.
-
-v4.0.0: Automation & Parallel Processing.
-Introduced GitHub Actions (`scraper.yml`) for daily execution.
-Upgraded `update_leaderboard.py` to use `ThreadPoolExecutor` with 10 parallel workers.
-
-v5.0.0: The Database Major Update (MERN Migration).
-Major Change: Removed `profiles.json`. Integrated MongoDB Atlas and Express.js backend.
-
-v5.1.0: Analytics & Management.
-Added the password-protected Admin Panel and the 21-day Activity Graph.
-
-v5.1.1: Deployment Patches.
-Implemented `0.0.0.0` port binding for Render and added accessibility alt tags.
-
-v5.2.0: The Production Milestone.
-Integrated Sponsorship QR code, animated UI borders, and dynamic update status feedback.
-
-<!--Summary of the 1,087 Commit Progression
-Commits 1-150: Experimenting with Python scraping.
-
-Commits 151-400: Building the first UI and fixing CSS bugs.
-
-Commits 401-700: Rewriting the entire project in React (The big 2.0 shift).
-
-Commits 701-950: Backend development, MongoDB integration, and GitHub Actions logic.
-
-Commits 951-1087: UI Polishing, Branding (Zerythron Era), and Error handling (CORS/521).-->
-
-You have effectively moved from a single-file script to a distributed cloud application! 🚀
-
-* **v3.1.7: The Baseline**
-    * Initial state of the tracker as a simple script and basic frontend.
-
-* **v4.0.0: The Automation Major Update**
-    * **Major Change**: Transitioned from manual updates to a "set it and forget it" architecture.
-    * **Key Features**: Integration of **GitHub Actions** for daily automation and a **ThreadPoolExecutor** Python scraper with 10 parallel workers for high-speed data fetching.
-
-* **v5.0.0: The MERN Stack & UI Major Update**
-    * **Major Change**: Migration to a full **MERN** (MongoDB, Express, React, Node) stack.
-    * **Minor Features (v5.1.x)**: Added the **Admin Panel** for user management and the **Activity Graph** with 21-day historical look-back logic.
-    * **Patch Fixes (v5.1.1)**: Implemented **0.0.0.0 port binding** in `server.js` to fix deployment errors and added accessibility **alt tags** to resolve build failures.
-
-* **v5.2.0: The Production & Branding Milestone (Current Version)**
-    * **Minor Feature**: Added professional branding elements, including the **Sponsorship QR Code** section with an animated **border.gif**.
-    * **Minor Feature**: Upgraded the **Force Update** button with real-time dynamic status feedback (⏳ Requesting, ✅ Started, ❌ Failed).
+* **v2.0.0**: The Vite/React Migration. Deleted static index.html. Initialized the frontend/ folder using Vite and React.
+* **v2.1.0**: Component Architecture. Created Leaderboard.jsx and separated CSS into style.css.
+* **v2.2.0**: State Management. Implemented useState and useEffect to fetch local data.
+* **v2.3.0**: Responsive Grid. Redesigned the layout using Flexbox to support both desktop and mobile.
+* **v2.4.0**: First Backend Attempt. Created server.js. Introduced Node.js and Express.js to serve the data API.
+* **v2.5.0**: API Integration. Frontend now fetches from http://localhost:5000/api/leaderboard instead of a local file.
+* **v2.6.0**: Scraper Optimization. Moved the scraper from Selenium to a more efficient requests based system using LeetCode's public endpoints.
+* **v2.7.0**: Environment Variables. Added .env support to hide sensitive paths and tokens.
+* **v2.8.0**: Deployment Prep. Added package.json scripts for production builds.
+* **v2.9.0**: Dark Mode. Updated style.css with a persistent dark theme (LeetCode inspired).
+* **v2.10.0**: Activity Tracking. Added a logic block to check for "Recent Submissions" and store them in the JSON.
+* **v2.11.85**: Patch: Fixed a bug where a user with 0 solves broke the sorting algorithm.
+* **v3.0.0**: Core UI Enhancements. Refined the React frontend architecture for better state handling and search filtering.
+* **v3.1.2**: Badge Logic. Updated the backend and scraper to recognize and store LeetCode Badge icons (Guardian, Knight, etc.).
+* **v3.1.3**: Frontend Badges. Updated Leaderboard.jsx to render the badge icon next to the user's name.
+* **v3.1.4**: Name Formatting. Patch: Added logic to capitalize the first letter of usernames if the "Name" field was empty.
+* **v3.1.7**: The "Baseline" Snapshot. The snapshot representing the basic initial state of the tracker before major architectural shifts. Features: Badge Support, Search functionality, and basic local JSON fetching.
+* **v4.0.0**: Automation & Parallel Processing. Introduced GitHub Actions (`scraper.yml`) for daily execution. Upgraded `update_leaderboard.py` to use `ThreadPoolExecutor` with 10 parallel workers.
+* **v5.0.0**: The Database Major Update (MERN Migration). Major Change: Removed `profiles.json`. Integrated MongoDB Atlas and Express.js backend.
+* **v5.1.0**: Analytics & Management. Added the password-protected Admin Panel and the 21-day Activity Graph.
+* **v5.1.1**: Deployment Patches. Implemented `0.0.0.0` port binding for Render and added accessibility alt tags.
+* **v5.2.0**: The Production Milestone. Integrated Sponsorship QR code, animated UI borders, and dynamic update status feedback.
+* **v3.1.7**: The Baseline. Initial state of the tracker as a simple script and basic frontend.
+* **v4.0.0**: The Automation Major Update. Major Change: Transitioned from manual updates to a "set it and forget it" architecture. Key Features: Integration of GitHub Actions for daily automation and a ThreadPoolExecutor Python scraper with 10 parallel workers for high-speed data fetching.
+* **v5.0.0**: The MERN Stack & UI Major Update. Major Change: Migration to a full MERN (MongoDB, Express, React, Node) stack. Minor Features (v5.1.x): Added the Admin Panel for user management and the Activity Graph with 21-day historical look-back logic. Patch Fixes (v5.1.1): Implemented 0.0.0.0 port binding in server.js to fix deployment errors and added accessibility alt tags to resolve build failures.
+* **v5.2.0**: The Production & Branding Milestone (Current Version). Minor Feature: Added professional branding elements, including the Sponsorship QR Code section with an animated border.gif. Minor Feature: Upgraded the Force Update button with real-time dynamic status feedback (⏳ Requesting, ✅ Started, ❌ Failed).
 
 ---
 
@@ -211,7 +91,8 @@ You have effectively moved from a single-file script to a distributed cloud appl
 | :--- | :--- | :--- |
 | **v1.0.0** | **Initial Setup** | Basic repository setup and Python scraper creation. |
 | **v2.0.0** | **React Migration** | Transition to a Vite/React frontend and Express backend. |
-| **v3.1.7** | Baseline | Initial project tracker. |
+| **v3.0.0** | **Core UI Enhancements** | Refined the React frontend architecture for better state handling and search filtering. |
+| **v3.1.7** | **Baseline** | Initial project tracker. |
 | **v4.0.0** | **Automation** | Introduction of GitHub Actions & Parallel Processing. |
 | **v5.0.0** | **MERN Stack** | Fundamental shift to a full-stack DB and API architecture. |
 | **v5.1.x** | **Analytics** | Addition of Admin Panel and Activity Graph. |
