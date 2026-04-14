@@ -267,8 +267,8 @@ a:hover {
     flex: 25;             /* <--- CHANGED to 25 */
     width: 100%;          
     
-    /* 👇 IMPORTANT: Increase this or remove it, otherwise it stays tiny! */
-    max-width: 400px;     /* Increased from 150px so it can fill the space */
+    /* Adjusted for better vertical alignment with other elements */
+    max-width: 250px;     /* Decreased from 400px to reduce height */
     
     height: auto;         
     align-self: flex-start; 
