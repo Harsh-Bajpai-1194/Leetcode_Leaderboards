@@ -82,6 +82,7 @@
 * **v4.0.0**: The Automation Major Update. Major Change: Transitioned from manual updates to a "set it and forget it" architecture. Key Features: Integration of GitHub Actions for daily automation and a ThreadPoolExecutor Python scraper with 10 parallel workers for high-speed data fetching.
 * **v5.0.0**: The MERN Stack & UI Major Update. Major Change: Migration to a full MERN (MongoDB, Express, React, Node) stack. Minor Features (v5.1.x): Added the Admin Panel for user management and the Activity Graph with 21-day historical look-back logic. Patch Fixes (v5.1.1): Implemented 0.0.0.0 port binding in server.js to fix deployment errors and added accessibility alt tags to resolve build failures.
 * **v5.2.0**: The Production & Branding Milestone (Current Version). Minor Feature: Added professional branding elements, including the Sponsorship QR Code section with an animated border.gif. Minor Feature: Upgraded the Force Update button with real-time dynamic status feedback (⏳ Requesting, ✅ Started, ❌ Failed).
+* **v5.2.1**: Patch: Decreased the height of the LeetCode logo to improve vertical alignment and layout spacing.
 
 ---
 

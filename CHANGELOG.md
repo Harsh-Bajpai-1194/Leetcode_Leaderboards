@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.2.1] - 2026-04-14
+### Fixed
+- Decreased the height of the LeetCode logo in the UI to improve vertical alignment and element spacing.
+
 ## [5.2.0] - 2026-04-11
 ### Added
 - Sponsorship section with QR code integration.
