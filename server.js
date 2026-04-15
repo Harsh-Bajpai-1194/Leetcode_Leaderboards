@@ -1,11 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
@@ -93,7 +95,20 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
 
-        const users = await usersCollection.find().toArray();
+        const users = await usersCollection.find()
+            .sort({ total_solved: -1 })
+            .project({
+                username: 1,
+                name: 1,
+                total_solved: 1,
+                easy_solved: 1,
+                medium_solved: 1,
+                hard_solved: 1,
+                url: 1,
+                badge_icon: 1,
+                badge_name: 1
+            })
+            .toArray();
         const metadata = await metadataCollection.findOne({ type: "last_updated" });
 
         // 1. FETCH FEED DATA (Fast, small limit)
