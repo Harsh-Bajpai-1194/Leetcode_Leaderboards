@@ -196,6 +196,14 @@ const Leaderboard = () => {
       {/* --- CENTER COLUMN: LEADERBOARD --- */}
       <div className="leaderboard-container">
         <h1>LEETCODE LEADERBOARD</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            LEETCODE LEADERBOARDS
+            <img 
+              src="https://img.shields.io/badge/Release-v5.3.0-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.3.0" 
+              style={{ height: '28px' }} 
+            />
+        </h1>
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
         </div>

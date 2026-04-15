@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.0] - 2026-04-15
+### Changed
+- Optimized database performance by adding a descending index to the `total_solved` field in the `users` collection. This significantly reduces query time for sorting the leaderboard.
+
 ## [5.2.1] - 2026-04-14
 ### Fixed
 - Decreased the height of the LeetCode logo in the UI to improve vertical alignment and element spacing.
