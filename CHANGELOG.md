@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.5] - 2026-04-15
+### Added
+- Added `workflow_dispatch` to `keep-alive.yml` to allow manual triggering of the keep-alive ping.
+
 ## [5.3.4] - 2026-04-15
 ### Fixed
 - Added missing `compression` dependency to `package.json` to fix Render deployment failure.

@@ -4,6 +4,7 @@ on:
   schedule:
     # Runs every 5 minutes, the most frequent schedule allowed
     - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
 
 jobs:
   ping:

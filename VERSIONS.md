@@ -88,6 +88,8 @@
 * **v5.3.2** Patch: Implemented Gzip Compression and Database Projection/Sorting to improve API response time.
 * **v5.3.3** Availability: Added a keep-alive cron job to prevent server from sleeping.
 * **v5.3.4** Patch: Added missing `compression` dependency to `package.json` to resolve deployment failure.
+* **v5.3.5** Patch: Added `workflow_dispatch` to `keep-alive.yml` for manual triggering of the keep-alive ping.
+* **v5.3.6** Performance: Implemented `Promise.all` in `server.js` and optimized Graph logic, effectively reducing DB waterfall querying and removing the CPU bottleneck.
 
 ---
 
@@ -108,3 +110,5 @@
 | **v5.3.2** | **Performance** | Implemented Gzip Compression and Database Projection/Sorting. |
 | **v5.3.3** | **Availability** | Added a keep-alive cron job to prevent server from sleeping. |
 | **v5.3.4** | **Patch** | Added missing `compression` dependency to `package.json`. |
+| **v5.3.5** | **Patch** | Added `workflow_dispatch` to `keep-alive.yml` for manual triggering. |
+| **v5.3.6** | **Performance** | Used `Promise.all` and refactored Graph looping to fix CPU bottleneck. |
