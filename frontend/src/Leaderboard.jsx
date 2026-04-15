@@ -195,7 +195,6 @@ const Leaderboard = () => {
       
       {/* --- CENTER COLUMN: LEADERBOARD --- */}
       <div className="leaderboard-container">
-        <h1>LEETCODE LEADERBOARD</h1>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
