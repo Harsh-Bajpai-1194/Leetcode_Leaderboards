@@ -101,57 +101,46 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
 
-        const users = await usersCollection.find()
-            .sort({ total_solved: -1 })
-            .project({
-                username: 1,
-                name: 1,
-                total_solved: 1,
-                easy_solved: 1,
-                medium_solved: 1,
-                hard_solved: 1,
-                url: 1,
-                badge_icon: 1,
-                badge_name: 1
-            })
-            .toArray();
-        const metadata = await metadataCollection.findOne({ type: "last_updated" });
-
-        // 1. FETCH FEED DATA (Fast, small limit)
-        const feedActivities = await activitiesCollection
-            .find()
-            .sort({ created_at: -1 })
-            .limit(100) // Keep the feed fast
-            .toArray();
-
-        // 2. FETCH GRAPH DATA (Look back 21 days, NO LIMIT)
         const daysToLookBack = 21; 
         const pastDate = new Date();
         pastDate.setDate(pastDate.getDate() - daysToLookBack);
 
-        // Fetch ALL activities newer than 21 days ago
-        const graphActivities = await activitiesCollection
-            .find({ created_at: { $gte: pastDate } }) 
-            .toArray();
+        // 1. RUN ALL DB QUERIES CONCURRENTLY (Massive Speedup)
+        const [users, metadata, feedActivities, graphActivities] = await Promise.all([
+            usersCollection.find().sort({ total_solved: -1 }).project({
+                username: 1, name: 1, total_solved: 1, easy_solved: 1, 
+                medium_solved: 1, hard_solved: 1, url: 1, badge_icon: 1, badge_name: 1
+            }).toArray(),
+            metadataCollection.findOne({ type: "last_updated" }),
+            activitiesCollection.find().sort({ created_at: -1 }).limit(100).toArray(),
+            activitiesCollection.find({ created_at: { $gte: pastDate } }).toArray()
+        ]);
 
-        // 3. BUILD GRAPH
+        // 2. OPTIMIZED GRAPH LOGIC (O(N) instead of O(N * 21))
+        const dailySolvedMap = {};
+        
+        // Single pass through activities to group by date
+        for (const act of graphActivities) {
+            if (!act.created_at) continue;
+            
+            const match = act.text.match(/\+(\d+)/);
+            const solved = match ? parseInt(match[1]) : 0;
+            
+            const actDate = new Date(act.created_at);
+            const dateKey = actDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+            dailySolvedMap[dateKey] += solved;
+        }
+
+        // 3. BUILD FINAL 21-DAY ARRAY
         const graphStats = [];
         for (let i = daysToLookBack - 1; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             
-            // Check strictly against Day/Month
-            const dailyCount = graphActivities.filter(act => {
-                if (!act.created_at) return false;
-                const actDate = new Date(act.created_at);
-                return actDate.getDate() === d.getDate() && actDate.getMonth() === d.getMonth();
-            }).reduce((acc, act) => {
-                const match = act.text.match(/\+(\d+)/);
-                return acc + (match ? parseInt(match[1]) : 0);
-            }, 0);
-
-            graphStats.push({ date: dateStr, solved: dailyCount });
+            graphStats.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
         }
 
         res.json({ 
