@@ -16,6 +16,10 @@ let db, usersCollection, activitiesCollection, metadataCollection;
 
 const client = new MongoClient(MONGO_URI);
 
+// --- IN-MEMORY CACHE ---
+let leaderboardCache = { data: null, timestamp: 0 };
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 async function connectDB() {
     try {
         await client.connect();
@@ -24,6 +28,11 @@ async function connectDB() {
         activitiesCollection = db.collection("activities");
         metadataCollection = db.collection("metadata");
         console.log("✅ Server Connected to MongoDB");
+
+        // Ensure Performance Indexes on Startup
+        await usersCollection.createIndex({ total_solved: -1 });
+        await activitiesCollection.createIndex({ created_at: -1 });
+        console.log("✅ MongoDB Indexes Ensured");
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err);
     }
@@ -101,6 +110,11 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
 
+        // ⚡ 1. SERVE FROM CACHE IF VALID (Lightning Fast < 50ms)
+        if (leaderboardCache.data && (Date.now() - leaderboardCache.timestamp < CACHE_TTL)) {
+            return res.json(leaderboardCache.data);
+        }
+
         const daysToLookBack = 21; 
         const pastDate = new Date();
         pastDate.setDate(pastDate.getDate() - daysToLookBack);
@@ -143,12 +157,18 @@ app.get('/api/leaderboard', async (req, res) => {
             graphStats.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
         }
 
-        res.json({ 
+        const responseData = { 
             users, 
             activities: feedActivities, // Send small list to UI
             graph_data: graphStats,     // Send calculated stats
             last_updated: metadata ? metadata.date_string : '--' 
-        });
+        };
+
+        // ⚡ 2. SAVE TO CACHE FOR SUBSEQUENT REQUESTS
+        leaderboardCache.data = responseData;
+        leaderboardCache.timestamp = Date.now();
+
+        res.json(responseData);
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -184,6 +204,9 @@ app.post('/api/trigger-update', async (req, res) => {
     const REPO_OWNER = "Harsh-Bajpai-1194"; 
     const REPO_NAME = "Leetcode_Leaderboards";
     const WORKFLOW_FILE = "scraper.yml"; 
+
+    // Invalidate Cache so the next request pulls fresh scraped data
+    leaderboardCache.data = null; 
 
     if (!GITHUB_TOKEN) return res.status(500).json({ error: "Server missing GitHub Token" });
 

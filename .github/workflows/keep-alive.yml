@@ -11,4 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping server to keep it alive
-        run: curl -s https://leetcode-leaderboards.onrender.com/api/health
+        run: |
+          curl -s https://leetcode-leaderboards.onrender.com/api/health
+          curl -s https://leetcode-leaderboards.onrender.com/api/leaderboard > /dev/null

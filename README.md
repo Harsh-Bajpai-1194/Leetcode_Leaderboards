@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.3.7-deeppink?style=for-the-the-badge&logo=github)
+# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.3.8-deeppink?style=for-the-the-badge&logo=github)
 ![Status](https://img.shields.io/badge/Status-Live-success?style=for-the-the-badge)  
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)

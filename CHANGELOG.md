@@ -2,6 +2,12 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.8] - 2026-04-15
+### Added
+- Implemented an In-Memory caching system (`CACHE_TTL`: 5 min) on the Express backend to drop API response times below 50ms.
+- Added automated MongoDB index creation for `created_at` in the `activities` collection.
+- Updated GitHub Actions `keep-alive.yml` to routinely hit the leaderboard endpoint, ensuring the cache stays perfectly warm in the background.
+
 ## [5.3.7] - 2026-04-15
 ### Fixed
 - Updated the release version badge in the frontend UI (`Leaderboard.jsx`) to sync with the current system version.
