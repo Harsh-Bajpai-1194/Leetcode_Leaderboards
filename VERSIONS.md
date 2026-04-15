@@ -87,6 +87,7 @@
 * **v5.3.1** Patch: Removed duplicate headings.
 * **v5.3.2** Patch: Implemented Gzip Compression and Database Projection/Sorting to improve API response time.
 * **v5.3.3** Availability: Added a keep-alive cron job to prevent server from sleeping.
+* **v5.3.4** Patch: Added missing `compression` dependency to `package.json` to resolve deployment failure.
 
 ---
 
@@ -106,3 +107,4 @@
 | **v5.3.1** | **Patch** | Removed duplicate headings. |
 | **v5.3.2** | **Performance** | Implemented Gzip Compression and Database Projection/Sorting. |
 | **v5.3.3** | **Availability** | Added a keep-alive cron job to prevent server from sleeping. |
+| **v5.3.4** | **Patch** | Added missing `compression` dependency to `package.json`. |

@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.4] - 2026-04-15
+### Fixed
+- Added missing `compression` dependency to `package.json` to fix Render deployment failure.
+
 ## [5.3.3] - 2026-04-15
 ### Added
 - Implemented a keep-alive system. Added a `/api/health` endpoint and a 5-minute cron job via GitHub Actions to prevent the free-tier server from sleeping.
