@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.2] - 2026-04-15
+### Added
+- Implemented Gzip Compression and Database Projection/Sorting for optimized API response sizes and speed.
+
 ## [5.3.1] - 2026-04-15
 ### Changed
 - Patch: Removed duplicate headings.

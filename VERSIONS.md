@@ -85,6 +85,7 @@
 * **v5.2.1**: Patch: Decreased the height of the LeetCode logo to improve vertical alignment and layout spacing.
 * **v5.3.0** Patch: Added a descending index to the `total_solved` field in the `users` collection. This significantly reduces query time for sorting the leaderboard.
 * **v5.3.1** Patch: Removed duplicate headings.
+* **v5.3.2** Patch: Implemented Gzip Compression and Database Projection/Sorting to improve API response time.
 
 ---
 
@@ -102,3 +103,4 @@
 | **v5.2.0** | **Production** | Sponsor integration, branding, and status feedback. |
 | **v5.3.0** | **Performance** | Added a MongoDB index to `total_solved` for faster sorting. |
 | **v5.3.1** | **Patch** | Removed duplicate headings. |
+| **v5.3.2** | **Performance** | Implemented Gzip Compression and Database Projection/Sorting. |

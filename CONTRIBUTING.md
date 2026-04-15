@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboard v5.3.1
+# 🏆 LeetCode Leaderboard v5.3.2
 
 An automated, full-stack tracking system designed to monitor competitive programming progress across a group of users. This project utilizes a specialized MERN architecture combined with multi-threaded Python automation to provide real-time stats, badges, and activity visualization.
 
@@ -88,6 +88,7 @@ Adds a new LeetCode handle to the tracking system.
 
 ## 📈 Version History
 
+* **v5.3.2**: API Performance. Implemented Gzip Compression and Database Projection/Sorting.
 * **v5.3.1**: Version Patch. Increased the patch update number.
 * **v5.3.0**: DB Performance. Added a MongoDB index to `total_solved` for faster sorting.
 * **v5.2.1**: UI Patch. Adjusted logo dimensions to improve layout spacing.
@@ -115,7 +116,7 @@ Contributions are welcome! To maintain the quality of the project, please follow
 * **v6.0.0**: Introduction of a **Global Authentication** system using OAuth for user logins.
 * **v7.0.0**: Migration of the entire codebase from JavaScript to **TypeScript** for enterprise-grade type safety.
 
-The project is currently operating at a **v5.3.1** level of technical maturity! 🚀
+The project is currently operating at a **v5.3.2** level of technical maturity! 🚀
 
 ## 💖 Support
 If this project helped you track your community's progress, consider supporting the development through the **Sponsors** section on the live dashboard.
