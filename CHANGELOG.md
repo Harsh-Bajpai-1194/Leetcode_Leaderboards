@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.9] - 2026-04-15
+### Fixed
+- Resolved a cache stampede issue where UptimeRobot periodically hit an expired cache. Implemented `?refresh=true` in `keep-alive.yml` and increased cache TTL to 15 minutes, ensuring the cache is actively warmed in the background.
+
 ## [5.3.8] - 2026-04-15
 ### Added
 - Implemented an In-Memory caching system (`CACHE_TTL`: 5 min) on the Express backend to drop API response times below 50ms.

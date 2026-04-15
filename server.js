@@ -18,7 +18,7 @@ const client = new MongoClient(MONGO_URI);
 
 // --- IN-MEMORY CACHE ---
 let leaderboardCache = { data: null, timestamp: 0 };
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes (Refreshed every 5m by cron)
 
 async function connectDB() {
     try {
@@ -110,8 +110,9 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
 
-        // ⚡ 1. SERVE FROM CACHE IF VALID (Lightning Fast < 50ms)
-        if (leaderboardCache.data && (Date.now() - leaderboardCache.timestamp < CACHE_TTL)) {
+        // ⚡ 1. SERVE FROM CACHE (Unless forced by background cron job)
+        const forceRefresh = req.query.refresh === 'true';
+        if (!forceRefresh && leaderboardCache.data && (Date.now() - leaderboardCache.timestamp < CACHE_TTL)) {
             return res.json(leaderboardCache.data);
         }
 

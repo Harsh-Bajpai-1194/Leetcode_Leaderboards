@@ -92,6 +92,7 @@
 * **v5.3.6** Performance: Implemented `Promise.all` in `server.js` and optimized Graph logic, effectively reducing DB waterfall querying and removing the CPU bottleneck.
 * **v5.3.7** Patch: Synced the version badge in `Leaderboard.jsx` to reflect the current state.
 * **v5.3.8** Performance: Added In-Memory Caching and automated MongoDB indexing, dropping response times to ~30ms.
+* **v5.3.9** Patch: Resolved cache stampede bug by turning Keep-Alive cron into an active cache warmer using `?refresh=true`.
 
 ---
 
@@ -116,3 +117,4 @@
 | **v5.3.6** | **Performance** | Used `Promise.all` and refactored Graph looping to fix CPU bottleneck. |
 | **v5.3.7** | **Patch** | Synced the version badge in `Leaderboard.jsx`. |
 | **v5.3.8** | **Performance** | Implemented API Cache and MongoDB `created_at` index. |
+| **v5.3.9** | **Patch** | Fixed cache invalidation bug; Keep-Alive now actively warms the cache. |
