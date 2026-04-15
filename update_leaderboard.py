@@ -6,15 +6,12 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 from followers import get_leetcode_data
-
 # 1. SETUP MONGODB
-load_dotenv()
+load_dotenv() 
 mongo_uri = os.getenv("MONGO_URI")
-
 if not mongo_uri:
     print("⚠️ Error: MONGO_URI not found!")
     exit()
-
 try:
     client = MongoClient(mongo_uri)
     db = client["leetcode_db"]
