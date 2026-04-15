@@ -198,7 +198,7 @@ const Leaderboard = () => {
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.3.2-deeppink?style=for-the-the-badge&logo=github" 
+              src="https://img.shields.io/badge/Release-v5.3.3-deeppink?style=for-the-the-badge&logo=github" 
               alt="Version v5.3.2" 
               style={{ height: '28px' }} 
             />

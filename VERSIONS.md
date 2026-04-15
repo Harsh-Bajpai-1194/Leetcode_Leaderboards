@@ -86,6 +86,7 @@
 * **v5.3.0** Patch: Added a descending index to the `total_solved` field in the `users` collection. This significantly reduces query time for sorting the leaderboard.
 * **v5.3.1** Patch: Removed duplicate headings.
 * **v5.3.2** Patch: Implemented Gzip Compression and Database Projection/Sorting to improve API response time.
+* **v5.3.3** Availability: Added a keep-alive cron job to prevent server from sleeping.
 
 ---
 
@@ -104,3 +105,4 @@
 | **v5.3.0** | **Performance** | Added a MongoDB index to `total_solved` for faster sorting. |
 | **v5.3.1** | **Patch** | Removed duplicate headings. |
 | **v5.3.2** | **Performance** | Implemented Gzip Compression and Database Projection/Sorting. |
+| **v5.3.3** | **Availability** | Added a keep-alive cron job to prevent server from sleeping. |

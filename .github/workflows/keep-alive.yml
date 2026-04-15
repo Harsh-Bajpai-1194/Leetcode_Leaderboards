@@ -1,0 +1,13 @@
+name: Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs every 5 minutes, the most frequent schedule allowed
+    - cron: '*/5 * * * *'
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping server to keep it alive
+        run: curl -s https://leetcode-leaderboards.onrender.com/api/health

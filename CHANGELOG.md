@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.3] - 2026-04-15
+### Added
+- Implemented a keep-alive system. Added a `/api/health` endpoint and a 5-minute cron job via GitHub Actions to prevent the free-tier server from sleeping.
+
 ## [5.3.2] - 2026-04-15
 ### Added
 - Implemented Gzip Compression and Database Projection/Sorting for optimized API response sizes and speed.

@@ -90,6 +90,12 @@ async function fetchLeetCodeData(username) {
     }
 }
 
+// --- API 0: HEALTH CHECK (for Keep-Alive) ---
+app.get('/api/health', (req, res) => {
+    // This endpoint does nothing but confirm the server is running.
+    res.status(200).send('OK');
+});
+
 // --- API 1: GET LEADERBOARD (FIXED GRAPH LOGIC) ---
 app.get('/api/leaderboard', async (req, res) => {
     try {
