@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.7] - 2026-04-15
+### Fixed
+- Updated the release version badge in the frontend UI (`Leaderboard.jsx`) to sync with the current system version.
+
 ## [5.3.6] - 2026-04-15
 ### Changed
 - Optimized the backend logic in `server.js`. Implemented `Promise.all` for parallel database queries and refactored the graph generation loop from O(N * 21) to O(N), resolving CPU bottleneck issues and massively decreasing response time.

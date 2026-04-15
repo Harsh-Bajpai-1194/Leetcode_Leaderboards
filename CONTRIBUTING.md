@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboard v5.3.6
+# 🏆 LeetCode Leaderboard v5.3.7
 
 An automated, full-stack tracking system designed to monitor competitive programming progress across a group of users. This project utilizes a specialized MERN architecture combined with multi-threaded Python automation to provide real-time stats, badges, and activity visualization.
 
@@ -88,6 +88,7 @@ Adds a new LeetCode handle to the tracking system.
 
 ## 📈 Version History
 
+* **v5.3.7**: Patch. Synced the release version badge in the frontend UI.
 * **v5.3.6**: Performance. Refactored backend query execution to use `Promise.all` and optimized the graph rendering logic to avoid excessive loop computations.
 * **v5.3.5**: Patch. Added `workflow_dispatch` to `keep-alive.yml` for manual triggering.
 * **v5.3.4**: Patch. Added missing `compression` dependency to fix deployment.
@@ -120,7 +121,7 @@ Contributions are welcome! To maintain the quality of the project, please follow
 * **v6.0.0**: Introduction of a **Global Authentication** system using OAuth for user logins.
 * **v7.0.0**: Migration of the entire codebase from JavaScript to **TypeScript** for enterprise-grade type safety.
 
-The project is currently operating at a **v5.3.6** level of technical maturity! 🚀
+The project is currently operating at a **v5.3.7** level of technical maturity! 🚀
 
 ## 💖 Support
 If this project helped you track your community's progress, consider supporting the development through the **Sponsors** section on the live dashboard.
