@@ -1,10 +1,10 @@
-# 🏆 LeetCode Leaderboard v5.3.10
+# 🏆 LeetCode Leaderboard v5.3.11
 
 An automated, full-stack tracking system designed to monitor competitive programming progress across a group of users. This project utilizes a specialized MERN architecture combined with multi-threaded Python automation to provide real-time stats, badges, and activity visualization.
 
 ## 🚀 Key Features
 
-* **Automated Data Pipeline**: Daily synchronization powered by GitHub Actions and a multi-threaded Python scraper (10 parallel workers).
+* **Automated Data Pipeline**: Daily synchronization powered by GitHub Actions and a multi-threaded Python scraper (50 parallel workers).
 * **Dynamic Leaderboard**: Real-time ranking with support for LeetCode badges (Guardian, Knight, etc.) and hover-based solve breakdowns.
 * **Activity Visualization**: Interactive 21-day progress graphs and a live activity feed.
 * **Admin Management**: An administrative panel for seamless user management and manual update triggers.
@@ -88,6 +88,7 @@ Adds a new LeetCode handle to the tracking system.
 
 ## 📈 Version History
 
+* **v5.3.11**: Performance. Dramatically reduced GitHub Action runtime via `requests.Session` TLS connection pooling and 50 parallel workers.
 * **v5.3.10**: Performance. Integrated Stale-While-Revalidate cache strategy and fixed a crash-causing TypeError to improve Uptime stability.
 * **v5.3.9**: Patch. Fixed Cache timing issue; updated keep-alive cron to actively warm the cache.
 * **v5.3.8**: Performance. Implemented In-Memory caching and MongoDB indexes for `<50ms` API response times.
@@ -124,7 +125,7 @@ Contributions are welcome! To maintain the quality of the project, please follow
 * **v6.0.0**: Introduction of a **Global Authentication** system using OAuth for user logins.
 * **v7.0.0**: Migration of the entire codebase from JavaScript to **TypeScript** for enterprise-grade type safety.
 
-The project is currently operating at a **v5.3.10** level of technical maturity! 🚀
+The project is currently operating at a **v5.3.11** level of technical maturity! 🚀
 
 ## 💖 Support
 If this project helped you track your community's progress, consider supporting the development through the **Sponsors** section on the live dashboard.

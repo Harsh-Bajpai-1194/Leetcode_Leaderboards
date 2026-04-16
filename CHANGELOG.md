@@ -2,6 +2,11 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.11] - 2026-04-16
+### Performance
+- Drastically reduced GitHub Actions scraper execution time (from ~107s down to ~25s) by adding `pip` caching, implementing `requests.Session()` for TLS connection pooling, and increasing parallel `max_workers` from 10 to 50.
+- Increased the frontend auto-reload delay from 30s to 45s to reliably capture the completed backend refresh.
+
 ## [5.3.10] - 2026-04-16
 ### Fixed
 - Implemented Stale-While-Revalidate cache architecture to eliminate UptimeRobot response spikes. Cron jobs now trigger `202 Accepted` and resolve in the background without blocking the event loop.

@@ -23,6 +23,9 @@ except Exception as e:
     print(f"❌ Connection failed: {e}")
     exit()
 
+# ⚡ Session for connection pooling (Massive TLS handshake speedup)
+session = requests.Session()
+
 # 2. WORKER FUNCTION (Process ONE user)
 def process_user(user_doc):
     username = user_doc.get("username")
@@ -42,7 +45,7 @@ def process_user(user_doc):
     }
     """
     try:
-        response = requests.post(url, json={"query": query, "variables": {"username": username}}, timeout=5)
+        response = session.post(url, json={"query": query, "variables": {"username": username}}, timeout=10)
         if response.status_code != 200: return None
         
         data = response.json()
@@ -137,10 +140,10 @@ def update_leaderboard():
         print(f"Follower sync error: {e}")
 
     db_users = list(users_col.find())
-    print(f"Checking stats for {len(db_users)} users using 10 parallel workers...")
+    print(f"Checking stats for {len(db_users)} users using 50 parallel workers...")
 
-    # 👇 Run 10 requests at the same time
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    # 👇 Run 50 requests at the same time for lightning-fast scraping
+    with ThreadPoolExecutor(max_workers=50) as executor:
         results = list(executor.map(process_user, db_users))
 
     # Update Time
