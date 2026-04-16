@@ -238,7 +238,7 @@ app.post('/api/trigger-update', async (req, res) => {
                 'Accept': 'application/vnd.github.v3+json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ ref: 'main' })
+            body: JSON.stringify({ ref: 'main', inputs: { skip_followers: 'true' } })
         });
 
         if (response.status === 204) res.json({ message: "Update Started! Refresh in ~30 seconds." });
