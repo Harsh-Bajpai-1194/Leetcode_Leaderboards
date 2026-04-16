@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '*/10 * * * *' # Runs every 10 minutes
   workflow_dispatch:       # Allows manual trigger
+    inputs:
+      skip_followers:
+        description: 'Skip follower sync for faster manual updates'
+        required: false
+        default: 'true'
 
 jobs:
   build:
@@ -26,12 +31,5 @@ jobs:
       - name: Run Scraper
         env: 
           MONGO_URI: ${{ secrets.MONGO_URI }}
+          SKIP_FOLLOWERS: ${{ github.event.inputs.skip_followers || 'false' }}
         run: python update_leaderboard.py
-
-      - name: Commit and Push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add profiles.json
-          git commit -m "Automated update of LeetCode stats" || exit 0
-          git push

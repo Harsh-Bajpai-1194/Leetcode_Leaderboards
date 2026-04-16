@@ -42,10 +42,10 @@ const Leaderboard = () => {
         
         if (response.ok) {
             setUpdateStatus('success');
-            // Automatically reload page after 45 seconds to show results
+            // Automatically reload page after 20 seconds to show results
             setTimeout(() => {
                 window.location.reload();
-            }, 45000);
+            }, 20000);
         } else {
             setUpdateStatus('error');
             setTimeout(() => setUpdateStatus('idle'), 3000); // Reset after 3s
@@ -67,7 +67,7 @@ const Leaderboard = () => {
   const getButtonText = () => {
       switch(updateStatus) {
           case 'loading': return '⏳ Requesting...';
-          case 'success': return '✅ Started (Wait 45s)';
+          case 'success': return '✅ Started (Wait 20s)';
           case 'error': return '❌ Failed. Try Again.';
           default: return '⚡ Force Update';
       }
@@ -198,8 +198,8 @@ const Leaderboard = () => {
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.3.11-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.3.11" 
+              src="https://img.shields.io/badge/Release-v5.3.12-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.3.12" 
               style={{ height: '28px' }} 
             />
         </h1>
