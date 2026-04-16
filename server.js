@@ -19,6 +19,61 @@ const client = new MongoClient(MONGO_URI);
 // --- IN-MEMORY CACHE ---
 let leaderboardCache = { data: null, timestamp: 0 };
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes (Refreshed every 5m by cron)
+let isFetchingCache = false; // Lock to prevent overlapping background queries
+
+// ⚡ BACKGROUND CACHE BUILDER (Prevents Event Loop Blocking)
+async function buildLeaderboardData() {
+    if (isFetchingCache || !usersCollection) return;
+    isFetchingCache = true;
+    try {
+        const daysToLookBack = 21; 
+        const pastDate = new Date();
+        pastDate.setDate(pastDate.getDate() - daysToLookBack);
+
+        const [users, metadata, feedActivities, graphActivities] = await Promise.all([
+            usersCollection.find().sort({ total_solved: -1 }).project({
+                username: 1, name: 1, total_solved: 1, easy_solved: 1, 
+                medium_solved: 1, hard_solved: 1, url: 1, badge_icon: 1, badge_name: 1
+            }).toArray(),
+            metadataCollection.findOne({ type: "last_updated" }),
+            activitiesCollection.find().sort({ created_at: -1 }).limit(100).toArray(),
+            activitiesCollection.find({ created_at: { $gte: pastDate } }).toArray()
+        ]);
+
+        const dailySolvedMap = {};
+        for (const act of graphActivities) {
+            // Safety check preventing TypeError server crashes
+            if (!act.created_at || typeof act.text !== 'string') continue;
+            
+            const match = act.text.match(/\+(\d+)/);
+            const solved = match ? parseInt(match[1]) : 0;
+            
+            const actDate = new Date(act.created_at);
+            const dateKey = actDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+            dailySolvedMap[dateKey] += solved;
+        }
+
+        const graphStats = [];
+        for (let i = daysToLookBack - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            graphStats.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
+        }
+
+        leaderboardCache.data = { 
+            users, activities: feedActivities, graph_data: graphStats, last_updated: metadata ? metadata.date_string : '--' 
+        };
+        leaderboardCache.timestamp = Date.now();
+        console.log("✅ Cache updated successfully in background.");
+    } catch (error) {
+        console.error("❌ Cache Build Error:", error);
+    } finally {
+        isFetchingCache = false;
+    }
+}
 
 async function connectDB() {
     try {
@@ -33,6 +88,9 @@ async function connectDB() {
         await usersCollection.createIndex({ total_solved: -1 });
         await activitiesCollection.createIndex({ created_at: -1 });
         console.log("✅ MongoDB Indexes Ensured");
+
+        // 🚀 Pre-warm cache immediately on startup
+        buildLeaderboardData();
     } catch (err) {
         console.error("❌ MongoDB Connection Error:", err);
     }
@@ -110,66 +168,27 @@ app.get('/api/leaderboard', async (req, res) => {
     try {
         if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
 
-        // ⚡ 1. SERVE FROM CACHE (Unless forced by background cron job)
-        const forceRefresh = req.query.refresh === 'true';
-        if (!forceRefresh && leaderboardCache.data && (Date.now() - leaderboardCache.timestamp < CACHE_TTL)) {
+        // ⚡ 1. CRON JOB TRIGGER: Respond instantly, build in background
+        if (req.query.refresh === 'true') {
+            buildLeaderboardData(); // Fire and forget (does not block)
+            return res.status(202).json({ message: "Background cache refresh triggered" });
+        }
+
+        // ⚡ 2. STALE-WHILE-REVALIDATE: Always serve instantly if possible
+        if (leaderboardCache.data) {
+            if (Date.now() - leaderboardCache.timestamp > CACHE_TTL) {
+                buildLeaderboardData(); // Trigger update for NEXT visitor, serve old data NOW
+            }
             return res.json(leaderboardCache.data);
         }
 
-        const daysToLookBack = 21; 
-        const pastDate = new Date();
-        pastDate.setDate(pastDate.getDate() - daysToLookBack);
-
-        // 1. RUN ALL DB QUERIES CONCURRENTLY (Massive Speedup)
-        const [users, metadata, feedActivities, graphActivities] = await Promise.all([
-            usersCollection.find().sort({ total_solved: -1 }).project({
-                username: 1, name: 1, total_solved: 1, easy_solved: 1, 
-                medium_solved: 1, hard_solved: 1, url: 1, badge_icon: 1, badge_name: 1
-            }).toArray(),
-            metadataCollection.findOne({ type: "last_updated" }),
-            activitiesCollection.find().sort({ created_at: -1 }).limit(100).toArray(),
-            activitiesCollection.find({ created_at: { $gte: pastDate } }).toArray()
-        ]);
-
-        // 2. OPTIMIZED GRAPH LOGIC (O(N) instead of O(N * 21))
-        const dailySolvedMap = {};
-        
-        // Single pass through activities to group by date
-        for (const act of graphActivities) {
-            if (!act.created_at) continue;
-            
-            const match = act.text.match(/\+(\d+)/);
-            const solved = match ? parseInt(match[1]) : 0;
-            
-            const actDate = new Date(act.created_at);
-            const dateKey = actDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            
-            if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-            dailySolvedMap[dateKey] += solved;
+        // ⚡ 3. COLD BOOT: Wait for first build if completely empty (e.g. after Render restart)
+        await buildLeaderboardData();
+        if (leaderboardCache.data) {
+            return res.json(leaderboardCache.data);
+        } else {
+            return res.status(500).json({ error: "Failed to generate data" });
         }
-
-        // 3. BUILD FINAL 21-DAY ARRAY
-        const graphStats = [];
-        for (let i = daysToLookBack - 1; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            
-            graphStats.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
-        }
-
-        const responseData = { 
-            users, 
-            activities: feedActivities, // Send small list to UI
-            graph_data: graphStats,     // Send calculated stats
-            last_updated: metadata ? metadata.date_string : '--' 
-        };
-
-        // ⚡ 2. SAVE TO CACHE FOR SUBSEQUENT REQUESTS
-        leaderboardCache.data = responseData;
-        leaderboardCache.timestamp = Date.now();
-
-        res.json(responseData);
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -206,8 +225,8 @@ app.post('/api/trigger-update', async (req, res) => {
     const REPO_NAME = "Leetcode_Leaderboards";
     const WORKFLOW_FILE = "scraper.yml"; 
 
-    // Invalidate Cache so the next request pulls fresh scraped data
-    leaderboardCache.data = null; 
+    // Expire cache timestamp instead of deleting data, triggering a smooth Stale-While-Revalidate
+    leaderboardCache.timestamp = 0; 
 
     if (!GITHUB_TOKEN) return res.status(500).json({ error: "Server missing GitHub Token" });
 

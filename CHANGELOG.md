@@ -2,6 +2,12 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.3.10] - 2026-04-16
+### Fixed
+- Implemented Stale-While-Revalidate cache architecture to eliminate UptimeRobot response spikes. Cron jobs now trigger `202 Accepted` and resolve in the background without blocking the event loop.
+- Fixed a critical `TypeError` regex crash where missing `act.text` fields would take the server offline.
+- Configured Express to instantly pre-warm the cache upon MongoDB connection up-start.
+
 ## [5.3.9] - 2026-04-15
 ### Fixed
 - Resolved a cache stampede issue where UptimeRobot periodically hit an expired cache. Implemented `?refresh=true` in `keep-alive.yml` and increased cache TTL to 15 minutes, ensuring the cache is actively warmed in the background.
