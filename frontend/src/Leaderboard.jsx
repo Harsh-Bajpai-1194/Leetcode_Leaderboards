@@ -85,6 +85,19 @@ const Leaderboard = () => {
 
   return (
     <div className="main-wrapper">
+      {/* ✨ PULSING SKELETON CSS ✨ */}
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.3; }
+          50% { opacity: 0.7; }
+          100% { opacity: 0.3; }
+        }
+        .skeleton-box {
+          background-color: #333;
+          border-radius: 4px;
+          animation: pulse 1.5s infinite ease-in-out;
+        }
+      `}</style>
       
       {/* --- LEFT COLUMN: LOGO & BUTTONS --- */}
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -198,8 +211,8 @@ const Leaderboard = () => {
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.3.12-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.3.12" 
+              src="https://img.shields.io/badge/Release-v5.4.0-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.3.13" 
               style={{ height: '28px' }} 
             />
         </h1>
@@ -229,7 +242,14 @@ const Leaderboard = () => {
             </thead>
             <tbody id="leaderboard-body">
               {loading ? (
-                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>
+                Array.from({ length: 10 }).map((_, idx) => (
+                  <tr key={`skeleton-${idx}`}>
+                    <td><div className="skeleton-box" style={{ height: '20px', width: '20px' }}></div></td>
+                    <td><div className="skeleton-box" style={{ height: '20px', width: '150px' }}></div></td>
+                    <td><div className="skeleton-box" style={{ height: '20px', width: '50px', margin: '0 auto' }}></div></td>
+                    <td><div className="skeleton-box" style={{ height: '30px', width: '60px' }}></div></td>
+                  </tr>
+                ))
               ) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index} data-rank={index + 1}>
