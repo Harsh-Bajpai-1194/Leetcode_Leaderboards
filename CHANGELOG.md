@@ -2,6 +2,14 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.4.0] - 2026-04-16
+### Added
+- Added animated loading skeletons to the frontend UI to improve perceived performance while fetching data.
+
+## [5.3.12] - 2026-04-16
+### Performance
+- Eliminated the remaining ~80s workflow delay during manual updates. Modified `scraper.yml` to skip the slow Selenium follower sync on manual dispatch, and removed the obsolete Git commit step for `profiles.json`. Reduced frontend reload delay to 20s.
+
 ## [5.3.11] - 2026-04-16
 ### Performance
 - Drastically reduced GitHub Actions scraper execution time (from ~107s down to ~25s) by adding `pip` caching, implementing `requests.Session()` for TLS connection pooling, and increasing parallel `max_workers` from 10 to 50.

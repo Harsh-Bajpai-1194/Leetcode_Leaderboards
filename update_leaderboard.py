@@ -123,21 +123,26 @@ def process_user(user_doc):
 
 # 3. MAIN PARALLEL LOOP
 def update_leaderboard():
-    print("Syncing followers and following list...")
-    try:
-        scraped_users = get_leetcode_data()
-        if scraped_users:
-            for username in scraped_users:
-                if not users_col.find_one({"username": username}):
-                    users_col.insert_one({
-                        "username": username, 
-                        "name": username, 
-                        "url": f"https://leetcode.com/{username}/", 
-                        "total_solved": 0
-                    })
-                    print(f"Added new user to DB: {username}")
-    except Exception as e:
-        print(f"Follower sync error: {e}")
+    skip_followers = os.environ.get("SKIP_FOLLOWERS", "false").lower() == "true"
+    
+    if not skip_followers:
+        print("Syncing followers and following list...")
+        try:
+            scraped_users = get_leetcode_data()
+            if scraped_users:
+                for username in scraped_users:
+                    if not users_col.find_one({"username": username}):
+                        users_col.insert_one({
+                            "username": username, 
+                            "name": username, 
+                            "url": f"https://leetcode.com/{username}/", 
+                            "total_solved": 0
+                        })
+                        print(f"Added new user to DB: {username}")
+        except Exception as e:
+            print(f"Follower sync error: {e}")
+    else:
+        print("⏩ Skipping follower sync for ultra-fast manual update...")
 
     db_users = list(users_col.find())
     print(f"Checking stats for {len(db_users)} users using 50 parallel workers...")

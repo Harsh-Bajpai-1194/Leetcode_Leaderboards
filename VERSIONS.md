@@ -95,6 +95,8 @@
 * **v5.3.9** Patch: Resolved cache stampede bug by turning Keep-Alive cron into an active cache warmer using `?refresh=true`.
 * **v5.3.10** Stability: Added Stale-While-Revalidate cache pattern and fixed a TypeError crash to ensure highly stable uptime.
 * **v5.3.11** Performance: Drastically reduced GitHub Actions runtime via `requests.Session` pooling, `pip` caching, and 50 parallel workers.
+* **v5.3.12** Performance: Eliminated 80s scraping bottleneck by skipping Selenium follower sync on manual triggers and removing legacy git commit step.
+* **v5.4.0** UI Polish: Added animated loading skeletons to the frontend.
 
 ---
 
@@ -122,3 +124,5 @@
 | **v5.3.9** | **Patch** | Fixed cache invalidation bug; Keep-Alive now actively warms the cache. |
 | **v5.3.10** | **Stability** | Added Stale-While-Revalidate and fixed Regex TypeError crash. |
 | **v5.3.11** | **Performance** | Reduced scraper runtime by pooling TLS connections and scaling parallel workers to 50. |
+| **v5.3.12** | **Performance** | Eliminated 80s bottleneck by skipping Selenium follower sync on manual updates. |
+| **v5.4.0** | **UI Polish** | Added animated loading skeletons to the frontend UI. |
