@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.4.0-deeppink?style=for-the-the-badge&logo=github)
+# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.5.0-deeppink?style=for-the-the-badge&logo=github)  
 ![Status](https://img.shields.io/badge/Status-Live-success?style=for-the-the-badge)  
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -42,7 +42,7 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 This project uses a decoupled **Client-Server Architecture**:
 
 1.  **Frontend (React + Vite):** Hosted on **Netlify**. Handles routing, searching, and triggers the "Force Update" API.
-2.  **Backend API (Node.js & Express):** Hosted on **Render**. Acts as a secure gateway between the Frontend, MongoDB, and GitHub API.
+2.  **Backend API (Node.js & Express):** Dual-Server setup hosted on **Render** with **Supabase** acting as a real-time fallback. Acts as a secure gateway between the Frontend, MongoDB, and GitHub API.  
 3.  **Database (MongoDB Atlas):** Stores User Profiles, Activity Logs, and Metadata.
 4.  **Automation (Python + GitHub Actions):** A script that wakes up (via schedule or trigger), scrapes LeetCode GraphQL data in parallel, and updates MongoDB.
 
@@ -53,7 +53,7 @@ This project uses a decoupled **Client-Server Architecture**:
 | Component | Technology | Description |
 | :--- | :--- | :--- |
 | **Frontend** | **React.js + Vite** | High-performance UI with Recharts for graphing |
-| **Backend** | **Node.js & Express** | REST API with GitHub Dispatch trigger integration |
+| **Backend** | **Node.js, Express & Supabase** | REST API with dual-server failover and GitHub Dispatch integration |
 | **Database** | **MongoDB Atlas** | Cloud NoSQL database storing Users & Activities |
 | **Automation** | **Python (PyMongo)** | Multi-threaded ETL script for rapid scraping |
 | **CI/CD** | **GitHub Actions** | Automated scheduling and manual trigger execution |
