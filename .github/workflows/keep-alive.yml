@@ -1,16 +1,17 @@
-name: Keep-Alive Ping
+name: Supabase Keep-Alive
 
 on:
   schedule:
-    # Runs every 5 minutes, the most frequent schedule allowed
+    # Runs at 00:00 UTC every day
     - cron: '*/5 * * * *'
-  workflow_dispatch: # Allows manual triggering from the GitHub UI
+  workflow_dispatch: # Allows you to run it manually from the Actions tab
 
 jobs:
-  ping:
+  ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping server to keep it alive
+      - name: Ping Supabase Edge Function
         run: |
-          curl -s https://leetcode-leaderboards.onrender.com/api/health
-          curl -s "https://leetcode-leaderboards.onrender.com/api/leaderboard?refresh=true" > /dev/null
+          curl -i -X POST \
+          https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine \
+          -H "Content-Type: application/json"
