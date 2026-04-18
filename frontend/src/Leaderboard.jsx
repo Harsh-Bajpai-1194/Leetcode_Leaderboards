@@ -192,8 +192,8 @@ const Leaderboard = () => {
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.7-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.5.7"  
+              src="https://img.shields.io/badge/Release-v5.5.8-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.5.8"  
               style={{ height: '28px' }} 
             />
         </h1>
@@ -263,12 +263,15 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN --- */}
+      {/* --- RIGHT COLUMN WRAPPER --- */}
       <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
+
+        {/* BOX 1: Activity Feed */}
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
-          <div id="activity-content" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {data.activities.length > 0 ? (
+
+          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
+            {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
                   <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span>
@@ -277,10 +280,16 @@ const Leaderboard = () => {
                 </div>
               ))
             ) : (
-              <div style={{ color: '#555', padding: '20px' }}>NO ACTIVITY CURRENTLY</div>
+              <div>NO ACTIVITY CURRENTLY</div>
             )}
           </div>
         </div>
+
+        {/* BOX 2: Graph */}
+        <div className="graph-wrapper">
+             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
+        </div>
+
       </div>
     </div>
   );
