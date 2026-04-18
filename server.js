@@ -20,7 +20,29 @@ const client = new MongoClient(MONGO_URI);
 let leaderboardCache = { data: null, timestamp: 0 };
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes (Refreshed every 5m by cron)
 let isFetchingCache = false; // Lock to prevent overlapping background queries
+const { createClient } = require('@supabase/supabase-js');
+const mongoose = require('mongoose');
 
+// Initialize Supabase (Use the variables you already added to Render)
+const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY);
+
+// Example sync function to call after your MongoDB save logic
+async function syncToSupabase(mongoUsers) {
+  const supabaseData = mongoUsers.map(user => ({
+    leetcode_handle: user.username, // Map your MongoDB field to Supabase
+    problems_solved: user.totalSolved,
+    streak: user.streak || 0,
+    badge_icon: user.badgeIcon,
+    badge_name: user.badgeName
+  }));
+
+  const { error } = await supabase
+    .from('leaderboard')
+    .upsert(supabaseData, { onConflict: 'leetcode_handle' });
+
+  if (error) console.error('Supabase Sync Error:', error.message);
+  else console.log('Successfully synced users to Supabase');
+}
 // ⚡ BACKGROUND CACHE BUILDER (Prevents Event Loop Blocking)
 async function buildLeaderboardData() {
     if (isFetchingCache || !usersCollection) return;
