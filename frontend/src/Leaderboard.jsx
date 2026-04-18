@@ -182,7 +182,7 @@ const Leaderboard = () => {
       <div className="leaderboard-container">
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.3.11-deeppink?style=for-the-the-badge&logo=github" alt="Version" style={{ height: '28px' }} />
+            <img src="https://img.shields.io/badge/Release-v5.5.0-deeppink?style=for-the-the-badge&logo=github" alt="Version" style={{ height: '28px' }} />
         </h1>
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
