@@ -189,9 +189,13 @@ const Leaderboard = () => {
       
       {/* --- CENTER COLUMN --- */}
       <div className="leaderboard-container">
-        <h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v6.0.0-blue?style=for-the-the-badge" alt="Version" style={{ height: '28px', marginLeft: '10px' }} />
+            <img 
+              src="https://img.shields.io/badge/Release-v5.5.7-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.5.7"  
+              style={{ height: '28px' }} 
+            />
         </h1>
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
@@ -200,6 +204,7 @@ const Leaderboard = () => {
         <div className="search-container">
           <input
             type="text"
+            id="searchInput"
             placeholder="🔍 Search for names..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
