@@ -2,6 +2,10 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.5.0] - 2026-04-18
+### Added
+- Dual-Server Architecture: Added Supabase for hosting the backend as a backup for Render, improving uptime and reliability.
+
 ## [5.4.0] - 2026-04-16
 ### Added
 - Added animated loading skeletons to the frontend UI to improve perceived performance while fetching data.
