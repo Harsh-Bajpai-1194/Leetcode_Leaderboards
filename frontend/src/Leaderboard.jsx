@@ -155,14 +155,24 @@ const Leaderboard = () => {
 
   return (
     <div className="main-wrapper">
+
+      {/* --- LEFT COLUMN: LOGO & BUTTONS --- */}
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
-          
+
           <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '80%' }}>
+
               <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
                 <button style={{
-                  width: '100%', padding: '10px', backgroundColor: '#2c2c2c', color: '#4ade80',
-                  border: '1px solid #4ade80', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1em'
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: '#2c2c2c',
+                  color: '#4ade80',
+                  border: '1px solid #4ade80',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '1em'
                 }}>
                   🔒 Admin Panel
                 </button>
@@ -170,47 +180,96 @@ const Leaderboard = () => {
 
               <button 
                 onClick={handleForceUpdate}
-                disabled={updateStatus !== 'idle'}
+                disabled={updateStatus !== 'idle'} // Disable while running
                 style={{
-                  width: '100%', padding: '10px', backgroundColor: getButtonColor(),
-                  color: 'white', border: 'none', borderRadius: '5px',
+                  width: '100%',
+                  padding: '10px',
+                  backgroundColor: getButtonColor(), // Dynamic Color
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
                   cursor: updateStatus === 'idle' ? 'pointer' : 'default',
-                  fontWeight: 'bold', fontSize: '1em', display: 'flex',
-                  alignItems: 'center', justifyContent: 'center', gap: '5px',
+                  fontWeight: 'bold',
+                  fontSize: '1em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
                   transition: 'background-color 0.3s ease'
                 }}
               >
                 {getButtonText()} 
               </button>
 
+              {/* 👇 SPONSOR BUTTON (WITH GIF BORDER) & QR CODE 👇 */}
               <div style={{ 
-                  marginTop: '10px', width: '100%', display: 'flex', flexDirection: 'column', 
-                  alignItems: 'center', backgroundColor: '#1a1a1a', padding: '15px', 
-                  borderRadius: '8px', border: '1px solid #333', boxSizing: 'border-box'
+                  marginTop: '10px', 
+                  width: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  backgroundColor: '#1a1a1a', 
+                  padding: '15px', 
+                  borderRadius: '8px', 
+                  border: '1px solid #333',
+                  boxSizing: 'border-box'
               }}>
+
+                {/* ✨ ANIMATED BORDER WRAPPER ✨ */}
                 <div style={{
-                  width: '100%', marginBottom: '15px', padding: '4px', borderRadius: '8px',
-                  backgroundImage: 'url("/border.gif")', backgroundSize: 'cover', backgroundPosition: 'center', boxSizing: 'border-box'
+                  width: '100%',
+                  marginBottom: '15px',
+                  padding: '4px', // This determines how thick the GIF border is
+                  borderRadius: '8px',
+                  backgroundImage: 'url("/border.gif")', // Loads your GIF
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxSizing: 'border-box'
                 }}>
                   <button style={{
-                    width: '100%', padding: '10px', backgroundColor: '#ec4899', color: 'white',
-                    border: 'none', borderRadius: '5px', fontWeight: 'bold', fontSize: '1em',
-                    cursor: 'default', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'
+                    width: '100%',
+                    padding: '10px',
+                    backgroundColor: '#ec4899', // Pink sponsor color
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px', // slightly smaller than the 8px wrapper
+                    fontWeight: 'bold',
+                    fontSize: '1em',
+                    cursor: 'default',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '8px'
                   }}>
                     💖 SPONSORS
                   </button>
                 </div>
-                <img src="/QR.jpg" alt="Sponsor QR Code" style={{ width: '85%', maxWidth: '180px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.5)' }} />
+
+                <img 
+                  src="/QR.jpg" 
+                  alt="Sponsor QR Code" 
+                  style={{ 
+                    width: '85%', 
+                    maxWidth: '180px', 
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
+                  }} 
+                />
+                <p style={{ color: '#888', fontSize: '0.8em', marginTop: '10px', textAlign: 'center', marginBottom: 0 }}>
+                  Scan to support the project!
+                </p>
               </div>
+              {/* 👆 END SPONSOR SECTION 👆 */}
           </div>
       </div>
-      
+
+      {/* --- CENTER COLUMN: LEADERBOARD --- */}
       <div className="leaderboard-container">
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.9-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.5.9"  
+              src="https://img.shields.io/badge/Release-v5.5.10-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.5.10"
               style={{ height: '28px' }} 
             />
         </h1>
@@ -238,37 +297,47 @@ const Leaderboard = () => {
                 <th>Profile</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="leaderboard-body">
               {loading ? (
-                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading from Supabase...</td></tr>
-              ) : filteredUsers.length === 0 ? (
-                <tr><td colSpan="4" style={{ textAlign: 'center' }}>No users found.</td></tr>
+                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>
               ) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index} data-rank={index + 1}>
                     <td>{index + 1}</td>
+
                     <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {user.badge_icon && (
                         <img 
                           src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} 
-                          alt="Badge" style={{ width: '25px', height: '25px' }} 
+                          alt="Badge" 
+                          title={user.badge_name}
+                          style={{ width: '25px', height: '25px' }} 
                         />
                       )}
-                      <span>{user.name || user.leetcode_handle}</span>
+                      <span>{user.name || user.username}</span>
                     </td>
+
                     <td className="solved-cell">
                       <div className="solved-wrapper">
                         <span className="main-stat">{user.total_solved || 0}</span>
                         <div className="hover-stats">
-                          <span className="easy">{user.easy_solved || 0}</span>
-                          <span className="medium">{user.medium_solved || 0}</span>
-                          <span className="hard">{user.hard_solved || 0}</span>
+                          <span className="easy" title="Easy">{user.easy_solved || 0}</span>
+                          <span className="medium" title="Medium">{user.medium_solved || 0}</span>
+                          <span className="hard" title="Hard">{user.hard_solved || 0}</span>
                         </div>
                       </div>
                     </td>
+
                     <td>
-                      <a href={user.url || `https://leetcode.com/${user.leetcode_handle}`} target="_blank" rel="noopener noreferrer" 
-                        style={{ textDecoration: 'none', backgroundColor: '#ffa116', color: 'black', padding: '5px 10px', borderRadius: '5px', fontWeight: 'bold' }}>
+                      <a href={user.url} target="_blank" rel="noopener noreferrer" 
+                        style={{
+                          textDecoration: 'none',
+                          backgroundColor: '#ffa116',
+                          color: 'black',
+                          padding: '5px 10px',
+                          borderRadius: '5px',
+                          fontWeight: 'bold'
+                        }}>
                         View
                       </a>
                     </td>
@@ -280,9 +349,13 @@ const Leaderboard = () => {
         </div>
       </div>
 
+      {/* --- RIGHT COLUMN WRAPPER --- */}
       <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
+
+        {/* BOX 1: Activity Feed */}
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
+
           <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
@@ -298,9 +371,11 @@ const Leaderboard = () => {
           </div>
         </div>
 
+        {/* BOX 2: Graph */}
         <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
+
       </div>
     </div>
   );
