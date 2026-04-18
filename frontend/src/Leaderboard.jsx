@@ -19,7 +19,7 @@ const Leaderboard = () => {
     try {
       setLoading(true);
 
-      // Step A: Fetch Users
+      // A. Fetch Users
       const { data: supabaseUsers, error: userError } = await supabase
         .from('leaderboard')
         .select('*')
@@ -27,7 +27,7 @@ const Leaderboard = () => {
 
       if (userError) throw userError;
 
-      // Step B: Fetch Activities
+      // B. Fetch Activities
       const { data: supabaseActivities, error: actError } = await supabase
         .from('activities')
         .select('*')
@@ -36,25 +36,25 @@ const Leaderboard = () => {
 
       if (actError) throw actError;
 
-      // Step C: Fetch Metadata (Last Updated)
+      // C. Fetch Metadata
       const { data: metaData, error: metaError } = await supabase
-  .from('metadata')
-  .select('date_string')
-  .eq('type', 'last_updated');
+        .from('metadata')
+        .select('date_string')
+        .eq('type', 'last_updated');
 
-const lastUpdated = metaData && metaData.length > 0 ? metaData[0].date_string : "--";
+      if (metaError) throw metaError;
 
-      // Step D: Update State
+      // D. Update State (Fixing the 'meta' is not defined error)
       setData({
         users: supabaseUsers || [],
         activities: supabaseActivities || [],
-        graph_data: [], // You can populate this later from an 'analytics' table
-        last_updated: meta?.date_string || "--"
+        graph_data: [], 
+        last_updated: (metaData && metaData.length > 0) ? metaData[0].date_string : "--"
       });
       
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data from Supabase:", error);
+      console.error("Error fetching data from Supabase:", error.message);
       setLoading(false);
     }
   };
