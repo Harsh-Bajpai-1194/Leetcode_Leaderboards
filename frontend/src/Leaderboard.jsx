@@ -8,54 +8,68 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const Leaderboard = () => {
-  const [data, setData] = useState({ users: [], activities: [], last_updated: '--' });
+  const [data, setData] = useState({ users: [], activities: [], graph_data: [], last_updated: '--' });
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [updateStatus, setUpdateStatus] = useState('idle'); 
 
-  // --- DATA FETCHING LOGIC (Both Render & Supabase) ---
+  // --- DATA FETCHING LOGIC (Pure Supabase) ---
 
   const fetchAllData = async () => {
     try {
-      // Step A: Fetch core data from Render (Activities, Graph, etc.)
-      const renderResponse = await fetch('https://leetcode-leaderboards.onrender.com/api/leaderboard');
-      const renderData = await renderResponse.json();
+      setLoading(true);
 
-      // Step B: Fetch Realtime User Rankings from Supabase
-      const { data: supabaseUsers, error } = await supabase
+      // Step A: Fetch Users
+      const { data: supabaseUsers, error: userError } = await supabase
         .from('leaderboard')
         .select('*')
-        .order('problems_solved', { ascending: false });
+        .order('total_solved', { ascending: false });
 
-      if (error) throw error;
+      if (userError) throw userError;
 
-      // Step C: Merge Supabase users into the Render data object
-      // This ensures your UI uses the fresh Supabase scores but Render's activities
+      // Step B: Fetch Activities
+      const { data: supabaseActivities, error: actError } = await supabase
+        .from('activities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (actError) throw actError;
+
+      // Step C: Fetch Metadata (Last Updated)
+      const { data: meta, error: metaError } = await supabase
+        .from('metadata')
+        .select('*')
+        .eq('type', 'last_updated')
+        .single();
+
+      // Step D: Update State
       setData({
-        ...renderData,
-        users: supabaseUsers.length > 0 ? supabaseUsers : renderData.users
+        users: supabaseUsers || [],
+        activities: supabaseActivities || [],
+        graph_data: [], // You can populate this later from an 'analytics' table
+        last_updated: meta?.date_string || "--"
       });
       
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching data from Supabase:", error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Initial Load
     fetchAllData();
 
-    // 2. Setup Realtime Subscription
+    // Setup Realtime Subscription
     const channel = supabase
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'leaderboard' },
-        (payload) => {
-          console.log('Real-time update received from Supabase!', payload);
-          fetchAllData(); // Re-sync everything when DB changes
+        () => {
+          console.log('Real-time update received!');
+          fetchAllData(); 
         }
       )
       .subscribe();
@@ -72,16 +86,14 @@ const Leaderboard = () => {
     setUpdateStatus('loading');
 
     try {
-      const response = await fetch('https://leetcode-leaderboards.onrender.com/api/trigger-update', {
+      // Direct call to your Supabase Edge Function instead of Render
+      const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        headers: { 'Content-Type': 'application/json' }
       });
       
       if (response.ok) {
         setUpdateStatus('success');
-        // We don't necessarily need window.location.reload() anymore 
-        // because Supabase Realtime will catch the update automatically!
         setTimeout(() => setUpdateStatus('idle'), 45000);
       } else {
         setUpdateStatus('error');
@@ -97,10 +109,10 @@ const Leaderboard = () => {
 
   const filteredUsers = data.users
     .filter((user) => {
-      const name = user.name || user.leetcode_handle || user.username || '';
+      const name = user.name || user.leetcode_handle || '';
       return name.toLowerCase().includes(searchTerm.toLowerCase());
     })
-    .sort((a, b) => (b.problems_solved || b.total_solved || 0) - (a.problems_solved || a.total_solved || 0));
+    .sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
 
   const getButtonText = () => {
     switch(updateStatus) {
@@ -123,12 +135,11 @@ const Leaderboard = () => {
   return (
     <div className="main-wrapper">
       
-      {/* --- LEFT COLUMN: LOGO & BUTTONS --- */}
+      {/* --- LEFT COLUMN --- */}
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
           
           <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '80%' }}>
-              
               <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
                 <button style={{
                   width: '100%', padding: '10px', backgroundColor: '#2c2c2c', color: '#4ade80',
@@ -171,18 +182,15 @@ const Leaderboard = () => {
                   </button>
                 </div>
                 <img src="/QR.jpg" alt="Sponsor QR Code" style={{ width: '85%', maxWidth: '180px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.5)' }} />
-                <p style={{ color: '#888', fontSize: '0.8em', marginTop: '10px', textAlign: 'center', marginBottom: 0 }}>
-                  Scan to support the project!
-                </p>
               </div>
           </div>
       </div>
       
-      {/* --- CENTER COLUMN: LEADERBOARD --- */}
+      {/* --- CENTER COLUMN --- */}
       <div className="leaderboard-container">
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <h1>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.5.0-deeppink?style=for-the-the-badge&logo=github" alt="Version" style={{ height: '28px' }} />
+            <img src="https://img.shields.io/badge/Release-v6.0.0-blue?style=for-the-the-badge" alt="Version" style={{ height: '28px', marginLeft: '10px' }} />
         </h1>
         <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
           Last updated: {data.last_updated}
@@ -191,7 +199,6 @@ const Leaderboard = () => {
         <div className="search-container">
           <input
             type="text"
-            id="searchInput"
             placeholder="🔍 Search for names..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -208,9 +215,11 @@ const Leaderboard = () => {
                 <th>Profile</th>
               </tr>
             </thead>
-            <tbody id="leaderboard-body">
+            <tbody>
               {loading ? (
-                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>
+                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading from Supabase...</td></tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr><td colSpan="4" style={{ textAlign: 'center' }}>No users found.</td></tr>
               ) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index} data-rank={index + 1}>
@@ -219,19 +228,18 @@ const Leaderboard = () => {
                       {user.badge_icon && (
                         <img 
                           src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} 
-                          alt="Badge" title={user.badge_name} style={{ width: '25px', height: '25px' }} 
+                          alt="Badge" style={{ width: '25px', height: '25px' }} 
                         />
                       )}
-                      <span>{user.name || user.leetcode_handle || user.username}</span>
-                      {user.streak > 100 && <span>🔥</span>}
+                      <span>{user.name || user.leetcode_handle}</span>
                     </td>
                     <td className="solved-cell">
                       <div className="solved-wrapper">
-                        <span className="main-stat">{user.problems_solved || user.total_solved || 0}</span>
+                        <span className="main-stat">{user.total_solved || 0}</span>
                         <div className="hover-stats">
-                          <span className="easy" title="Easy">{user.easy_solved || 0}</span>
-                          <span className="medium" title="Medium">{user.medium_solved || 0}</span>
-                          <span className="hard" title="Hard">{user.hard_solved || 0}</span>
+                          <span className="easy">{user.easy_solved || 0}</span>
+                          <span className="medium">{user.medium_solved || 0}</span>
+                          <span className="hard">{user.hard_solved || 0}</span>
                         </div>
                       </div>
                     </td>
@@ -249,12 +257,12 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN: ACTIVITY --- */}
+      {/* --- RIGHT COLUMN --- */}
       <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
-          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
-            {data.activities && data.activities.length > 0 ? (
+          <div id="activity-content" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            {data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
                   <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span>
@@ -263,18 +271,10 @@ const Leaderboard = () => {
                 </div>
               ))
             ) : (
-              <div>NO ACTIVITY CURRENTLY</div>
+              <div style={{ color: '#555', padding: '20px' }}>NO ACTIVITY CURRENTLY</div>
             )}
           </div>
         </div>
-
-        <div className="graph-wrapper">
-             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
-        </div>
-      </div>
-
-      <div className="contact" style={{ width: '100%' }}>
-        <h3>Thanks for visiting!</h3>
       </div>
     </div>
   );
