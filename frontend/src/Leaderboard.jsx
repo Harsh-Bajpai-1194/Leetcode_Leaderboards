@@ -37,11 +37,12 @@ const Leaderboard = () => {
       if (actError) throw actError;
 
       // Step C: Fetch Metadata (Last Updated)
-      const { data: meta, error: metaError } = await supabase
-        .from('metadata')
-        .select('*')
-        .eq('type', 'last_updated')
-        .single();
+      const { data: metaData, error: metaError } = await supabase
+  .from('metadata')
+  .select('date_string')
+  .eq('type', 'last_updated');
+
+const lastUpdated = metaData && metaData.length > 0 ? metaData[0].date_string : "--";
 
       // Step D: Update State
       setData({
