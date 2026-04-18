@@ -13,8 +13,6 @@ const Leaderboard = () => {
   const [loading, setLoading] = useState(true);
   const [updateStatus, setUpdateStatus] = useState('idle'); 
 
-  // --- DATA FETCHING LOGIC (Pure Supabase) ---
-
   const fetchAllData = async () => {
     try {
       setLoading(true);
@@ -27,12 +25,12 @@ const Leaderboard = () => {
 
       if (userError) throw userError;
 
-      // B. Fetch Activities
+      // B. Fetch Activities (Fetch enough to build a 21-day graph)
       const { data: supabaseActivities, error: actError } = await supabase
         .from('activities')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(1000); 
 
       if (actError) throw actError;
 
@@ -44,11 +42,42 @@ const Leaderboard = () => {
 
       if (metaError) throw metaError;
 
-      // D. Update State (Fixing the 'meta' is not defined error)
+      // --- D. PROCESS GRAPH DATA (NEW LOGIC) ---
+      const daysToLookBack = 21;
+      const dailySolvedMap = {};
+      
+      // 1. Group activity by date and sum the "+X" values from the text
+      if (supabaseActivities) {
+        supabaseActivities.forEach(act => {
+          if (!act.text || !act.created_at) return;
+          const match = act.text.match(/\+(\d+)/);
+          const solved = match ? parseInt(match[1]) : 0;
+          
+          // Use UTC or Local depending on your preference, but be consistent
+          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          
+          if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+          dailySolvedMap[dateKey] += solved;
+        });
+      }
+
+      // 2. Generate the 21-day timeline
+      const processedGraphData = [];
+      for (let i = daysToLookBack - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        processedGraphData.push({ 
+          date: dateStr, 
+          solved: dailySolvedMap[dateStr] || 0 
+        });
+      }
+
+      // E. Update State
       setData({
         users: supabaseUsers || [],
-        activities: supabaseActivities || [],
-        graph_data: [], 
+        activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [], // Limit feed to 50
+        graph_data: processedGraphData,
         last_updated: (metaData && metaData.length > 0) ? metaData[0].date_string : "--"
       });
       
@@ -62,16 +91,12 @@ const Leaderboard = () => {
   useEffect(() => {
     fetchAllData();
 
-    // Setup Realtime Subscription
     const channel = supabase
       .channel('schema-db-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'leaderboard' },
-        () => {
-          console.log('Real-time update received!');
-          fetchAllData(); 
-        }
+        () => fetchAllData()
       )
       .subscribe();
 
@@ -80,14 +105,11 @@ const Leaderboard = () => {
     };
   }, []);
 
-  // --- EVENT HANDLERS ---
-
   const handleForceUpdate = async () => {
     if (updateStatus !== 'idle') return;
     setUpdateStatus('loading');
 
     try {
-      // Direct call to your Supabase Edge Function instead of Render
       const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -105,8 +127,6 @@ const Leaderboard = () => {
       setTimeout(() => setUpdateStatus('idle'), 3000);
     }
   };
-
-  // --- RENDER HELPERS ---
 
   const filteredUsers = data.users
     .filter((user) => {
@@ -135,8 +155,6 @@ const Leaderboard = () => {
 
   return (
     <div className="main-wrapper">
-      
-      {/* --- LEFT COLUMN --- */}
       <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
           
@@ -187,13 +205,12 @@ const Leaderboard = () => {
           </div>
       </div>
       
-      {/* --- CENTER COLUMN --- */}
       <div className="leaderboard-container">
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.8-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.5.8"  
+              src="https://img.shields.io/badge/Release-v5.5.9-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.5.9"  
               style={{ height: '28px' }} 
             />
         </h1>
@@ -263,13 +280,9 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN WRAPPER --- */}
       <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
-
-        {/* BOX 1: Activity Feed */}
         <div className="activity-container" style={{ margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
-
           <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
@@ -285,11 +298,9 @@ const Leaderboard = () => {
           </div>
         </div>
 
-        {/* BOX 2: Graph */}
         <div className="graph-wrapper">
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
-
       </div>
     </div>
   );
