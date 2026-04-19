@@ -111,9 +111,13 @@ const Leaderboard = () => {
 
     try {
       const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, // ADD THIS LINE
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` // ADD THIS LINE
+    }
+  });
       
       if (response.ok) {
         setUpdateStatus('success');
