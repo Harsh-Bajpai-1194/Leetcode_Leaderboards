@@ -1,16 +1,16 @@
-name: Supabase Keep-Alive
+name: Scheduled Leaderboard Update
 
 on:
   schedule:
-    # Runs at 00:00 UTC every day
+    # This tells GitHub to run your sync-engine every 5 minutes
     - cron: '*/5 * * * *'
-  workflow_dispatch: # Allows you to run it manually from the Actions tab
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase Edge Function
+      - name: Trigger Supabase Sync
         run: |
           curl -i -X POST \
           https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine \
