@@ -25,7 +25,7 @@ const Leaderboard = () => {
 
       if (userError) throw userError;
 
-      // B. Fetch Activities (Fetch enough to build a 21-day graph)
+      // B. Fetch Activities
       const { data: supabaseActivities, error: actError } = await supabase
         .from('activities')
         .select('*')
@@ -42,25 +42,21 @@ const Leaderboard = () => {
 
       if (metaError) throw metaError;
 
-      // --- D. PROCESS GRAPH DATA (NEW LOGIC) ---
+      // --- D. PROCESS GRAPH DATA ---
       const daysToLookBack = 21;
       const dailySolvedMap = {};
       
-      // 1. Group activity by date and sum the "+X" values from the text
       if (supabaseActivities) {
         supabaseActivities.forEach(act => {
           if (!act.text || !act.created_at) return;
           const match = act.text.match(/\+(\d+)/);
           const solved = match ? parseInt(match[1]) : 0;
-          
           const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          
           if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
           dailySolvedMap[dateKey] += solved;
         });
       }
 
-      // 2. Generate the 21-day timeline
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
         const d = new Date();
@@ -72,42 +68,33 @@ const Leaderboard = () => {
         });
       }
 
-      // E. Update State
       setData({
         users: supabaseUsers || [],
-        activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [], // Limit feed to 50
+        activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
         graph_data: processedGraphData,
         last_updated: (metaData && metaData.length > 0) ? metaData[0].date_string : "--"
       });
       
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching data from Supabase:", error.message);
+      console.error("Error fetching data:", error.message);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAllData();
-
     const channel = supabase
       .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'leaderboard' },
-        () => fetchAllData()
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => fetchAllData())
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const handleForceUpdate = async () => {
     if (updateStatus !== 'idle') return;
     setUpdateStatus('loading');
-
     try {
       const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
         method: 'POST',
@@ -117,7 +104,6 @@ const Leaderboard = () => {
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
         }
       });
-      
       if (response.ok) {
         setUpdateStatus('success');
         setTimeout(() => setUpdateStatus('idle'), 45000);
@@ -157,183 +143,61 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="main-wrapper" style={{ display: 'flex', gap: '25px', padding: '20px', width: '100%', boxSizing: 'border-box', minHeight: '100vh' }}>
+    <div className="main-wrapper" style={{ display: 'flex', gap: '20px', padding: '20px', width: '100%', boxSizing: 'border-box', minHeight: '100vh', backgroundColor: '#000' }}>
 
-      {/* --- LEFT COLUMN: 15% --- */}
-      <div className="left-section" style={{ flex: 15, maxWidth: '300px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
+      {/* --- LEFT COLUMN: flex 1 --- */}
+      <div className="left-section" style={{ flex: 1, minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', borderRadius: '10px' }} />
 
           <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
-                <button style={{
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: '#2c2c2c',
-                  color: '#4ade80',
-                  border: '1px solid #4ade80',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '1em'
-                }}>
-                  🔒 Admin Panel
-                </button>
+                <button style={{ width: '100%', padding: '12px', backgroundColor: '#2c2c2c', color: '#4ade80', border: '1px solid #4ade80', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>🔒 Admin Panel</button>
               </Link>
 
-              <button 
-                onClick={handleForceUpdate}
-                disabled={updateStatus !== 'idle'}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  backgroundColor: getButtonColor(),
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: updateStatus === 'idle' ? 'pointer' : 'default',
-                  fontWeight: 'bold',
-                  fontSize: '1em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  transition: 'background-color 0.3s ease'
-                }}
-              >
+              <button onClick={handleForceUpdate} disabled={updateStatus !== 'idle'} style={{ width: '100%', padding: '12px', backgroundColor: getButtonColor(), color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: updateStatus === 'idle' ? 'pointer' : 'default' }}>
                 {getButtonText()} 
               </button>
 
-              <div style={{ 
-                  marginTop: '10px', 
-                  width: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  backgroundColor: '#1a1a1a', 
-                  padding: '15px', 
-                  borderRadius: '8px', 
-                  border: '1px solid #333',
-                  boxSizing: 'border-box'
-              }}>
-                <div style={{
-                  width: '100%',
-                  marginBottom: '15px',
-                  padding: '4px',
-                  borderRadius: '8px',
-                  backgroundImage: 'url("/border.gif")',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  boxSizing: 'border-box'
-                }}>
-                  <button style={{
-                    width: '100%',
-                    padding: '10px',
-                    backgroundColor: '#ec4899',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    fontWeight: 'bold',
-                    fontSize: '1em',
-                    cursor: 'default'
-                  }}>
-                    💖 SPONSORS
-                  </button>
+              <div style={{ marginTop: '10px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
+                <div style={{ width: '100%', marginBottom: '15px', padding: '4px', borderRadius: '8px', backgroundImage: 'url("/border.gif")', backgroundSize: 'cover' }}>
+                  <button style={{ width: '100%', padding: '10px', backgroundColor: '#ec4899', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>💖 SPONSORS</button>
                 </div>
-
-                <img 
-                  src="/QR.jpg" 
-                  alt="Sponsor QR Code" 
-                  style={{ 
-                    width: '90%', 
-                    maxWidth: '180px', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
-                  }} 
-                />
-                <p style={{ color: '#888', fontSize: '0.8em', marginTop: '10px', textAlign: 'center', marginBottom: 0 }}>
-                  Scan to support the project!
-                </p>
+                <img src="/QR.jpg" alt="QR" style={{ width: '90%', borderRadius: '8px' }} />
               </div>
           </div>
       </div>
 
-      {/* --- CENTER COLUMN: 55% --- */}
-      <div className="leaderboard-container" style={{ flex: 55, minWidth: '0' }}>
+      {/* --- CENTER COLUMN: flex 3 --- */}
+      <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             LEETCODE LEADERBOARDS
-            <img 
-              src="https://img.shields.io/badge/Release-v5.5.14-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.5.14"
-              style={{ height: '28px' }} 
-            />
+            <img src="https://img.shields.io/badge/Release-v5.5.15-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.15" style={{ height: '28px' }} />
         </h1>
-        <div id="last-updated" style={{ textAlign: 'center', color: '#888', fontSize: '0.9em', marginBottom: '15px' }}>
-          Last updated: {data.last_updated}
-        </div>
-
-        <div className="search-container">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="🔍 Search for names..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%' }}
-          />
-        </div>
-
+        <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
+        <div className="search-container"><input type="text" placeholder="🔍 Search for names..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%' }} /></div>
         <div className="table-wrapper">
           <table className="leaderboard-table" style={{ width: '100%' }}>
-            <thead>
-              <tr>
-                <th>S.no.</th>
-                <th>NAME</th>
-                <th>Solved</th>
-                <th>Profile</th>
-              </tr>
-            </thead>
-            <tbody id="leaderboard-body">
-              {loading ? (
-                <tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>
-              ) : (
+            <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
+            <tbody>
+              {loading ? (<tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>) : (
                 filteredUsers.map((user, index) => (
-                  <tr key={index} data-rank={index + 1}>
+                  <tr key={index}>
                     <td>{index + 1}</td>
                     <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      {user.badge_icon && (
-                        <img 
-                          src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} 
-                          alt="Badge" 
-                          title={user.badge_name}
-                          style={{ width: '25px', height: '25px' }} 
-                        />
-                      )}
+                      {user.badge_icon && <img src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} alt="Badge" style={{ width: '25px' }} />}
                       <span>{user.name || user.username}</span>
                     </td>
                     <td className="solved-cell">
                       <div className="solved-wrapper">
                         <span className="main-stat">{user.total_solved || 0}</span>
                         <div className="hover-stats">
-                          <span className="easy" title="Easy">{user.easy_solved || 0}</span>
-                          <span className="medium" title="Medium">{user.medium_solved || 0}</span>
-                          <span className="hard" title="Hard">{user.hard_solved || 0}</span>
+                          <span className="easy">{user.easy_solved || 0}</span>
+                          <span className="medium">{user.medium_solved || 0}</span>
+                          <span className="hard">{user.hard_solved || 0}</span>
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <a href={user.url} target="_blank" rel="noopener noreferrer" 
-                        style={{
-                          textDecoration: 'none',
-                          backgroundColor: '#ffa116',
-                          color: 'black',
-                          padding: '5px 12px',
-                          borderRadius: '5px',
-                          fontWeight: 'bold',
-                          display: 'inline-block'
-                        }}>
-                        View
-                      </a>
-                    </td>
+                    <td><a href={user.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', backgroundColor: '#ffa116', color: 'black', padding: '5px 12px', borderRadius: '5px', fontWeight: 'bold' }}>View</a></td>
                   </tr>
                 ))
               )}
@@ -342,33 +206,24 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN: 30% --- */}
-      <div className="right-section" style={{ flex: 30, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
-
-        {/* BOX 1: Activity Feed */}
-        <div className="activity-container" style={{ margin: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {/* --- RIGHT COLUMN: flex 2 --- */}
+      <div className="right-section" style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
+        <div className="activity-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 0 }}>
           <div className="activity-title">Activity Feed</div>
-
-          <div id="activity-content" style={{ flex: 1, overflowY: 'auto', paddingRight: '5px', maxHeight: '450px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', maxHeight: '450px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
-                  <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span>
-                  <br />
+                  <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span><br />
                   <span style={{ fontSize: '0.8em', color: '#666' }}>{act.time}</span>
                 </div>
               ))
-            ) : (
-              <div style={{ color: '#888', textAlign: 'center', marginTop: '20px' }}>NO ACTIVITY CURRENTLY</div>
-            )}
+            ) : (<div style={{ textAlign: 'center', color: '#888' }}>NO ACTIVITY CURRENTLY</div>)}
           </div>
         </div>
-
-        {/* BOX 2: Graph */}
-        <div className="graph-wrapper" style={{ flex: '0 1 auto', backgroundColor: '#1a1a1a', borderRadius: '8px', padding: '10px', border: '1px solid #333' }}>
+        <div className="graph-wrapper" style={{ backgroundColor: '#1a1a1a', borderRadius: '8px', padding: '10px', border: '1px solid #333' }}>
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
-
       </div>
     </div>
   );
