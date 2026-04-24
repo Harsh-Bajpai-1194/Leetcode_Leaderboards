@@ -45,40 +45,37 @@ const Leaderboard = () => {
 
       if (metaError) throw metaError;
 
-      // --- D. PROCESS GRAPH DATA (ENSURING 21 SLOTS) ---
-      const daysToLookBack = 21;
-      const dailySolvedMap = {};
-      
-      if (supabaseActivities) {
-        supabaseActivities.forEach(act => {
-          if (!act.text || !act.created_at) return;
-          const match = act.text.match(/\+(\d+)/);
-          const solved = match ? parseInt(match[1]) : 0;
-          
-          // Use UTC-based formatting to avoid timezone shifts between days
-          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric' 
-          });
-          
-          if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-          dailySolvedMap[dateKey] += solved;
-        });
-      }
+      // --- D. PROCESS GRAPH DATA ---
+const daysToLookBack = 21;
+const dailySolvedMap = {};
 
-      // Generate exactly 21 slots, filling empty days with 0
-      const processedGraphData = [];
-      for (let i = daysToLookBack - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        
-        processedGraphData.push({ 
-          date: dateStr, 
-          solved: dailySolvedMap[dateStr] || 0 
-        });
-      }
+if (supabaseActivities) {
+  supabaseActivities.forEach(act => {
+    if (!act.text || !act.created_at) return;
+    const match = act.text.match(/\+(\d+)/);
+    const solved = match ? parseInt(match[1]) : 0;
+    
+    // Use 'en-GB' or 'en-US' but keep it consistent everywhere
+    const dateObj = new Date(act.created_at);
+    const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    
+    if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+    dailySolvedMap[dateKey] += solved;
+  });
+}
 
+const processedGraphData = [];
+for (let i = daysToLookBack - 1; i >= 0; i--) {
+  const d = new Date();
+  d.setDate(d.getDate() - i);
+  // This must match the formatting used in the loop above EXACTLY
+  const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  
+  processedGraphData.push({ 
+    date: dateStr, 
+    solved: dailySolvedMap[dateStr] || 0 
+  });
+}
       setData({
         users: supabaseUsers || [],
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
