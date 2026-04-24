@@ -174,7 +174,16 @@ const Leaderboard = () => {
             <img src="https://img.shields.io/badge/Release-v5.5.15-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.15" style={{ height: '28px' }} />
         </h1>
         <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
-        <div className="search-container"><input type="text" placeholder="🔍 Search for names..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ width: '100%' }} /></div>
+        <div className="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search for names..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '100%' }}
+          />
+        </div>
         <div className="table-wrapper">
           <table className="leaderboard-table" style={{ width: '100%' }}>
             <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
