@@ -25,12 +25,15 @@ const Leaderboard = () => {
 
       if (userError) throw userError;
 
-      // B. Fetch Activities
-      const { data: supabaseActivities, error: actError } = await supabase
-        .from('activities')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1000); 
+const twentyOneDaysAgo = new Date();
+twentyOneDaysAgo.setDate(twentyOneDaysAgo.getDate() - 21);
+
+// Change your B. Fetch Activities call to this:
+const { data: supabaseActivities, error: actError } = await supabase
+  .from('activities')
+  .select('*')
+  .gte('created_at', twentyOneDaysAgo.toISOString()) // Fetch everything from last 21 days
+  .order('created_at', { ascending: false }); 
 
       if (actError) throw actError;
 
