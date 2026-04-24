@@ -25,15 +25,15 @@ const Leaderboard = () => {
 
       if (userError) throw userError;
 
-const twentyOneDaysAgo = new Date();
-twentyOneDaysAgo.setDate(twentyOneDaysAgo.getDate() - 21);
+      // B. Fetch exactly 21 days of data based on timestamp
+      const twentyOneDaysAgo = new Date();
+      twentyOneDaysAgo.setDate(twentyOneDaysAgo.getDate() - 21);
 
-// Change your B. Fetch Activities call to this:
-const { data: supabaseActivities, error: actError } = await supabase
-  .from('activities')
-  .select('*')
-  .gte('created_at', twentyOneDaysAgo.toISOString()) // Fetch everything from last 21 days
-  .order('created_at', { ascending: false }); 
+      const { data: supabaseActivities, error: actError } = await supabase
+        .from('activities')
+        .select('*')
+        .gte('created_at', twentyOneDaysAgo.toISOString()) 
+        .order('created_at', { ascending: false });
 
       if (actError) throw actError;
 
@@ -45,7 +45,7 @@ const { data: supabaseActivities, error: actError } = await supabase
 
       if (metaError) throw metaError;
 
-      // --- D. PROCESS GRAPH DATA ---
+      // --- D. PROCESS GRAPH DATA (ENSURING 21 SLOTS) ---
       const daysToLookBack = 21;
       const dailySolvedMap = {};
       
@@ -54,17 +54,25 @@ const { data: supabaseActivities, error: actError } = await supabase
           if (!act.text || !act.created_at) return;
           const match = act.text.match(/\+(\d+)/);
           const solved = match ? parseInt(match[1]) : 0;
-          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          
+          // Use UTC-based formatting to avoid timezone shifts between days
+          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+          });
+          
           if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
           dailySolvedMap[dateKey] += solved;
         });
       }
 
+      // Generate exactly 21 slots, filling empty days with 0
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
         processedGraphData.push({ 
           date: dateStr, 
           solved: dailySolvedMap[dateStr] || 0 
