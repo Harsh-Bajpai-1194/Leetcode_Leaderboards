@@ -53,7 +53,6 @@ const Leaderboard = () => {
           const match = act.text.match(/\+(\d+)/);
           const solved = match ? parseInt(match[1]) : 0;
           
-          // Use UTC or Local depending on your preference, but be consistent
           const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           
           if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
@@ -111,13 +110,13 @@ const Leaderboard = () => {
 
     try {
       const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY, // ADD THIS LINE
-      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` // ADD THIS LINE
-    }
-  });
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        }
+      });
       
       if (response.ok) {
         setUpdateStatus('success');
@@ -158,18 +157,17 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="main-wrapper">
+    <div className="main-wrapper" style={{ display: 'flex', gap: '25px', padding: '20px', width: '100%', boxSizing: 'border-box', minHeight: '100vh' }}>
 
-      {/* --- LEFT COLUMN: LOGO & BUTTONS --- */}
-      <div style={{ flex: 25, maxWidth: '400px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {/* --- LEFT COLUMN: 15% --- */}
+      <div className="left-section" style={{ flex: 15, maxWidth: '300px', minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', display: 'block', borderRadius: '10px' }} />
 
-          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '80%' }}>
-
+          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
                 <button style={{
                   width: '100%',
-                  padding: '10px',
+                  padding: '12px',
                   backgroundColor: '#2c2c2c',
                   color: '#4ade80',
                   border: '1px solid #4ade80',
@@ -184,11 +182,11 @@ const Leaderboard = () => {
 
               <button 
                 onClick={handleForceUpdate}
-                disabled={updateStatus !== 'idle'} // Disable while running
+                disabled={updateStatus !== 'idle'}
                 style={{
                   width: '100%',
-                  padding: '10px',
-                  backgroundColor: getButtonColor(), // Dynamic Color
+                  padding: '12px',
+                  backgroundColor: getButtonColor(),
                   color: 'white',
                   border: 'none',
                   borderRadius: '5px',
@@ -205,7 +203,6 @@ const Leaderboard = () => {
                 {getButtonText()} 
               </button>
 
-              {/* 👇 SPONSOR BUTTON (WITH GIF BORDER) & QR CODE 👇 */}
               <div style={{ 
                   marginTop: '10px', 
                   width: '100%', 
@@ -218,14 +215,12 @@ const Leaderboard = () => {
                   border: '1px solid #333',
                   boxSizing: 'border-box'
               }}>
-
-                {/* ✨ ANIMATED BORDER WRAPPER ✨ */}
                 <div style={{
                   width: '100%',
                   marginBottom: '15px',
-                  padding: '4px', // This determines how thick the GIF border is
+                  padding: '4px',
                   borderRadius: '8px',
-                  backgroundImage: 'url("/border.gif")', // Loads your GIF
+                  backgroundImage: 'url("/border.gif")',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   boxSizing: 'border-box'
@@ -233,17 +228,13 @@ const Leaderboard = () => {
                   <button style={{
                     width: '100%',
                     padding: '10px',
-                    backgroundColor: '#ec4899', // Pink sponsor color
+                    backgroundColor: '#ec4899',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '5px', // slightly smaller than the 8px wrapper
+                    borderRadius: '5px',
                     fontWeight: 'bold',
                     fontSize: '1em',
-                    cursor: 'default',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    gap: '8px'
+                    cursor: 'default'
                   }}>
                     💖 SPONSORS
                   </button>
@@ -253,7 +244,7 @@ const Leaderboard = () => {
                   src="/QR.jpg" 
                   alt="Sponsor QR Code" 
                   style={{ 
-                    width: '85%', 
+                    width: '90%', 
                     maxWidth: '180px', 
                     borderRadius: '8px',
                     boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
@@ -263,17 +254,16 @@ const Leaderboard = () => {
                   Scan to support the project!
                 </p>
               </div>
-              {/* 👆 END SPONSOR SECTION 👆 */}
           </div>
       </div>
 
-      {/* --- CENTER COLUMN: LEADERBOARD --- */}
-      <div className="leaderboard-container">
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      {/* --- CENTER COLUMN: 55% --- */}
+      <div className="leaderboard-container" style={{ flex: 55, minWidth: '0' }}>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             LEETCODE LEADERBOARDS
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.10-deeppink?style=for-the-the-badge&logo=github" 
-              alt="Version v5.5.10"
+              src="https://img.shields.io/badge/Release-v5.5.14-deeppink?style=for-the-the-badge&logo=github" 
+              alt="Version v5.5.14"
               style={{ height: '28px' }} 
             />
         </h1>
@@ -288,11 +278,12 @@ const Leaderboard = () => {
             placeholder="🔍 Search for names..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '100%' }}
           />
         </div>
 
         <div className="table-wrapper">
-          <table className="leaderboard-table">
+          <table className="leaderboard-table" style={{ width: '100%' }}>
             <thead>
               <tr>
                 <th>S.no.</th>
@@ -308,7 +299,6 @@ const Leaderboard = () => {
                 filteredUsers.map((user, index) => (
                   <tr key={index} data-rank={index + 1}>
                     <td>{index + 1}</td>
-
                     <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       {user.badge_icon && (
                         <img 
@@ -320,7 +310,6 @@ const Leaderboard = () => {
                       )}
                       <span>{user.name || user.username}</span>
                     </td>
-
                     <td className="solved-cell">
                       <div className="solved-wrapper">
                         <span className="main-stat">{user.total_solved || 0}</span>
@@ -331,16 +320,16 @@ const Leaderboard = () => {
                         </div>
                       </div>
                     </td>
-
                     <td>
                       <a href={user.url} target="_blank" rel="noopener noreferrer" 
                         style={{
                           textDecoration: 'none',
                           backgroundColor: '#ffa116',
                           color: 'black',
-                          padding: '5px 10px',
+                          padding: '5px 12px',
                           borderRadius: '5px',
-                          fontWeight: 'bold'
+                          fontWeight: 'bold',
+                          display: 'inline-block'
                         }}>
                         View
                       </a>
@@ -353,14 +342,14 @@ const Leaderboard = () => {
         </div>
       </div>
 
-      {/* --- RIGHT COLUMN WRAPPER --- */}
-      <div className="right-section" style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '300px' }}>
+      {/* --- RIGHT COLUMN: 30% --- */}
+      <div className="right-section" style={{ flex: 30, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
 
         {/* BOX 1: Activity Feed */}
-        <div className="activity-container" style={{ margin: 0 }}>
+        <div className="activity-container" style={{ margin: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div className="activity-title">Activity Feed</div>
 
-          <div id="activity-content" style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '5px' }}>
+          <div id="activity-content" style={{ flex: 1, overflowY: 'auto', paddingRight: '5px', maxHeight: '450px' }}>
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
@@ -370,13 +359,13 @@ const Leaderboard = () => {
                 </div>
               ))
             ) : (
-              <div>NO ACTIVITY CURRENTLY</div>
+              <div style={{ color: '#888', textAlign: 'center', marginTop: '20px' }}>NO ACTIVITY CURRENTLY</div>
             )}
           </div>
         </div>
 
         {/* BOX 2: Graph */}
-        <div className="graph-wrapper">
+        <div className="graph-wrapper" style={{ flex: '0 1 auto', backgroundColor: '#1a1a1a', borderRadius: '8px', padding: '10px', border: '1px solid #333' }}>
              {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
         </div>
 
