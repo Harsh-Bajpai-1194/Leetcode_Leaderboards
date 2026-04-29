@@ -179,7 +179,7 @@ for (let i = daysToLookBack - 1; i >= 0; i--) {
       <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.5.21-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.21" style={{ height: '28px' }} />
+            <img src="https://img.shields.io/badge/Release-v5.5.23-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.23" style={{ height: '28px' }} />
         </h1>
         <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
         <div className="search-container">
