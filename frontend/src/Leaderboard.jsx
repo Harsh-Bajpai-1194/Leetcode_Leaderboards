@@ -67,16 +67,18 @@ const Leaderboard = () => {
           dailySolvedMap[dateKey] += solved;
         });
       }
-
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        // Match the UTC formatting exactly
+        const d = new Date(); // Start with current time
+        
+        // IMPORTANT: Move the Date object itself into UTC alignment
+        d.setUTCDate(d.getUTCDate() - i);
+        
+        // Now format that specific UTC date into a string
         const dateStr = d.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',
-          timeZone: 'UTC'
+          timeZone: 'UTC' // Keep this for absolute safety
         });
         
         processedGraphData.push({ 
@@ -84,6 +86,7 @@ const Leaderboard = () => {
           solved: dailySolvedMap[dateStr] || 0 
         });
       }
+
       setData({
         users: supabaseUsers || [],
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
@@ -187,7 +190,7 @@ const Leaderboard = () => {
       <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.5.27-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.27" style={{ height: '28px' }} />
+            <img src="https://img.shields.io/badge/Release-v5.5.28-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.28" style={{ height: '28px' }} />
         </h1>
         <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
         <div className="search-container">
