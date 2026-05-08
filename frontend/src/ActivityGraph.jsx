@@ -42,10 +42,12 @@ const ActivityGraph = ({ data }) => {
             </defs>
             <XAxis 
               dataKey="date" 
-              tick={{ fill: '#888', fontSize: 11 }} 
+              tick={{ fill: '#888', fontSize: 10 }} 
               axisLine={false}
               tickLine={false}
-              dy={10} /* Pushes text down slightly (now inside the safe margin) */
+              interval={2} 
+              height={50} 
+              dy={10} 
             />
             <YAxis 
               tick={{ fill: '#888', fontSize: 11 }} 
