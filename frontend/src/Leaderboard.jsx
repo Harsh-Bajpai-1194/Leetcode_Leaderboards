@@ -46,39 +46,17 @@ const Leaderboard = () => {
       if (metaError) throw metaError;
 
       // --- D. PROCESS GRAPH DATA ---
-      const daysToLookBack = 21;
-      const dailySolvedMap = {};
-
-      if (supabaseActivities) {
-        supabaseActivities.forEach(act => {
-          if (!act.text || !act.created_at) return;
-          const match = act.text.match(/\+(\d+)/);
-          const solved = match ? parseInt(match[1]) : 0;
-          
-          // Use UTC to ensure consistency between DB and Frontend
-          const dateObj = new Date(act.created_at);
-          const dateKey = dateObj.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric',
-            timeZone: 'UTC' 
-          });
-          
-          if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-          dailySolvedMap[dateKey] += solved;
-        });
-      }
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
-        const d = new Date(); // Start with current time
+        const d = new Date(); 
         
-        // IMPORTANT: Move the Date object itself into UTC alignment
+        // Use UTC math to prevent the 5.5-hour India shift from skipping dates
         d.setUTCDate(d.getUTCDate() - i);
         
-        // Now format that specific UTC date into a string
         const dateStr = d.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',
-          timeZone: 'UTC' // Keep this for absolute safety
+          timeZone: 'UTC' 
         });
         
         processedGraphData.push({ 
@@ -86,7 +64,7 @@ const Leaderboard = () => {
           solved: dailySolvedMap[dateStr] || 0 
         });
       }
-
+  
       setData({
         users: supabaseUsers || [],
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
