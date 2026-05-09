@@ -184,7 +184,7 @@ const Leaderboard = () => {
       <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.5.28-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.28" style={{ height: '28px' }} />
+            <img src="https://img.shields.io/badge/Release-v5.5.30-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.30" style={{ height: '28px' }} />
         </h1>
         <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
         <div className="search-container">
