@@ -26,16 +26,14 @@ const Leaderboard = () => {
       if (userError) throw userError;
 
       // B. Fetch exactly 21 days of data based on timestamp
-      const twentyOneDaysAgo = new Date();
-      twentyOneDaysAgo.setDate(twentyOneDaysAgo.getDate() - 21);
+      const now = new Date();
+      const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
 
       const { data: supabaseActivities, error: actError } = await supabase
         .from('activities')
         .select('*')
         .gte('created_at', twentyOneDaysAgo.toISOString()) 
         .order('created_at', { ascending: false });
-
-      if (actError) throw actError;
 
       // C. Fetch Metadata
       const { data: metaData, error: metaError } = await supabase
@@ -46,17 +44,36 @@ const Leaderboard = () => {
       if (metaError) throw metaError;
 
       // --- D. PROCESS GRAPH DATA ---
+      const daysToLookBack = 21;
+      const dailySolvedMap = {};
+
+      if (supabaseActivities) {
+        supabaseActivities.forEach(act => {
+          if (!act.text || !act.created_at) return;
+          const match = act.text.match(/\+(\d+)/);
+          const solved = match ? parseInt(match[1]) : 0;
+          
+          // Create a key strictly based on UTC
+          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            timeZone: 'UTC' 
+          });
+          
+          if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+          dailySolvedMap[dateKey] += solved;
+        });
+      }
+
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
-        const d = new Date(); 
-        
-        // Use UTC math to prevent the 5.5-hour India shift from skipping dates
-        d.setUTCDate(d.getUTCDate() - i);
+        // Generate dates strictly in UTC
+        const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
         
         const dateStr = d.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',
-          timeZone: 'UTC' 
+          timeZone: 'UTC'
         });
         
         processedGraphData.push({ 
@@ -64,7 +81,6 @@ const Leaderboard = () => {
           solved: dailySolvedMap[dateStr] || 0 
         });
       }
-  
       setData({
         users: supabaseUsers || [],
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
