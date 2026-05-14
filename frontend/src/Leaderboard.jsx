@@ -184,8 +184,19 @@ const Leaderboard = () => {
       {/* --- CENTER COLUMN: flex 3 --- */}
       <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            LEETCODE LEADERBOARDS
-            <img src="https://img.shields.io/badge/Release-v5.5.31-deeppink?style=for-the-the-badge&logo=github" alt="v5.5.31" style={{ height: '28px' }} />
+          LEETCODE LEADERBOARDS
+          <a 
+            href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{ display: 'flex' }}
+          >
+            <img 
+              src="https://img.shields.io/badge/Release-v5.5.32-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.5.32" 
+              style={{ height: '28px', cursor: 'pointer' }} 
+            />
+          </a>
         </h1>
         <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
         <div className="search-container">
