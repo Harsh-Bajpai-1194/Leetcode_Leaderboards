@@ -33,7 +33,7 @@ const Leaderboard = () => {
         .from('activities')
         .select('*')
         .gte('created_at', twentyOneDaysAgo.toISOString()) 
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
         .limit(5000);
 
       // C. Fetch Metadata
@@ -192,8 +192,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.32-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.5.32" 
+              src="https://img.shields.io/badge/Release-v5.5.33-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.5.33" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
