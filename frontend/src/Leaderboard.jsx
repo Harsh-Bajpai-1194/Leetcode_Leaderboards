@@ -17,15 +17,25 @@ const Leaderboard = () => {
     try {
       setLoading(true);
 
-      // A. Fetch Users
-      const { data: supabaseUsers, error: userError } = await supabase
-        .from('leaderboard')
-        .select('*')
-        .order('total_solved', { ascending: false });
+      // 1. Fetch lightweight Users and Metadata in PARALLEL (Lightning Fast)
+      const [usersResponse, metaResponse] = await Promise.all([
+        supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
+        supabase.from('metadata').select('date_string').eq('type', 'last_updated')
+      ]);
 
-      if (userError) throw userError;
+      if (usersResponse.error) throw usersResponse.error;
+      if (metaResponse.error) throw metaResponse.error;
 
-      // B. Fetch exactly 21 days of data based on timestamp
+      // 2. TURN OFF THE LOADING SCREEN EARLY! 
+      // Show the main table to the user instantly while the graph thinks in the background.
+      setData(prev => ({
+        ...prev,
+        users: usersResponse.data || [],
+        last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--"
+      }));
+      setLoading(false); 
+
+      // 3. Now, fetch the heavy 5000-row Activities data
       const now = new Date();
       const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
 
@@ -36,15 +46,9 @@ const Leaderboard = () => {
         .order('created_at', { ascending: false })
         .limit(5000);
 
-      // C. Fetch Metadata
-      const { data: metaData, error: metaError } = await supabase
-        .from('metadata')
-        .select('date_string')
-        .eq('type', 'last_updated');
+      if (actError) throw actError;
 
-      if (metaError) throw metaError;
-
-      // --- D. PROCESS GRAPH DATA ---
+      // 4. Process the Graph Data
       const daysToLookBack = 21;
       const dailySolvedMap = {};
 
@@ -54,7 +58,6 @@ const Leaderboard = () => {
           const match = act.text.match(/\+(\d+)/);
           const solved = match ? parseInt(match[1]) : 0;
           
-          // Create a key strictly based on UTC
           const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric',
@@ -68,26 +71,25 @@ const Leaderboard = () => {
 
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
-        // Generate dates strictly in UTC
         const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-        
         const dateStr = d.toLocaleDateString('en-US', { 
           month: 'short', 
           day: 'numeric',
           timeZone: 'UTC'
         });
-        
         processedGraphData.push({ 
           date: dateStr, 
           solved: dailySolvedMap[dateStr] || 0 
         });
       }
-      setData({
-        users: supabaseUsers || [],
+
+      // 5. Update state silently with the graph and activity feed once it finishes calculating
+      setData(prev => ({
+        ...prev,
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
         graph_data: processedGraphData,
         last_updated: (metaData && metaData.length > 0) ? metaData[0].date_string : "--"
-      });
+      }));
       
       setLoading(false);
     } catch (error) {
@@ -192,8 +194,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.34-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.5.34" 
+              src="https://img.shields.io/badge/Release-v5.6.0-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.6.0" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
@@ -255,7 +257,11 @@ const Leaderboard = () => {
           </div>
         </div>
         <div className="graph-wrapper" style={{ backgroundColor: '#1a1a1a', borderRadius: '8px', padding: '10px', border: '1px solid #333' }}>
-             {!loading && data.graph_data && <ActivityGraph data={data.graph_data} />}
+             {data.graph_data && data.graph_data.length > 0 ? (
+               <ActivityGraph data={data.graph_data} />
+             ) : (
+               <div style={{ textAlign: 'center', color: '#888', padding: '50px 0' }}>Loading graph data...</div>
+             )}
         </div>
       </div>
     </div>
