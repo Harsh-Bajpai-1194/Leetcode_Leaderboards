@@ -194,8 +194,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.6.0-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.6.0" 
+              src="https://img.shields.io/badge/Release-v5.6.1-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.6.1" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
@@ -215,7 +215,7 @@ const Leaderboard = () => {
           <table className="leaderboard-table" style={{ width: '100%' }}>
             <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
             <tbody>
-              {loading ? (<tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>) : (
+              {loading && data.users.length === 0 ? (<tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
