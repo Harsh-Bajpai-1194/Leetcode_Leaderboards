@@ -11,7 +11,6 @@ const Leaderboard = () => {
   const [data, setData] = useState({ users: [], activities: [], graph_data: [], last_updated: '--' });
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [updateStatus, setUpdateStatus] = useState('idle'); 
 
   const fetchAllData = async () => {
     try {
@@ -118,55 +117,12 @@ const Leaderboard = () => {
     };
   }, []);
 
-  const handleForceUpdate = async () => {
-    if (updateStatus !== 'idle') return;
-    setUpdateStatus('loading');
-    try {
-      const response = await fetch('https://zxmysspedkhrtoqtbjtg.functions.supabase.co/sync-engine', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        }
-      });
-      if (response.ok) {
-        setUpdateStatus('success');
-        setTimeout(() => setUpdateStatus('idle'), 45000);
-      } else {
-        setUpdateStatus('error');
-        setTimeout(() => setUpdateStatus('idle'), 3000);
-      }
-    } catch (error) {
-      setUpdateStatus('error');
-      setTimeout(() => setUpdateStatus('idle'), 3000);
-    }
-  };
-
   const filteredUsers = data.users
     .filter((user) => {
       const name = user.name || user.leetcode_handle || '';
       return name.toLowerCase().includes(searchTerm.toLowerCase());
     })
     .sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
-
-  const getButtonText = () => {
-    switch(updateStatus) {
-      case 'loading': return '⏳ Requesting...';
-      case 'success': return '✅ Started (Wait 45s)';
-      case 'error': return '❌ Failed. Try Again.';
-      default: return '⚡ Force Update';
-    }
-  };
-
-  const getButtonColor = () => {
-    switch(updateStatus) {
-      case 'loading': return '#f59e0b';
-      case 'success': return '#10b981';
-      case 'error': return '#ef4444';
-      default: return '#ef4743';
-    }
-  };
 
   return (
     <div className="main-wrapper" style={{ display: 'flex', gap: '20px', padding: '20px', width: '100%', boxSizing: 'border-box', minHeight: '100vh', backgroundColor: '#000' }}>
@@ -190,7 +146,7 @@ const Leaderboard = () => {
       </div>
 
       {/* --- CENTER COLUMN: flex 3 --- */}
-      <div className="leaderboard-container" style={{ flex: 3, minWidth: '0' }}>
+      <div className="leaderboard-container" style={{ flex: 3, minWidth: '0', overflow: 'hidden' }}>
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           LEETCODE LEADERBOARDS
           <a 
@@ -200,8 +156,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.6.3-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.6.3" 
+              src="https://img.shields.io/badge/Release-v5.6.5-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.6.5" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
@@ -217,7 +173,7 @@ const Leaderboard = () => {
             style={{ width: '100%' }}
           />
         </div>
-        <div className="table-wrapper">
+        <div className="table-wrapper" style={{ overflowX: 'auto', width: '100%' }}>
           <table className="leaderboard-table" style={{ width: '100%' }}>
             <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
             <tbody>
@@ -247,6 +203,7 @@ const Leaderboard = () => {
           </table>
         </div>
       </div>
+      
       {/* --- RIGHT COLUMN: flex 2 --- */}
       <div className="right-section" style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
         <div className="activity-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 0 }}>
