@@ -180,10 +180,6 @@ const Leaderboard = () => {
                 <button style={{ width: '100%', padding: '12px', backgroundColor: '#2c2c2c', color: '#4ade80', border: '1px solid #4ade80', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>🔒 Admin Panel</button>
               </Link>
 
-              <button onClick={handleForceUpdate} disabled={updateStatus !== 'idle'} style={{ width: '100%', padding: '12px', backgroundColor: getButtonColor(), color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold', cursor: updateStatus === 'idle' ? 'pointer' : 'default' }}>
-                {getButtonText()} 
-              </button>
-
               <div style={{ marginTop: '10px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
                 <div style={{ width: '100%', marginBottom: '15px', padding: '4px', borderRadius: '8px', backgroundImage: 'url("/border.gif")', backgroundSize: 'cover' }}>
                   <button style={{ width: '100%', padding: '10px', backgroundColor: '#ec4899', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>💖 SPONSORS</button>
