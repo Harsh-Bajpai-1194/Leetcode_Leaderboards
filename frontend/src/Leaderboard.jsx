@@ -31,7 +31,7 @@ const Leaderboard = () => {
 
       const { data: supabaseActivities, error: actError } = await supabase
         .from('activities')
-        .select('*')
+        .select('created_at, text, time')
         .gte('created_at', twentyOneDaysAgo.toISOString()) 
         .order('created_at', { ascending: false })
         .limit(5000);
@@ -192,8 +192,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.5.33-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.5.33" 
+              src="https://img.shields.io/badge/Release-v5.5.34-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.5.34" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
