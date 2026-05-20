@@ -87,8 +87,7 @@ const Leaderboard = () => {
       setData(prev => ({
         ...prev,
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
-        graph_data: processedGraphData,
-        last_updated: (metaData && metaData.length > 0) ? metaData[0].date_string : "--"
+        graph_data: processedGraphData
       }));
       
       setLoading(false);
@@ -100,12 +99,23 @@ const Leaderboard = () => {
 
   useEffect(() => {
     fetchAllData();
+    
+    let debounceTimer;
     const channel = supabase
       .channel('schema-db-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => fetchAllData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => {
+        // Prevent spamming the database. Wait 1.5s after the last update before fetching.
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          fetchAllData();
+        }, 1500);
+      })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => { 
+      supabase.removeChannel(channel); 
+      clearTimeout(debounceTimer);
+    };
   }, []);
 
   const handleForceUpdate = async () => {
@@ -194,8 +204,8 @@ const Leaderboard = () => {
             style={{ display: 'flex' }}
           >
             <img 
-              src="https://img.shields.io/badge/Release-v5.6.1-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.6.1" 
+              src="https://img.shields.io/badge/Release-v5.6.3-deeppink?style=for-the-the-badge&logo=github" 
+              alt="v5.6.3" 
               style={{ height: '28px', cursor: 'pointer' }} 
             />
           </a>
