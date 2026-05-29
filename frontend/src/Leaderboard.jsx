@@ -16,7 +16,6 @@ const Leaderboard = () => {
     try {
       setLoading(true);
 
-      // 1. Fetch lightweight Users and Metadata in PARALLEL (Lightning Fast)
       const [usersResponse, metaResponse] = await Promise.all([
         supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
         supabase.from('metadata').select('date_string').eq('type', 'last_updated')
@@ -25,8 +24,6 @@ const Leaderboard = () => {
       if (usersResponse.error) throw usersResponse.error;
       if (metaResponse.error) throw metaResponse.error;
 
-      // 2. TURN OFF THE LOADING SCREEN EARLY! 
-      // Show the main table to the user instantly while the graph thinks in the background.
       setData(prev => ({
         ...prev,
         users: usersResponse.data || [],
@@ -34,7 +31,6 @@ const Leaderboard = () => {
       }));
       setLoading(false); 
 
-      // 3. Now, fetch the heavy 5000-row Activities data
       const now = new Date();
       const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
 
@@ -47,7 +43,6 @@ const Leaderboard = () => {
 
       if (actError) throw actError;
 
-      // 4. Process the Graph Data
       const daysToLookBack = 21;
       const dailySolvedMap = {};
 
@@ -82,7 +77,6 @@ const Leaderboard = () => {
         });
       }
 
-      // 5. Update state silently with the graph and activity feed once it finishes calculating
       setData(prev => ({
         ...prev,
         activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
@@ -103,7 +97,6 @@ const Leaderboard = () => {
     const channel = supabase
       .channel('schema-db-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => {
-        // Prevent spamming the database. Wait 1.5s after the last update before fetching.
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           fetchAllData();
@@ -125,44 +118,36 @@ const Leaderboard = () => {
     .sort((a, b) => (b.total_solved || 0) - (a.total_solved || 0));
 
   return (
-    <div className="main-wrapper" style={{ display: 'flex', gap: '20px', padding: '20px', width: '100%', boxSizing: 'border-box', minHeight: '100vh', backgroundColor: '#000' }}>
+    <div className="main-wrapper">
 
-      {/* --- LEFT COLUMN: flex 1 --- */}
-      <div className="left-section" style={{ flex: 1, minWidth: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" style={{ width: '100%', borderRadius: '10px' }} />
+      {/* --- LEFT COLUMN --- */}
+      <div className="left-section">
+          <img src="/leetcode.jpg" alt="LEETCODE" className="leetcode-img" />
 
-          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-              <Link to="/admin" style={{ textDecoration: 'none', width: '100%' }}>
-                <button style={{ width: '100%', padding: '12px', backgroundColor: '#2c2c2c', color: '#4ade80', border: '1px solid #4ade80', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>🔒 Admin Panel</button>
+          <div className="left-menu-container">
+              <Link to="/admin" className="admin-link">
+                <button className="admin-btn">🔒 Admin Panel</button>
               </Link>
 
-              <div style={{ marginTop: '10px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#1a1a1a', padding: '15px', borderRadius: '8px', border: '1px solid #333' }}>
-                <div style={{ width: '100%', marginBottom: '15px', padding: '4px', borderRadius: '8px', backgroundImage: 'url("/border.gif")', backgroundSize: 'cover' }}>
-                  <button style={{ width: '100%', padding: '10px', backgroundColor: '#ec4899', color: 'white', border: 'none', borderRadius: '5px', fontWeight: 'bold' }}>💖 SPONSORS</button>
+              <div className="sponsor-container">
+                <div className="sponsor-banner-wrapper">
+                  <button className="sponsor-btn">💖 SPONSORS</button>
                 </div>
-                <img src="/QR.jpg" alt="QR" style={{ width: '90%', borderRadius: '8px' }} />
+                <img src="/QR.jpg" alt="QR" className="qr-img" />
               </div>
           </div>
       </div>
 
-      {/* --- CENTER COLUMN: flex 3 --- */}
-      <div className="leaderboard-container" style={{ flex: 3, minWidth: '0', overflow: 'hidden' }}>
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+      {/* --- CENTER COLUMN --- */}
+      <div className="leaderboard-container">
+        <h1>
           LEETCODE LEADERBOARDS
-          <a 
-            href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={{ display: 'flex' }}
-          >
-            <img 
-              src="https://img.shields.io/badge/Release-v5.6.5-deeppink?style=for-the-the-badge&logo=github" 
-              alt="v5.6.5" 
-              style={{ height: '28px', cursor: 'pointer' }} 
-            />
+          <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
+            <img src="https://img.shields.io/badge/Release-v5.6.8-deeppink?style=for-the-the-badge&logo=github" alt="v5.6.8" className="release-badge" />
           </a>
         </h1>
-        <div style={{ textAlign: 'center', color: '#888', marginBottom: '15px' }}>Last updated: {data.last_updated}</div>
+        <div className="last-updated">Last updated: {data.last_updated}</div>
+        
         <div className="search-container">
           <input
             type="text"
@@ -170,19 +155,19 @@ const Leaderboard = () => {
             placeholder="🔍 Search for names..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%' }}
           />
         </div>
-        <div className="table-wrapper" style={{ overflowX: 'auto', width: '100%' }}>
-          <table className="leaderboard-table" style={{ width: '100%' }}>
+        
+        <div className="table-wrapper">
+          <table className="leaderboard-table">
             <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
             <tbody>
-              {loading && data.users.length === 0 ? (<tr><td colSpan="4" style={{ textAlign: 'center' }}>Loading...</td></tr>) : (
+              {loading && data.users.length === 0 ? (<tr><td colSpan="4" className="loading-text">Loading...</td></tr>) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      {user.badge_icon && <img src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} alt="Badge" style={{ width: '25px' }} />}
+                    <td className="user-name-cell">
+                      {user.badge_icon && <img src={user.badge_icon.startsWith('http') ? user.badge_icon : `https://leetcode.com${user.badge_icon}`} alt="Badge" className="user-badge" />}
                       <span>{user.name || user.username}</span>
                     </td>
                     <td className="solved-cell">
@@ -195,7 +180,7 @@ const Leaderboard = () => {
                         </div>
                       </div>
                     </td>
-                    <td><a href={user.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', backgroundColor: '#ffa116', color: 'black', padding: '5px 12px', borderRadius: '5px', fontWeight: 'bold' }}>View</a></td>
+                    <td><a href={user.url} target="_blank" rel="noopener noreferrer" className="profile-btn">View</a></td>
                   </tr>
                 ))
               )}
@@ -204,30 +189,32 @@ const Leaderboard = () => {
         </div>
       </div>
       
-      {/* --- RIGHT COLUMN: flex 2 --- */}
-      <div className="right-section" style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
-        <div className="activity-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 0 }}>
+      {/* --- RIGHT COLUMN --- */}
+      <div className="right-section">
+        <div className="activity-container">
           <div className="activity-title">Activity Feed</div>
-          <div style={{ flex: 1, overflowY: 'auto', maxHeight: '450px' }}>
+          {/* Note: Connected this div to your CSS custom scrollbar ID! */}
+          <div id="activity-content"> 
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
-                <div key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px' }}>
-                  <span style={{ color: 'white', fontWeight: 'bold' }}>{act.text}</span><br />
-                  <span style={{ fontSize: '0.8em', color: '#666' }}>{act.time}</span>
+                <div key={index} className="activity-item">
+                  <span className="activity-text">{act.text}</span><br />
+                  <span className="activity-time">{act.time}</span>
                 </div>
               ))
-            ) : (<div style={{ textAlign: 'center', color: '#888' }}>NO ACTIVITY CURRENTLY</div>)}
+            ) : (<div className="no-activity">NO ACTIVITY CURRENTLY</div>)}
           </div>
         </div>
-        <div className="graph-wrapper" style={{ backgroundColor: '#1a1a1a', borderRadius: '8px', padding: '10px', border: '1px solid #333' }}>
+        <div className="graph-wrapper">
              {data.graph_data && data.graph_data.length > 0 ? (
                <ActivityGraph data={data.graph_data} />
              ) : (
-               <div style={{ textAlign: 'center', color: '#888', padding: '50px 0' }}>Loading graph data...</div>
+               <div className="graph-loading">Loading graph data...</div>
              )}
         </div>
       </div>
     </div>
   );
 };
+
 export default Leaderboard;

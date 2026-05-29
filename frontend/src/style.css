@@ -17,34 +17,118 @@ body {
     margin: 0 auto;
     padding: 20px;
     flex-wrap: wrap;
+    min-height: 100vh;
+    background-color: #000;
 }
-/* --- LEFT SIDE: LEADERBOARD --- */
+
+/* --- LEFT SIDE: MENU & IMAGE --- */
+.left-section {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.left-menu-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.admin-link {
+    text-decoration: none;
+    width: 100%;
+}
+
+.admin-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #2c2c2c;
+    color: #4ade80;
+    border: 1px solid #4ade80;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.sponsor-container {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    box-sizing: border-box; /* <--- Prevents container overflow */
+}
+
+.sponsor-banner-wrapper {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 4px;
+    border-radius: 8px;
+    background-image: url("/border.gif");
+    background-size: cover;
+    background-position: center;
+    box-sizing: border-box; /* <--- Keeps the GIF border visible! */
+}
+
+.sponsor-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #ec4899;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    box-sizing: border-box; /* <--- Stops the button from covering the GIF */
+    cursor: pointer;
+}
+
+.qr-img {
+    width: 90%;
+    border-radius: 8px;
+}
+
+/* --- CENTER SIDE: LEADERBOARD --- */
 .leaderboard-container {
-    flex: 50;            /* <--- CHANGED to 50 */
-    min-width: 300px;
+    flex: 3;
+    min-width: 0;
+    overflow: hidden;
     background-color: #1a1a1a;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     padding: 24px;
 }
-/* --- RIGHT SIDE: ACTIVITY FEED (The Shell) --- */
+
+/* --- RIGHT SIDE: ACTIVITY FEED & GRAPH --- */
+.right-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 320px;
+}
+
 .activity-container {
-    flex: 25;
+    flex: 1;
+    margin: 0;
     min-width: 250px;
     background-color: #1a1a1a;
     border-radius: 12px;
     border: 1px solid #ffa116;
     padding: 20px;
     text-align: center;
-    
-    /* 👇 THIS IS THE FIX 👇 */
-    height: 500px;          /* Fixed height (or use max-height: 80vh) */
-    display: flex;          /* Turn on Flexbox layout */
-    flex-direction: column; /* Stack items vertically */
-    overflow: hidden;       /* STOP the main box from scrolling */
+    display: flex;          
+    flex-direction: column; 
+    overflow: hidden;       
 }
 
-/* --- THE TITLE (Stays Fixed) --- */
 .activity-title {
     color: #ffa116;
     font-size: 1.2em;
@@ -52,85 +136,67 @@ body {
     margin-bottom: 15px;
     border-bottom: 1px solid #333;
     padding-bottom: 10px;
-    
-    flex-shrink: 0;         /* Prevent title from getting squished */
+    flex-shrink: 0;         
 }
 
-/* --- THE CONTENT LIST (This part scrolls!) --- */
 #activity-content {
-    overflow-y: auto;       /* Scrollbar appears ONLY here */
-    flex-grow: 1;           /* Fills all remaining space */
+    overflow-y: auto;       
+    flex-grow: 1;           
     width: 100%;
-    padding-right: 5px;     /* Space so text doesn't touch scrollbar */
+    max-height: 250px;
+    padding-right: 5px;     
     color: #888;
     font-style: italic;
 }
 
-/* --- CUSTOM SCROLLBAR (Make it look cool) --- */
-#activity-content::-webkit-scrollbar {
-    width: 6px;
-}
-#activity-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-#activity-content::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 10px;
-}
-#activity-content::-webkit-scrollbar-thumb:hover {
-    background-color: #ffa116;
-}
-/* --- 🏆 TROPHY SYSTEM (Gold, Silver, Bronze) --- */
+#activity-content::-webkit-scrollbar { width: 6px; }
+#activity-content::-webkit-scrollbar-track { background: transparent; }
+#activity-content::-webkit-scrollbar-thumb { background-color: #555; border-radius: 10px; }
+#activity-content::-webkit-scrollbar-thumb:hover { background-color: #ffa116; }
 
-/* 🥇 Rank 1: GOLD */
-.leaderboard-table tbody tr:nth-child(1) {
-    background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent); /* Gold Glow */
-    border-left: 4px solid #FFD700;
-}
-.leaderboard-table tbody tr:nth-child(1) td:first-child {
-    font-size: 0; /* Hide the number "1" */
-}
-.leaderboard-table tbody tr:nth-child(1) td:first-child::before {
-    content: "🥇"; /* Add Medal Icon */
-    font-size: 1.5rem; /* Make it big */
+.activity-item {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    text-align: center;
 }
 
-/* 🥈 Rank 2: SILVER */
-.leaderboard-table tbody tr:nth-child(2) {
-    background: linear-gradient(90deg, rgba(192, 192, 192, 0.25), transparent); /* Silver Glow */
-    border-left: 4px solid #C0C0C0;
-}
-.leaderboard-table tbody tr:nth-child(2) td:first-child {
-    font-size: 0; /* Hide the number "2" */
-}
-.leaderboard-table tbody tr:nth-child(2) td:first-child::before {
-    content: "🥈";
-    font-size: 1.4rem;
+.activity-text {
+    color: white;
+    font-weight: bold;
 }
 
-/* 🥉 Rank 3: BRONZE */
-.leaderboard-table tbody tr:nth-child(3) {
-    background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), transparent); /* Bronze Glow */
-    border-left: 4px solid #CD7F32;
-}
-.leaderboard-table tbody tr:nth-child(3) td:first-child {
-    font-size: 0; /* Hide the number "3" */
-}
-.leaderboard-table tbody tr:nth-child(3) td:first-child::before {
-    content: "🥉";
-    font-size: 1.3rem;
+.activity-time {
+    font-size: 0.8em;
+    color: #666;
+    font-style: normal;
 }
 
-/* ✨ Pop-out Hover Effect for Champions */
-.leaderboard-table tbody tr:nth-child(1):hover,
-.leaderboard-table tbody tr:nth-child(2):hover,
-.leaderboard-table tbody tr:nth-child(3):hover {
-    transform: scale(1.02) translateX(5px);
-    transition: transform 0.2s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 10; /* Bring to front */
+.no-activity {
+    text-align: center;
+    color: #888;
 }
+
+.graph-wrapper {
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #333;
+}
+
+.graph-loading {
+    text-align: center;
+    color: #888;
+    padding: 50px 0;
+}
+
+/* --- TITLE AND BADGES --- */
 h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
     text-align: center;
     color: #ffa116;
     margin-top: 0;
@@ -140,7 +206,58 @@ h1 {
     letter-spacing: 2px;
 }
 
+.release-link {
+    display: flex;
+}
+
+.release-badge {
+    height: 28px;
+    cursor: pointer;
+}
+
+.last-updated {
+    text-align: center;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* --- 🏆 TROPHY SYSTEM --- */
+.leaderboard-table tbody tr:nth-child(1) { background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent); border-left: 4px solid #FFD700; }
+.leaderboard-table tbody tr:nth-child(1) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(1) td:first-child::before { content: "🥇"; font-size: 1.5rem; }
+
+.leaderboard-table tbody tr:nth-child(2) { background: linear-gradient(90deg, rgba(192, 192, 192, 0.25), transparent); border-left: 4px solid #C0C0C0; }
+.leaderboard-table tbody tr:nth-child(2) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(2) td:first-child::before { content: "🥈"; font-size: 1.4rem; }
+
+.leaderboard-table tbody tr:nth-child(3) { background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), transparent); border-left: 4px solid #CD7F32; }
+.leaderboard-table tbody tr:nth-child(3) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(3) td:first-child::before { content: "🥉"; font-size: 1.3rem; }
+
+.leaderboard-table tbody tr:nth-child(1):hover,
+.leaderboard-table tbody tr:nth-child(2):hover,
+.leaderboard-table tbody tr:nth-child(3):hover {
+    transform: scale(1.02) translateX(5px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
 /* --- TABLE STYLES --- */
+.table-wrapper {
+    max-height: 480px;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar { width: 8px; height: 8px;}
+.table-wrapper::-webkit-scrollbar-track { background: #1a1a1a; }
+.table-wrapper::-webkit-scrollbar-thumb { background-color: #555; border-radius: 10px; }
+.table-wrapper::-webkit-scrollbar-thumb:hover { background-color: #ffa116; }
+
 .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
@@ -155,6 +272,10 @@ h1 {
 }
 
 .leaderboard-table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
     background-color: #ffa116;
     color: #1a1a1a;
     font-weight: 700;
@@ -165,79 +286,48 @@ h1 {
     background-color: #2c2c2c;
 }
 
-.leaderboard-table td:nth-child(2) {
-    font-weight: bold;
-    color: white;
-}
-
-.leaderboard-table td:nth-child(3) {
-    color: #ffa116;
-    font-weight: bold;
+.loading-text {
     text-align: center;
 }
 
-.leaderboard-table th:nth-child(3) {
-    text-align: center;
-}
-/* --- 👻 GHOST STATS (Hover Effect) --- */
-/* --- FIXED DIMENSION HOVER EFFECT --- */
-
-/* 1. Lock the column width */
-.solved-cell {
-    min-width: 140px; /* Ensures enough space for 3 numbers */
-    text-align: center;
-}
-
-/* 2. The Container: Relative allows stacking */
-.solved-wrapper {
-    position: relative;
-    height: 24px;       /* Fixed height prevents row jumping */
+.user-name-cell {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-/* 3. The "Total" Number (Layer 1) */
-.main-stat {
-    font-size: 1.1em;
-    font-weight: bold;
-    color: white;
-    position: absolute; /* Stacked on top */
-    transition: opacity 0.2s ease;
-}
-
-/* 4. The "Easy/Med/Hard" Breakdown (Layer 2) */
-.hover-stats {
-    display: flex;
     gap: 10px;
-    font-size: 0.9em;
-    font-weight: bold;
-    position: absolute; /* Stacked on top */
-    opacity: 0;         /* Hidden by default */
-    transition: opacity 0.2s ease;
 }
 
-/* 5. Colors for the breakdown */
+.user-badge {
+    width: 25px;
+}
+
+.leaderboard-table td:nth-child(2) { font-weight: bold; color: white; }
+.leaderboard-table td:nth-child(3) { color: #ffa116; font-weight: bold; text-align: center; }
+.leaderboard-table th:nth-child(3) { text-align: center; }
+
+/* --- 👻 GHOST STATS --- */
+.solved-cell { min-width: 140px; text-align: center; }
+.solved-wrapper { position: relative; height: 24px; display: flex; align-items: center; justify-content: center; }
+.main-stat { font-size: 1.1em; font-weight: bold; color: white; position: absolute; transition: opacity 0.2s ease; }
+.hover-stats { display: flex; gap: 10px; font-size: 0.9em; font-weight: bold; position: absolute; opacity: 0; transition: opacity 0.2s ease; }
 .easy { color: #00b8a3; }
 .medium { color: #ffc01e; }
 .hard { color: #ef4743; }
 
-/* 6. THE INTERACTION: Swap opacity on hover */
-.leaderboard-table tbody tr:hover .main-stat {
-    opacity: 0; /* Hide Total */
-}
-.leaderboard-table tbody tr:hover .hover-stats {
-    opacity: 1; /* Show Breakdown */
-}
-/* Links */
-a {
-    text-decoration: none;
-    color: #ffa116;
-    font-weight: bold;
-}
+.leaderboard-table tbody tr:hover .main-stat { opacity: 0; }
+.leaderboard-table tbody tr:hover .hover-stats { opacity: 1; }
 
-a:hover {
-    text-decoration: underline;
+/* --- BUTTONS & LINKS --- */
+a { text-decoration: none; color: #ffa116; font-weight: bold; }
+a:hover { text-decoration: underline; }
+
+.profile-btn {
+    text-decoration: none;
+    background-color: #ffa116;
+    color: black;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block;
 }
 
 /* --- SEARCH BAR --- */
@@ -248,6 +338,7 @@ a:hover {
 
 #searchInput {
     width: 100%;
+    box-sizing: border-box;
     max-width: 400px;
     padding: 12px 20px;
     border-radius: 25px;
@@ -258,18 +349,12 @@ a:hover {
     outline: none;
 }
 
-#searchInput:focus {
-    border-color: #ffa116;
-}
+#searchInput:focus { border-color: #ffa116; }
 
 /* --- LOGO --- */
 .leetcode-img {
-    flex: 25;             /* <--- CHANGED to 25 */
     width: 100%;          
-    
-    /* Adjusted for better vertical alignment with other elements */
-    max-width: 250px;     /* Decreased from 400px to reduce height */
-    
+    max-width: 250px;     
     height: auto;         
     align-self: flex-start; 
     border-radius: 12px;
@@ -277,29 +362,10 @@ a:hover {
 }
 
 /* --- FOOTER CONTACT --- */
-.contact {
-    text-align: center;
-    margin-top: 40px;
-    padding: 20px;
-    color: #888;
-}
-
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
-}
-
-.social-links a {
-    font-size: 1.5em;
-    color: #ffa116;
-    transition: 0.2s;
-}
-
-.social-links a:hover {
-    transform: scale(1.1);
-}
+.contact { text-align: center; margin-top: 40px; padding: 20px; color: #888; }
+.social-links { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
+.social-links a { font-size: 1.5em; color: #ffa116; transition: 0.2s; }
+.social-links a:hover { transform: scale(1.1); }
 
 /* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
@@ -326,36 +392,4 @@ a:hover {
     body {
         padding-top: 20px;
     }
-}
-/* --- LEADERBOARD SCROLLING 📜 --- */
-
-/* 1. The Scrollable Wrapper */
-.table-wrapper {
-    max-height: 600px;       /* Shows approx 10 users, then scrolls */
-    overflow-y: auto;        /* Adds the vertical scrollbar */
-    margin-top: 10px;
-    border-radius: 8px;      /* Optional: Rounds the corners */
-}
-
-/* 2. Sticky Headers (So you can always see column names) */
-.leaderboard-table th {
-    position: sticky;
-    top: 0;
-    z-index: 10;             /* Ensures header floats above the list */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Adds a shadow line under header */
-}
-
-/* 3. Custom Scrollbar (Matches your theme) */
-.table-wrapper::-webkit-scrollbar {
-    width: 8px;
-}
-.table-wrapper::-webkit-scrollbar-track {
-    background: #1a1a1a;
-}
-.table-wrapper::-webkit-scrollbar-thumb {
-    background-color: #555;
-    border-radius: 10px;
-}
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background-color: #ffa116; /* Orange on hover */
 }
