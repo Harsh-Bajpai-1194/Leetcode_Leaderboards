@@ -271,6 +271,12 @@ h1 {
     text-align: left;
 }
 
+.leaderboard-table th:nth-child(1) { width: 8%; }
+.leaderboard-table th:nth-child(2) { width: 30%; }
+.leaderboard-table th:nth-child(3) { width: 20%; }
+.leaderboard-table th:nth-child(4) { width: 18%; }
+.leaderboard-table th:nth-child(5) { width: 14%; }
+
 .leaderboard-table th {
     position: sticky;
     top: 0;
@@ -328,6 +334,27 @@ a:hover { text-decoration: underline; }
     border-radius: 5px;
     font-weight: bold;
     display: inline-block;
+}
+
+.stats-btn-cell {
+    text-align: center;
+}
+
+.stats-btn {
+    background-color: #ffa116;
+    color: black;
+    padding: 6px 14px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+}
+
+.stats-btn:hover {
+    background-color: #ff8c00;
+    transform: scale(1.05);
 }
 
 /* --- SEARCH BAR --- */

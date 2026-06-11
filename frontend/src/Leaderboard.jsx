@@ -160,9 +160,9 @@ const Leaderboard = () => {
         
         <div className="table-wrapper">
           <table className="leaderboard-table">
-            <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th></tr></thead>
+            <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th><th>Stats</th></tr></thead>
             <tbody>
-              {loading && data.users.length === 0 ? (<tr><td colSpan="4" className="loading-text">Loading...</td></tr>) : (
+              {loading && data.users.length === 0 ? (<tr><td colSpan="5" className="loading-text">Loading...</td></tr>) : (
                 filteredUsers.map((user, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
@@ -181,6 +181,7 @@ const Leaderboard = () => {
                       </div>
                     </td>
                     <td><a href={user.url} target="_blank" rel="noopener noreferrer" className="profile-btn">View</a></td>
+                    <td className="stats-btn-cell"><button className="stats-btn">Stats</button></td>
                   </tr>
                 ))
               )}
