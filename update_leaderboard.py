@@ -2,25 +2,27 @@ import os
 import requests
 import time
 from datetime import datetime, timedelta, timezone
-from pymongo import MongoClient
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
 from followers import get_leetcode_data
-# 1. SETUP MONGODB
-load_dotenv() 
-mongo_uri = os.getenv("MONGO_URI")
-if not mongo_uri:
-    print("⚠️ Error: MONGO_URI not found!")
+from supabase import create_client, Client
+
+# 1. SETUP
+load_dotenv()
+
+# Environment variables for Supabase
+SUPABASE_URL = os.getenv("VITE_SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") # Use Service Role Key for backend operations
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("⚠️ Error: Supabase environment variables not found!")
     exit()
+
 try:
-    client = MongoClient(mongo_uri)
-    db = client["leetcode_db"]
-    users_col = db["users"]
-    activities_col = db["activities"]
-    metadata_col = db["metadata"]
-    print("✅ Connected to MongoDB")
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    print("✅ Connected to Supabase")
 except Exception as e:
-    print(f"❌ Connection failed: {e}")
+    print(f"❌ Supabase connection failed: {e}")
     exit()
 
 # ⚡ Session for connection pooling (Massive TLS handshake speedup)
@@ -28,7 +30,7 @@ session = requests.Session()
 
 # 2. WORKER FUNCTION (Process ONE user)
 def process_user(user_doc):
-    username = user_doc.get("username")
+    username = user_doc.get("leetcode_handle") # Supabase uses 'leetcode_handle'
     if not username: return None
 
     # Fetch Data from LeetCode
@@ -94,28 +96,27 @@ def process_user(user_doc):
         if diff > 0 and previous_solved > 0:
             print(f"🔥 {real_name} solved +{diff}!")
             ist_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
-            activities_col.insert_one({
+            activity_payload = {
                 "text": f"{real_name} solved +{diff} questions",
                 "time": ist_time,
                 "type": "up",
-                "created_at": datetime.now()
-            })
+                "created_at": datetime.now().isoformat()
+            }
+            supabase.from_("activities").insert(activity_payload).execute()
 
         # Update Database
-        users_col.update_one(
-            {"username": username}, 
-            {"$set": {
-                "name": real_name,
-                "url": f"https://leetcode.com/{username}/",
-                "total_solved": stats["total"],
-                "easy_solved": stats["easy"],
-                "medium_solved": stats["medium"],
-                "hard_solved": stats["hard"],
-                "badge_icon": stats["badge_icon"],
-                "badge_name": stats["badge_name"],
-                "last_updated": datetime.now()
-            }}
-        )
+        user_payload = {
+            "name": real_name,
+            "url": f"https://leetcode.com/{username}/",
+            "total_solved": stats["total"],
+            "easy_solved": stats["easy"],
+            "medium_solved": stats["medium"],
+            "hard_solved": stats["hard"],
+            "badge_icon": stats["badge_icon"],
+            "badge_name": stats["badge_name"],
+            "last_updated": datetime.now().isoformat()
+        }
+        supabase.from_("leaderboard").update(user_payload).eq("leetcode_handle", username).execute()
         return f"✅ {username}"
 
     except Exception as e:
@@ -130,21 +131,26 @@ def update_leaderboard():
         try:
             scraped_users = get_leetcode_data()
             if scraped_users:
+                new_users_payload = []
                 for username in scraped_users:
-                    if not users_col.find_one({"username": username}):
-                        users_col.insert_one({
-                            "username": username, 
-                            "name": username, 
-                            "url": f"https://leetcode.com/{username}/", 
-                            "total_solved": 0
-                        })
-                        print(f"Added new user to DB: {username}")
+                    new_users_payload.append({
+                        "leetcode_handle": username,
+                        "name": username,
+                        "url": f"https://leetcode.com/{username}/"
+                    })
+                
+                if new_users_payload:
+                    # Upsert new users, ignoring conflicts on existing handles
+                    supabase.from_("leaderboard").upsert(new_users_payload, on_conflict="leetcode_handle").execute()
+                    print(f"Synced {len(new_users_payload)} follower/following users.")
+
         except Exception as e:
             print(f"Follower sync error: {e}")
     else:
         print("⏩ Skipping follower sync for ultra-fast manual update...")
 
-    db_users = list(users_col.find())
+    response = supabase.from_('leaderboard').select('leetcode_handle, total_solved').execute()
+    db_users = response.data
     print(f"Checking stats for {len(db_users)} users using 50 parallel workers...")
 
     # 👇 Run 50 requests at the same time for lightning-fast scraping
@@ -153,7 +159,7 @@ def update_leaderboard():
 
     # Update Time
     current_ist = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%d/%m/%Y, %I:%M %p")
-    metadata_col.update_one({"type": "last_updated"}, {"$set": {"date_string": current_ist}}, upsert=True)
+    supabase.from_("metadata").upsert({"type": "last_updated", "date_string": current_ist}).execute()
     
     print(f"🚀 Update Complete at {current_ist}")
 

@@ -253,6 +253,39 @@ app.post('/api/trigger-update', async (req, res) => {
     }
 });
 
+app.get('/api/user-stats/:username', async (req, res) => {
+    const { username } = req.params;
+    try {
+        const response = await fetch('https://leetcode.com/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+                    query getUserStats($username: String!) {
+                        matchedUser(username: $username) {
+                            username
+                            profile { realName userAvatar aboutMe }
+                            submitStats { acSubmissionNum { difficulty count } }
+                        }
+                        userContestRanking(username: $username) {
+                            attendedContestsCount
+                            rating
+                            globalRanking
+                        }
+                    }
+                `,
+                variables: { username }
+            })
+        });
+
+        const data = await response.json();
+        if (!data.data || !data.data.matchedUser) return res.status(404).json({ error: "User not found" });
+        res.json(data.data);
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });

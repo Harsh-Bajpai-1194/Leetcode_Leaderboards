@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@supabase/supabase-js": "^2.106.1",
+    "@supabase/supabase-js": "^2.108.1",
     "compression": "^1.8.1",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongodb": "^7.0.0",
+    "mongodb": "^7.3.0",
     "mongoose": "^9.1.6"
   }
 }

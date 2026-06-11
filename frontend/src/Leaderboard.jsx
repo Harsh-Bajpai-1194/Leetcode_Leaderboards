@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './style.css'; 
 import ActivityGraph from './ActivityGraph';
 import { createClient } from '@supabase/supabase-js';
@@ -11,6 +11,7 @@ const Leaderboard = () => {
   const [data, setData] = useState({ users: [], activities: [], graph_data: [], last_updated: '--' });
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchAllData = async () => {
     try {
@@ -143,7 +144,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.0-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.1-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -181,7 +182,14 @@ const Leaderboard = () => {
                       </div>
                     </td>
                     <td><a href={user.url} target="_blank" rel="noopener noreferrer" className="profile-btn">View</a></td>
-                    <td className="stats-btn-cell"><button className="stats-btn">Stats</button></td>
+                    <td className="stats-btn-cell">
+                      <button 
+                        className="stats-btn" 
+                        onClick={() => navigate(`/stats/${user.leetcode_handle || user.username}`)}
+                      >
+                        Stats
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
