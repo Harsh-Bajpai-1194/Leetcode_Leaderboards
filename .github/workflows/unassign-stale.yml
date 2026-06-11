@@ -1,0 +1,75 @@
+name: Unassign Stale Claims
+
+on:
+  schedule:
+    # This cron schedule means the action runs automatically at the top of every hour
+    - cron: '0 * * * *'
+  # Allows you to trigger this workflow manually from the Actions tab for testing
+  workflow_dispatch:
+
+jobs:
+  unassign-stale:
+    permissions:
+      issues: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check and unassign stale issues
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const now = new Date();
+            const STALE_HOURS = 24; // Time limit in hours
+            
+            // 1. Get all currently open issues (using pagination to get ALL issues)
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              // Skip if it's actually a Pull Request or if nobody is assigned
+              if (issue.pull_request || !issue.assignees || issue.assignees.length === 0) continue;
+              
+              // 2. Fetch the activity history (events) for this specific issue (using pagination)
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number
+              });
+              
+              // 3. Find exactly when it was last assigned
+              const assignedEvents = events.filter(e => e.event === 'assigned');
+              if (assignedEvents.length === 0) continue;
+              
+              const lastAssignedEvent = assignedEvents[assignedEvents.length - 1];
+              const lastAssigned = new Date(lastAssignedEvent.created_at);
+              const hoursSinceAssigned = (now - lastAssigned) / (1000 * 60 * 60);
+              
+              // 4. Check if the user linked a Pull Request AFTER they were assigned
+              // GitHub automatically creates a 'cross-referenced' event when a PR mentions an issue
+              const hasPRLinked = events.some(e => (e.event === 'cross-referenced' || e.event === 'connected') && new Date(e.created_at) > lastAssigned);
+              
+              // 5. If 24 hours have passed AND no PR is linked, remove them!
+              if (hoursSinceAssigned >= STALE_HOURS && !hasPRLinked) {
+                const assigneesToRemove = issue.assignees.map(a => a.login);
+                
+                // Unassign the users
+                await github.rest.issues.removeAssignees({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  assignees: assigneesToRemove
+                });
+                
+                // Leave a friendly automated comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `⏳ **Time's up!** It has been over 24 hours since this issue was claimed, and no Pull Request has been linked.\n\nI am automatically unassigning this issue so others in the CodeX Club can have a chance to work on it! If you're still working on it, feel free to \`/claim\` it again. 🐍`
+                });
+              }
+            }

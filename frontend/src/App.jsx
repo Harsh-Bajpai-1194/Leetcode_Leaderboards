@@ -3,6 +3,7 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Leaderboard from './Leaderboard';
 import AdminPanel from './AdminPanel';
+import Stats from './Stats';
 
 function App() {
   return (
@@ -14,6 +15,9 @@ function App() {
           
           {/* Admin Page */}
           <Route path="/admin" element={<AdminPanel />} />
+          
+          {/* Stats Page */}
+          <Route path="/stats/:username" element={<Stats />} />
         </Routes>
       </div>
     </Router>

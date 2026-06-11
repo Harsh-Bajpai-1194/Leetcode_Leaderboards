@@ -37,14 +37,16 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ System Architecture (Supabase-Powered)
 
-This project uses a decoupled **Client-Server Architecture**:
+This project uses a modern, serverless architecture centered around Supabase:
 
-1.  **Frontend (React + Vite):** Hosted on **Netlify**. Handles routing, searching, and triggers the "Force Update" API.
-2.  **Backend API (Node.js & Express):** Dual-Server setup hosted on **Render** with **Supabase** acting as a real-time fallback. Acts as a secure gateway between the Frontend, MongoDB, and GitHub API.  
-3.  **Database (MongoDB Atlas):** Stores User Profiles, Activity Logs, and Metadata.
-4.  **Automation (Python + GitHub Actions):** A script that wakes up (via schedule or trigger), scrapes LeetCode GraphQL data in parallel, and updates MongoDB.
+1.  **Frontend (React + Vite):** A responsive UI hosted on **Netlify** for viewing leaderboards and user stats.
+2.  **Backend (Supabase):** Provides the entire backend infrastructure:
+    *   **Postgres Database:** Stores user profiles, activities, and metadata.
+    *   **Realtime:** Pushes live data changes to the frontend for an always-fresh view.
+    *   **Edge Functions:** Serverless functions for securely proxying external API calls to LeetCode.
+3.  **Automation (Python + GitHub Actions):** A script that wakes up (via schedule or trigger), scrapes LeetCode GraphQL data in parallel, and updates the Supabase database.
 
 ---
 
@@ -52,11 +54,11 @@ This project uses a decoupled **Client-Server Architecture**:
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Frontend** | **React.js + Vite** | High-performance UI with Recharts for graphing |
-| **Backend** | **Node.js, Express & Supabase** | REST API with dual-server failover and GitHub Dispatch integration |
-| **Database** | **MongoDB Atlas** | Cloud NoSQL database storing Users & Activities |
-| **Automation** | **Python (PyMongo)** | Multi-threaded ETL script for rapid scraping |
-| **CI/CD** | **GitHub Actions** | Automated scheduling and manual trigger execution |
+| **Frontend** | **React.js + Vite** | High-performance UI with Recharts for graphing. |
+| **Backend** | **Supabase** | All-in-one backend with Postgres, Realtime, and Edge Functions. |
+| **Database** | **Supabase (Postgres)** | Cloud SQL database storing all application data. |
+| **Automation** | **Python (supabase-py)** | Multi-threaded ETL script for rapid scraping and data insertion. |
+| **CI/CD** | **GitHub Actions** | Automated scheduling and manual trigger execution. |
 
 ---
 
