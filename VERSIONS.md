@@ -98,6 +98,8 @@
 * **v5.3.12** Performance: Eliminated 80s scraping bottleneck by skipping Selenium follower sync on manual triggers and removing legacy git commit step.
 * **v5.4.0** UI Polish: Added animated loading skeletons to the frontend.
 * **v5.5.0** Architecture: Dual-Server configuration adding Supabase as a backend backup for Render.  
+* **v5.6.0** UI Refinement: Added table layout adjustments and Stats button for enhanced user analytics.
+* **v5.7.0** UI Enhancement: Added Stats button to leaderboard table with optimized column layout for better spacing.
 
 ---
 
@@ -128,4 +130,6 @@
 | **v5.3.12** | **Performance** | Eliminated 80s bottleneck by skipping Selenium follower sync on manual updates. |
 | **v5.4.0** | **UI Polish** | Added animated loading skeletons to the frontend UI. |
 | **v5.5.0** | **Architecture** | Added Supabase for hosting the backend as a backup for Render. |
+| **v5.6.0** | **UI Refinement** | Added table layout adjustments and Stats button for enhanced user analytics. |
+| **v5.7.0** | **UI Enhancement** | Added Stats button to leaderboard table with optimized column layout for better spacing. |
 
