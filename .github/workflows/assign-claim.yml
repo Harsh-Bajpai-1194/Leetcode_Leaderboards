@@ -1,0 +1,39 @@
+name: Issue Assigner
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  assign:
+    permissions:
+      issues: write
+
+    runs-on: ubuntu-latest
+    # Only run if it's an issue (not a PR), is unassigned, and the comment contains "/claim"
+    if: !github.event.issue.pull_request && github.event.issue.assignee == null && contains(github.event.comment.body, '/claim')
+    
+    steps:
+      - name: Assign issue to commenter
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issueNumber = context.issue.number;
+            const commenter = context.payload.comment.user.login;
+            
+            // Assign the issue
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              assignees: [commenter]
+            });
+            
+            // Optional: Leave a friendly reply confirming the assignment!
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `Assigned to @${commenter}! Happy coding! 🚀`
+            });
