@@ -15,76 +15,70 @@ const Leaderboard = () => {
 
   const fetchAllData = async () => {
     try {
-      setLoading(true);
+      // 1. STALE-WHILE-REVALIDATE: Instantly load cached data (0ms response time)
+      const cachedData = localStorage.getItem('leaderboard_cache');
+      if (cachedData) {
+        setData(JSON.parse(cachedData));
+        setLoading(false); // Turn off loader instantly so users see data immediately
+      } else {
+        setLoading(true); // Only show loader on the very first visit
+      }
 
-      const [usersResponse, metaResponse] = await Promise.all([
+      // 2. PARALLEL PROMISE.ALL: Fetch all 3 heavy tables at the exact same time
+      const now = new Date();
+      const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
+
+      const [usersResponse, metaResponse, activitiesResponse] = await Promise.all([
         supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
-        supabase.from('metadata').select('date_string').eq('type', 'last_updated')
+        supabase.from('metadata').select('date_string').eq('type', 'last_updated'),
+        supabase.from('activities')
+          .select('created_at, text, time')
+          .gte('created_at', twentyOneDaysAgo.toISOString()) 
+          .order('created_at', { ascending: false })
+          .limit(5000)
       ]);
 
       if (usersResponse.error) throw usersResponse.error;
       if (metaResponse.error) throw metaResponse.error;
+      if (activitiesResponse.error) throw activitiesResponse.error;
 
-      setData(prev => ({
-        ...prev,
-        users: usersResponse.data || [],
-        last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--"
-      }));
-      setLoading(false); 
-
-      const now = new Date();
-      const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
-
-      const { data: supabaseActivities, error: actError } = await supabase
-        .from('activities')
-        .select('created_at, text, time')
-        .gte('created_at', twentyOneDaysAgo.toISOString()) 
-        .order('created_at', { ascending: false })
-        .limit(5000);
-
-      if (actError) throw actError;
-
+      // 3. O(N) GRAPH CALCULATION
+      const supabaseActivities = activitiesResponse.data || [];
       const daysToLookBack = 21;
       const dailySolvedMap = {};
 
-      if (supabaseActivities) {
-        supabaseActivities.forEach(act => {
-          if (!act.text || !act.created_at) return;
-          const match = act.text.match(/\+(\d+)/);
-          const solved = match ? parseInt(match[1]) : 0;
-          
-          const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric',
-            timeZone: 'UTC' 
-          });
-          
-          if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-          dailySolvedMap[dateKey] += solved;
+      supabaseActivities.forEach(act => {
+        if (!act.text || !act.created_at) return;
+        const match = act.text.match(/\+(\d+)/);
+        const solved = match ? parseInt(match[1]) : 0;
+        
+        const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
+          month: 'short', day: 'numeric', timeZone: 'UTC' 
         });
-      }
+        
+        if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+        dailySolvedMap[dateKey] += solved;
+      });
 
       const processedGraphData = [];
       for (let i = daysToLookBack - 1; i >= 0; i--) {
         const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-        const dateStr = d.toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric',
-          timeZone: 'UTC'
-        });
-        processedGraphData.push({ 
-          date: dateStr, 
-          solved: dailySolvedMap[dateStr] || 0 
-        });
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+        processedGraphData.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
       }
 
-      setData(prev => ({
-        ...prev,
-        activities: supabaseActivities ? supabaseActivities.slice(0, 50) : [],
+      // 4. PREPARE FRESH DATA & UPDATE CACHE IN THE BACKGROUND
+      const freshData = {
+        users: usersResponse.data || [],
+        last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--",
+        activities: supabaseActivities.slice(0, 50),
         graph_data: processedGraphData
-      }));
-      
+      };
+
+      setData(freshData); // Seamlessly swap the old cache with the fresh database pull
+      localStorage.setItem('leaderboard_cache', JSON.stringify(freshData)); // Save for next time
       setLoading(false);
+
     } catch (error) {
       console.error("Error fetching data:", error.message);
       setLoading(false);
@@ -144,7 +138,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.2-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.3-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -202,7 +196,6 @@ const Leaderboard = () => {
       <div className="right-section">
         <div className="activity-container">
           <div className="activity-title">Activity Feed</div>
-          {/* Note: Connected this div to your CSS custom scrollbar ID! */}
           <div id="activity-content"> 
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
