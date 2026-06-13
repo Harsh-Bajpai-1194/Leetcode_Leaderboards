@@ -138,7 +138,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.3-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.4-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
