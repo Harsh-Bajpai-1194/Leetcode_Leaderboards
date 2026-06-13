@@ -4,35 +4,37 @@ on:
   issue_comment:
     types: [created]
 
+# Set permissions at the top level to ensure the token has access
+permissions:
+  issues: write
+
 jobs:
   assign:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-
-    # Explicitly wrapped in quotes to prevent exclamation mark tag-parsing bugs
-    if: "!github.event.issue.pull_request && github.event.issue.assignee == null && contains(github.event.comment.body, '/claim')"
-
+    # FIXED LINE 14: Wrapped the expression in ${{ }} so YAML parses it correctly!
+    if: ${{ !github.event.issue.pull_request && github.event.issue.assignees.length == 0 && github.event.comment.body == '/claim' }}
+    
     steps:
-      - name: Assign Issue to Commenter
+      - name: Assign issue to commenter
         uses: actions/github-script@v6
         with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const issueNumber = context.issue.number;
-            const commenter = context.payload.commenter?.login || context.actor;
-
-            // Assign the user who commented to the issue
+            const commenter = context.payload.comment.user.login;
+            
+            // Assign the issue
             await github.rest.issues.addAssignees({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
               assignees: [commenter]
             });
-
-            // Post a friendly confirmation comment
+            
+            // Leave a friendly reply confirming the assignment and 24-hour rule
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber,
-              body: `Assigned to @${commenter}! Happy coding! 🚀`
+              body: `Assigned to @${commenter}! You have 24 hours to link a Pull Request. Happy coding! 🚀`
             });
