@@ -8,6 +8,7 @@ const Stats = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dbStats, setDbStats] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -18,29 +19,32 @@ const Stats = () => {
           import.meta.env.VITE_SUPABASE_ANON_KEY
         );
 
-        let finalData;
-        const { data, error: functionError } = await supabase.functions.invoke('get-user-stats', {
-          body: { username },
-        });
+        // Fetch both sources concurrently
+        const [apiResponse, dbResponse] = await Promise.all([
+          supabase.functions.invoke('get-user-stats', { body: { username } }),
+          supabase.from('leaderboard').select('*')
+        ]);
 
-        if (functionError) {
-          console.warn("Edge Function failed, falling back to Node server...", functionError);
-          const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-          try {
-            const response = await fetch(`${backendUrl}/api/user-stats/${username}`);
-            if (!response.ok) throw new Error('Failed to fetch user stats from Node server.');
-            finalData = await response.json();
-          } catch (fallbackError) {
-            throw new Error(`Backend unreachable! Ensure your server is running and VITE_BACKEND_URL is set.`);
-          }
-        } else {
-          finalData = data;
+        if (apiResponse.error) {
+          throw new Error(`Edge Function failed: ${apiResponse.error.message}`);
         }
         
-        if (finalData && finalData.error) throw new Error(finalData.error);
-        if (!finalData || !finalData.matchedUser) throw new Error('User not found on LeetCode or invalid data received.');
+        let data = apiResponse.data;
+        if (data && data.error) throw new Error(data.error);
+        if (!data || !data.matchedUser) throw new Error('User not found on LeetCode or invalid data received.');
 
-        setUserData(finalData);
+        // Client-Side Case-Insensitive Matching loop
+        if (dbResponse.data) {
+          const matchedRecord = dbResponse.data.find(u => 
+            u.username?.toLowerCase() === username.toLowerCase() ||
+            u.leetcode_handle?.toLowerCase() === username.toLowerCase()
+          );
+          if (matchedRecord) {
+            setDbStats(matchedRecord);
+          }
+        }
+
+        setUserData(data);
         setLoading(false);
       } catch (err) {
         console.error("Stats Fetch Error:", err);
@@ -51,10 +55,9 @@ const Stats = () => {
     fetchStats();
   }, [username]);
 
-  // Visual Graph Builder: Rating Line Chart
   const renderRatingGraph = (history) => {
     const attended = history?.filter(h => h.attended) || [];
-    if (attended.length === 0) return <p style={{color: '#888'}}>No contest history</p>;
+    if (attended.length === 0) return <p style={{color: '#888', fontStyle: 'italic'}}>No contest history available</p>;
 
     const ratings = attended.map(h => h.rating);
     const max = Math.max(...ratings) + 100;
@@ -84,8 +87,9 @@ const Stats = () => {
     );
   };
 
-  // Visual Graph Builder: GitHub-style Heatmap
   const renderHeatmap = (calendarStr) => {
+    if (!calendarStr || calendarStr === "null") return <p style={{color: '#888', fontStyle: 'italic'}}>No submission data visible for private profiles</p>;
+    
     const data = JSON.parse(calendarStr || "{}");
     const now = new Date();
     now.setHours(0, 0, 0, 0);
@@ -125,29 +129,41 @@ const Stats = () => {
   };
 
   if (loading) return <div className="main-wrapper" style={{ justifyContent: 'center', alignItems: 'center' }}><h2 style={{ color: '#4ade80' }}>Loading Stats...</h2></div>;
-  if (error || !userData || !userData.matchedUser) return <div className="main-wrapper" style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}><h2 style={{ color: '#ef4743' }}>Error: {error || 'User not found'}</h2><Link to="/" style={{ color: '#888', marginTop: '20px', textDecoration: 'none' }}>← Back to Leaderboard</Link></div>;
+  if (error || !userData || !userData.matchedUser) return <div className="main-wrapper" style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}><h2 style={{ color: '#ef4743' }}>{error || 'User not found'}</h2><Link to="/" style={{ color: '#888', marginTop: '20px', textDecoration: 'none' }}>← Back to Leaderboard</Link></div>;
 
   const { matchedUser, userContestRanking, userContestRankingHistory } = userData;
   const profile = matchedUser.profile || {};
+  
+  const isPrivate = matchedUser.submitStats === null;
   const stats = matchedUser.submitStats?.acSubmissionNum || [];
   const badges = matchedUser.badges || [];
 
-  const totalSolved = stats.find(s => s.difficulty === 'All')?.count || 0;
-  const easySolved = stats.find(s => s.difficulty === 'Easy')?.count || 0;
-  const mediumSolved = stats.find(s => s.difficulty === 'Medium')?.count || 0;
-  const hardSolved = stats.find(s => s.difficulty === 'Hard')?.count || 0;
+  // Fall back explicitly to localized storage parameters if string matches are null
+  const totalSolved = isPrivate ? (dbStats?.total_solved || 0) : (stats.find(s => s.difficulty === 'All')?.count || dbStats?.total_solved || 0);
+  const easySolved = isPrivate ? (dbStats?.easy_solved || 0) : (stats.find(s => s.difficulty === 'Easy')?.count || dbStats?.easy_solved || 0);
+  const mediumSolved = isPrivate ? (dbStats?.medium_solved || 0) : (stats.find(s => s.difficulty === 'Medium')?.count || dbStats?.medium_solved || 0);
+  const hardSolved = isPrivate ? (dbStats?.hard_solved || 0) : (stats.find(s => s.difficulty === 'Hard')?.count || dbStats?.hard_solved || 0);
 
   return (
     <div className="main-wrapper" style={{ padding: '40px', boxSizing: 'border-box' }}>
       <div className="stats-container" style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', border: '1px solid #333', maxWidth: '900px', margin: '0 auto', width: '100%', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
         
-        {/* Header Profile Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
-          <img src={profile.userAvatar} alt="Profile Avatar" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #ffa116' }} />
+          <img src={profile.userAvatar || 'https://assets.leetcode.com/users/avatars/avatar_default.jpg'} alt="Profile Avatar" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #ffa116' }} />
           <div>
-            <h1 style={{ color: 'white', margin: '0 0 5px 0' }}>{profile.realName || matchedUser.username}</h1>
+            <h1 style={{ color: 'white', margin: '0 0 5px 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              {profile.realName || matchedUser.username}
+              {isPrivate ? (
+                <span style={{ backgroundColor: '#ef4743', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '0.5em', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                  🔒 Private Profile
+                </span>
+              ) : (
+                <span style={{ backgroundColor: '#4ade80', color: '#1a1a1a', padding: '4px 10px', borderRadius: '12px', fontSize: '0.5em', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                  👥 Public Profile
+                </span>
+              )}
+            </h1>
             <p style={{ color: '#888', margin: 0, fontSize: '1.1em' }}>@{matchedUser.username}</p>
-            {/* Badges List */}
             {badges.length > 0 && (
               <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
                 {badges.map((b, i) => (
@@ -158,11 +174,11 @@ const Stats = () => {
           </div>
         </div>
 
-        {/* Top Data Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-          
           <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444' }}>
-            <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>Problem Solving</h3>
+            <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>
+              Problem Solving {isPrivate && <span style={{ fontSize: '0.75em', color: '#888', fontWeight: 'normal' }}>(Database Sync)</span>}
+            </h3>
             <p style={{ margin: '5px 0', color: 'white' }}><strong>Total:</strong> {totalSolved}</p>
             <div style={{ marginTop: '15px' }}>
               <p style={{ margin: '5px 0', color: '#00af9b' }}>Easy: {easySolved}</p>
@@ -187,22 +203,19 @@ const Stats = () => {
                 <p style={{ margin: '5px 0', color: 'white' }}><strong>Attended:</strong> {userContestRanking.attendedContestsCount}</p>
                 <p style={{ margin: '5px 0', color: 'white' }}><strong>Rating:</strong> {Math.round(userContestRanking.rating)}</p>
                 <p style={{ margin: '5px 0', color: 'white' }}><strong>Global Rank:</strong> {userContestRanking.globalRanking}</p>
-                {/* Top Percentage Added Here */}
-                <p style={{ margin: '15px 0 5px 0', color: '#4ade80', fontSize: '1.2em', fontWeight: 'bold' }}>Top {userContestRanking.topPercentage}%</p>
+                {userContestRanking.topPercentage && <p style={{ margin: '15px 0 5px 0', color: '#4ade80', fontSize: '1.2em', fontWeight: 'bold' }}>Top {userContestRanking.topPercentage}%</p>}
               </>
             ) : (
-              <p style={{ color: '#888' }}>No contest data available</p>
+              <p style={{ color: '#888', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>No contest data available</p>
             )}
           </div>
         </div>
 
-        {/* Rating Line Chart */}
         <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444', marginTop: '20px' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>Contest Rating History</h3>
           {renderRatingGraph(userContestRankingHistory)}
         </div>
 
-        {/* Submissions Heatmap */}
         <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444', marginTop: '20px' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>Submissions (Past Year)</h3>
           {renderHeatmap(matchedUser.userCalendar?.submissionCalendar)}
