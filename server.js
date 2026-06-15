@@ -284,43 +284,100 @@ app.get('/api/user-stats/:username', async (req, res) => {
     }
 });
 
-// --- ACTUAL GEMINI AI CHATBOT API ENDPOINT ---
+// --- ACTUAL GEMINI AI CHATBOT API ENDPOINT WITH MASSIVE FALLBACK ---
 app.post('/api/chat', async (req, res) => {
     const { prompt, context } = req.body;
     
     if (!prompt) return res.status(400).json({ error: "Missing prompt" });
 
+    const engineeredPrompt = `
+      You are 'CodeX AI', a helpful, highly encouraging, and intelligent assistant 
+      for a coding community called CodeX Club. Keep your responses conversational, 
+      helpful, and concise (under 2 paragraphs).
+      
+      Here are the live LeetCode stats for the user the person is looking at right now:
+      - Username: ${context.username}
+      - Total Solved: ${context.totalSolved}
+      - Easy: ${context.easy} | Medium: ${context.medium} | Hard: ${context.hard}
+      - Contest Rating: ${context.rating}
+      - Global Rank Top %: ${context.topPercentage}%
+
+      Based ONLY on those stats and your knowledge of Data Structures and Algorithms, 
+      answer the following question from the community member: 
+      
+      "${prompt}"
+    `;
+
     try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // Using the exact version string provided by your API check
-        const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+        
+        // 🔄 MASSIVE FALLBACK LIST: Tries these models in order from top to bottom
+        const modelsToTry = [
+            "gemini-2.0-flash-lite",
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-flash-lite-latest",
+            "gemini-flash-latest",
+            "gemini-2.0-flash-001",
+            "gemini-2.0-flash-lite-001",
+            "gemini-2.5-pro",
+            "gemini-pro-latest",
+            "gemma-4-26b-a4b-it",
+            "gemma-4-31b-it",
+            "gemini-3.5-flash",
+            "gemini-3.1-flash-lite",
+            "gemini-3.1-flash-lite-preview",
+            "gemini-3-flash-preview",
+            "gemini-3-pro-preview",
+            "gemini-3.1-pro-preview",
+            "gemini-3.1-pro-preview-customtools",
+            "gemini-2.5-flash-preview-tts",
+            "gemini-2.5-pro-preview-tts",
+            "gemini-3.1-flash-tts-preview",
+            "gemini-2.5-flash-image",
+            "gemini-3-pro-image-preview",
+            "gemini-3-pro-image",
+            "gemini-3.1-flash-image-preview",
+            "gemini-3.1-flash-image",
+            "nano-banana-pro-preview",
+            "lyria-3-clip-preview",
+            "lyria-3-pro-preview",
+            "gemini-robotics-er-1.5-preview",
+            "gemini-robotics-er-1.6-preview",
+            "gemini-2.5-computer-use-preview-10-2025",
+            "antigravity-preview-05-2026",
+            "deep-research-preview-04-2026",
+            "deep-research-pro-preview-12-2025",
+            "deep-research-max-preview-04-2026"
+        ];
 
-        const engineeredPrompt = `
-          You are 'CodeX AI', a helpful, highly encouraging, and intelligent assistant 
-          for a coding community called CodeX Club. Keep your responses conversational, 
-          helpful, and concise (under 2 paragraphs).
-          
-          Here are the live LeetCode stats for the user the person is looking at right now:
-          - Username: ${context.username}
-          - Total Solved: ${context.totalSolved}
-          - Easy: ${context.easy} | Medium: ${context.medium} | Hard: ${context.hard}
-          - Contest Rating: ${context.rating}
-          - Global Rank Top %: ${context.topPercentage}%
+        // Loop through the models
+        for (const modelName of modelsToTry) {
+            try {
+                console.log(`🤖 AI Attempt: Generating with ${modelName}...`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                
+                const result = await model.generateContent(engineeredPrompt);
+                const responseText = result.response.text();
 
-          Based ONLY on those stats and your knowledge of Data Structures and Algorithms, 
-          answer the following question from the community member: 
-          
-          "${prompt}"
-        `;
+                // If successful, log it, send the response, and exit the function completely!
+                console.log(`✅ AI Success: Responded using ${modelName}`);
+                return res.json({ reply: responseText });
 
-        const result = await model.generateContent(engineeredPrompt);
-        const responseText = result.response.text();
+            } catch (modelError) {
+                // If it fails, log the warning, but don't crash. The loop will just try the next model.
+                console.log(`⚠️ AI Warning: ${modelName} failed. Trying next model... (${modelError.message})`);
+            }
+        }
 
-        res.json({ reply: responseText });
+        // If the loop finishes and we are still here, ALL 37 models failed.
+        console.error("❌ AI Error: All 37 fallback models failed.");
+        res.status(503).json({ error: "The AI servers are currently experiencing extreme demand. Please try again in 30 seconds!" });
 
     } catch (error) {
-        console.error("Gemini API Error:", error);
-        res.status(500).json({ error: "Failed to communicate with AI model. Check your API key!" });
+        console.error("Critical API Setup Error:", error);
+        res.status(500).json({ error: "Internal Server Configuration Error." });
     }
 });
 
