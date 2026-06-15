@@ -74,7 +74,6 @@ const Stats = () => {
       const statsArray = userData?.matchedUser?.submitStats?.acSubmissionNum || [];
       const ranking = userData?.userContestRanking;
 
-      // Package the user's stats so the AI has context
       const contextData = {
         username: username,
         totalSolved: isPrivate ? (dbStats?.total_solved || 0) : (statsArray.find(s => s.difficulty === 'All')?.count || dbStats?.total_solved || 0),
@@ -85,28 +84,24 @@ const Stats = () => {
         topPercentage: ranking?.topPercentage || 'N/A'
       };
 
-      const backendUrl = env.VITE_BACKEND_URL || 'http://localhost:10000';
-      
-      const response = await fetch(`${backendUrl}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          prompt: userMessage, 
-          context: contextData 
-        })
+      // 🛠️ FIX: We now call the Supabase Edge Function directly! No backend URL needed!
+      const { data, error } = await supabase.functions.invoke('AI-Assistant', {
+        body: { prompt: userMessage, context: contextData }
       });
 
-      const data = await response.json();
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      if (response.ok) {
+      if (data && data.reply) {
         setChatMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
-      } else {
+      } else if (data && data.error) {
         setChatMessages(prev => [...prev, { sender: 'ai', text: `⚠️ Error: ${data.error}` }]);
       }
 
     } catch (err) {
       console.error("Chat API Error:", err);
-      setChatMessages(prev => [...prev, { sender: 'ai', text: '⚠️ Connection error. Make sure your backend server is running and restarted!' }]);
+      setChatMessages(prev => [...prev, { sender: 'ai', text: '⚠️ Connection error. Please try again!' }]);
     } finally {
       setIsAiTyping(false);
     }
