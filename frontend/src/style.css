@@ -64,7 +64,7 @@ body {
     padding: 15px;
     border-radius: 8px;
     border: 1px solid #333;
-    box-sizing: border-box; /* <--- Prevents container overflow */
+    box-sizing: border-box; 
 }
 
 .sponsor-banner-wrapper {
@@ -75,7 +75,7 @@ body {
     background-image: url("/border.gif");
     background-size: cover;
     background-position: center;
-    box-sizing: border-box; /* <--- Keeps the GIF border visible! */
+    box-sizing: border-box; 
 }
 
 .sponsor-btn {
@@ -86,7 +86,7 @@ body {
     border: none;
     border-radius: 5px;
     font-weight: bold;
-    box-sizing: border-box; /* <--- Stops the button from covering the GIF */
+    box-sizing: border-box; 
     cursor: pointer;
 }
 
@@ -222,16 +222,16 @@ h1 {
 }
 
 /* --- 🏆 TROPHY SYSTEM --- */
-.leaderboard-table tbody tr:nth-child(1) { background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent); border-left: 4px solid #FFD700; }
-.leaderboard-table tbody tr:nth-child(1) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(1) { background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), transparent); }
+.leaderboard-table tbody tr:nth-child(1) td:first-child { border-left: 4px solid #FFD700; font-size: 0; }
 .leaderboard-table tbody tr:nth-child(1) td:first-child::before { content: "🥇"; font-size: 1.5rem; }
 
-.leaderboard-table tbody tr:nth-child(2) { background: linear-gradient(90deg, rgba(192, 192, 192, 0.25), transparent); border-left: 4px solid #C0C0C0; }
-.leaderboard-table tbody tr:nth-child(2) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(2) { background: linear-gradient(90deg, rgba(192, 192, 192, 0.25), transparent); }
+.leaderboard-table tbody tr:nth-child(2) td:first-child { border-left: 4px solid #C0C0C0; font-size: 0; }
 .leaderboard-table tbody tr:nth-child(2) td:first-child::before { content: "🥈"; font-size: 1.4rem; }
 
-.leaderboard-table tbody tr:nth-child(3) { background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), transparent); border-left: 4px solid #CD7F32; }
-.leaderboard-table tbody tr:nth-child(3) td:first-child { font-size: 0; }
+.leaderboard-table tbody tr:nth-child(3) { background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), transparent); }
+.leaderboard-table tbody tr:nth-child(3) td:first-child { border-left: 4px solid #CD7F32; font-size: 0; }
 .leaderboard-table tbody tr:nth-child(3) td:first-child::before { content: "🥉"; font-size: 1.3rem; }
 
 .leaderboard-table tbody tr:nth-child(1):hover,
@@ -243,6 +243,7 @@ h1 {
     z-index: 10;
 }
 
+/* --- TABLE STYLES --- */
 /* --- TABLE STYLES --- */
 .table-wrapper {
     max-height: 480px;
@@ -260,16 +261,21 @@ h1 {
 
 .leaderboard-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Reverted to fuse the table */
     margin-top: 10px;
+}
+
+/* Apply the line to the entire ROW, guaranteeing it stays perfectly straight */
+.leaderboard-table tr {
+    border-bottom: 1px solid #444; 
 }
 
 .leaderboard-table th,
 .leaderboard-table td {
     padding: 12px;
-    border-bottom: 1px solid #444;
     text-align: left;
-}
+    vertical-align: middle; /* Centers content and fixes baseline shifts */
+}   /* Added to keep the rows tight */
 
 .leaderboard-table th:nth-child(1) { width: 8%; }
 .leaderboard-table th:nth-child(2) { width: 30%; }
@@ -394,29 +400,220 @@ a:hover { text-decoration: underline; }
 .social-links a { font-size: 1.5em; color: #ffa116; transition: 0.2s; }
 .social-links a:hover { transform: scale(1.1); }
 
-/* --- MOBILE RESPONSIVENESS --- */
-@media (max-width: 768px) {
-    .main-wrapper {
-        flex-direction: column;
-        align-items: center;
-    }
-    .leaderboard-container,
-    .activity-container {
-        width: 90%;
-        min-width: unset;
-    }
-    .activity-container {
-        order: -1;
-        margin-bottom: 20px;
-    }
-    .leetcode-img {
-        position: relative;
-        display: block;
-        margin: 0 auto 20px auto;
-        top: auto;
-        left: auto;
-    }
-    body {
-        padding-top: 20px;
-    }
+/* --- AI CHATBOT --- */
+.chatbot-container {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 1; /* Forces the box to stretch and fill the empty bottom space! */
+    min-height: 250px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.chatbot-header {
+    background-color: #2c2c2c;
+    color: #ffa116;
+    padding: 12px 15px;
+    font-weight: bold;
+    border-bottom: 1px solid #444;
+    font-size: 1.1em;
+}
+
+.chatbot-messages {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 350px;
+}
+
+/* Custom Scrollbar for Chat */
+.chatbot-messages::-webkit-scrollbar { width: 6px; }
+.chatbot-messages::-webkit-scrollbar-track { background: transparent; }
+.chatbot-messages::-webkit-scrollbar-thumb { background-color: #555; border-radius: 10px; }
+.chatbot-messages::-webkit-scrollbar-thumb:hover { background-color: #ffa116; }
+
+.chat-message {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.ai-msg {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    border: 1px solid #444;
+}
+
+.user-msg {
+    background-color: #0e4429; /* Matches your GitHub green stats */
+    color: #4ade80;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+    border: 1px solid #2ea043;
+}
+
+.chatbot-input-area {
+    display: flex;
+    border-top: 1px solid #444;
+    padding: 12px;
+    background-color: #1a1a1a;
+    gap: 10px;
+}
+
+.chatbot-input {
+    flex-grow: 1;
+    background-color: #2c2c2c;
+    border: 1px solid #555;
+    border-radius: 20px;
+    padding: 10px 15px;
+    color: white;
+    outline: none;
+    font-size: 0.9em;
+    transition: border-color 0.2s ease;
+}
+
+.chatbot-input:focus {
+    border-color: #ffa116;
+}
+
+.chatbot-send-btn {
+    background-color: transparent;
+    color: #ffa116;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+}
+
+.chatbot-send-btn:hover {
+    transform: scale(1.15);
+    color: #ffb800;
+}
+
+/* =========================================
+   📱 CONSOLIDATED MOBILE & TABLET RESPONSIVENESS
+   ========================================= */
+@media screen and (max-width: 768px) {
+  /* Layout Stacking */
+  .main-wrapper {
+      flex-direction: column;
+      align-items: center;
+      padding: 15px !important;
+  }
+  
+  .leaderboard-container,
+  .activity-container {
+      width: 95%; /* Better fit for mobile */
+      min-width: unset;
+  }
+  
+  .activity-container {
+      order: -1; /* Puts activity feed at top on mobile */
+      margin-bottom: 20px;
+  }
+  
+  /* Image and Title Formatting */
+  .leetcode-img {
+      position: relative;
+      display: block;
+      margin: 0 auto 20px auto;
+      top: auto;
+      left: auto;
+  }
+  
+  body {
+      padding-top: 20px;
+  }
+  
+  h1 {
+      font-size: 1.5rem !important;
+  }
+  
+  /* --- HORIZONTAL TABLE SCROLLING FIX --- */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  .leaderboard-table th, 
+  .leaderboard-table td {
+    padding: 12px 10px !important;
+    font-size: 0.9rem;
+    white-space: nowrap; /* CRITICAL: Stops columns from crushing together! */
+  }
+
+  /* Stats Pages Mobile Formatting */
+  .stats-container {
+    padding: 20px !important;
+  }
+  
+  .stats-container img[alt="Profile Avatar"] {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  /* Graph Scaling */
+  svg {
+    max-width: 100%;
+    height: auto !important;
+  }
+}
+
+/* Extra small devices (phones, 480px and down) */
+@media screen and (max-width: 480px) {
+  .leaderboard-table th, 
+  .leaderboard-table td {
+    font-size: 0.8rem;
+    padding: 10px 8px !important;
+  }
+  
+  .main-stat {
+    font-size: 0.95em;
+  }
+  
+  .hover-stats {
+    font-size: 0.8em;
+  }
+}
+
+/* AI Typing Indicator Animation */
+.typing-indicator {
+    display: inline-flex;
+    gap: 4px;
+    padding: 12px 18px;
+    align-items: center;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background-color: #888;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
 }
