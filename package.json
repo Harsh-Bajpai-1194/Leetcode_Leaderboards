@@ -1,6 +1,8 @@
 {
+  "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.108.1",
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.108.2",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

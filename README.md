@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.7.4-deeppink?style=for-the-the-badge&logo=github)  
+# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.7.5-deeppink?style=for-the-the-badge&logo=github)  
 ![Status](https://img.shields.io/badge/Status-Live-success?style=for-the-the-badge)  
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -14,7 +14,7 @@ A robust, full-stack automated leaderboard system that tracks LeetCode problem-s
 
 ## 🚀 Live Demo
 👉 **[View the Live Leaderboard](https://leetcode-leaderboards.netlify.app/)**  
-⌛ **[Website Status](https://stats.uptimerobot.com/kQ4Ujs21Yz)**  
+⌛ **[Website Status](https://leetcode-leaderboards-status.betteruptime.com/)**  
 ---
 
 ## ✨ Key Features

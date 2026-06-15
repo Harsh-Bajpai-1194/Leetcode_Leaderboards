@@ -1,9 +1,9 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const compression = require('compression');
-const { MongoClient } = require('mongodb');
-const { createClient } = require('@supabase/supabase-js');
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import compression from 'compression';
+import { createClient } from '@supabase/supabase-js';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,11 +11,6 @@ const PORT = process.env.PORT || 5000;
 app.use(compression());
 app.use(cors());
 app.use(express.json());
-
-// --- DATABASE CONFIGURATION ---
-const MONGO_URI = process.env.MONGO_URI;
-const client = new MongoClient(MONGO_URI);
-let db, usersCollection, activitiesCollection, metadataCollection;
 
 // --- SUPABASE CONFIGURATION ---
 const supabase = createClient(
@@ -28,52 +23,41 @@ let leaderboardCache = { data: null, timestamp: 0 };
 const CACHE_TTL = 15 * 60 * 1000; 
 let isFetchingCache = false;
 
-// --- SYNC LOGIC: PUSH TO SUPABASE ---
-async function syncToSupabase(mongoUsers) {
-    try {
-        // Map MongoDB native structure to your Supabase table schema
-        const supabasePayload = mongoUsers.map(user => ({
-            leetcode_handle: user.username,
-            problems_solved: user.total_solved || 0,
-            streak: user.streak || 0,
-            badge_icon: user.badge_icon,
-            badge_name: user.badge_name
-        }));
-
-        const { error } = await supabase
-            .from('leaderboard')
-            .upsert(supabasePayload, { onConflict: 'leetcode_handle' });
-
-        if (error) throw error;
-        console.log(`✅ Successfully synced ${mongoUsers.length} users to Supabase Realtime.`);
-    } catch (err) {
-        console.error('❌ Supabase Sync Error:', err.message);
-    }
-}
-
 // ⚡ BACKGROUND CACHE BUILDER
 async function buildLeaderboardData() {
-    if (isFetchingCache || !usersCollection) return;
+    if (isFetchingCache) return;
     isFetchingCache = true;
     try {
         const daysToLookBack = 21; 
         const pastDate = new Date();
         pastDate.setDate(pastDate.getDate() - daysToLookBack);
 
-        const [users, metadata, feedActivities, graphActivities] = await Promise.all([
-            usersCollection.find().sort({ total_solved: -1 }).project({
-                username: 1, name: 1, total_solved: 1, easy_solved: 1, 
-                medium_solved: 1, hard_solved: 1, url: 1, badge_icon: 1, badge_name: 1, streak: 1
-            }).toArray(),
-            metadataCollection.findOne({ type: "last_updated" }),
-            activitiesCollection.find().sort({ created_at: -1 }).limit(100).toArray(),
-            activitiesCollection.find({ created_at: { $gte: pastDate } }).toArray()
+        const [usersRes, metadataRes, feedRes, graphRes] = await Promise.all([
+            supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
+            supabase.from('metadata').select('*').eq('type', 'last_updated').maybeSingle(),
+            supabase.from('activities').select('*').order('created_at', { ascending: false }).limit(100),
+            supabase.from('activities').select('*').gte('created_at', pastDate.toISOString())
         ]);
 
-        // Trigger the Supabase sync whenever we build the cache (ensures Supabase is fresh)
-        if (users.length > 0) {
-            syncToSupabase(users);
-        }
+        const users = usersRes.data || [];
+        
+        // Match the frontend's expected format (mapping leetcode_handle -> username)
+        const formattedUsers = users.map(u => ({
+            username: u.leetcode_handle,
+            name: u.name,
+            total_solved: u.total_solved,
+            easy_solved: u.easy_solved, 
+            medium_solved: u.medium_solved,
+            hard_solved: u.hard_solved,
+            url: u.url,
+            badge_icon: u.badge_icon,
+            badge_name: u.badge_name,
+            streak: u.streak || 0
+        }));
+
+        const metadata = metadataRes.data;
+        const feedActivities = feedRes.data || [];
+        const graphActivities = graphRes.data || [];
 
         const dailySolvedMap = {};
         for (const act of graphActivities) {
@@ -95,10 +79,13 @@ async function buildLeaderboardData() {
         }
 
         leaderboardCache.data = { 
-            users, activities: feedActivities, graph_data: graphStats, last_updated: metadata ? metadata.date_string : '--' 
+            users: formattedUsers, 
+            activities: feedActivities, 
+            graph_data: graphStats, 
+            last_updated: metadata ? metadata.date_string : '--' 
         };
         leaderboardCache.timestamp = Date.now();
-        console.log("✅ Cache updated and pushed to Supabase.");
+        console.log("✅ Cache updated using Supabase.");
     } catch (error) {
         console.error("❌ Cache Build Error:", error);
     } finally {
@@ -106,24 +93,8 @@ async function buildLeaderboardData() {
     }
 }
 
-async function connectDB() {
-    try {
-        await client.connect();
-        db = client.db("leetcode_db");
-        usersCollection = db.collection("users");
-        activitiesCollection = db.collection("activities");
-        metadataCollection = db.collection("metadata");
-        console.log("✅ Server Connected to MongoDB Atlas");
-
-        await usersCollection.createIndex({ total_solved: -1 });
-        await activitiesCollection.createIndex({ created_at: -1 });
-        
-        buildLeaderboardData();
-    } catch (err) {
-        console.error("❌ MongoDB Connection Error:", err);
-    }
-}
-connectDB();
+// Initial cache build on startup
+buildLeaderboardData();
 
 async function fetchLeetCodeData(username) {
     try {
@@ -190,7 +161,6 @@ app.get('/api/health', (req, res) => res.status(200).send('OK'));
 
 app.get('/api/leaderboard', async (req, res) => {
     try {
-        if (!usersCollection) return res.status(503).json({ error: "Database not ready" });
         if (req.query.refresh === 'true') {
             buildLeaderboardData(); 
             return res.status(202).json({ message: "Background sync triggered" });
@@ -209,18 +179,46 @@ app.get('/api/leaderboard', async (req, res) => {
 app.post('/api/add-user', async (req, res) => {
     const { username } = req.body;
     if (!username) return res.status(400).json({ error: "Username required" });
+    
+    let cleanHandle = username.trim();
+
+    if (cleanHandle.includes("leetcode.com")) {
+        const parts = cleanHandle.split('/').filter(part => part.length > 0);
+        cleanHandle = parts[parts.length - 1]; 
+    }
+
+    cleanHandle = cleanHandle.toLowerCase();
+
     try {
-        const existingUser = await usersCollection.findOne({ username });
+        const { data: existingUser } = await supabase
+            .from('leaderboard')
+            .select('*')
+            .eq('leetcode_handle', cleanHandle)
+            .maybeSingle();
+
         if (existingUser) return res.status(400).json({ error: "User already exists" });
-        const leetCodeData = await fetchLeetCodeData(username);
+        
+        const leetCodeData = await fetchLeetCodeData(cleanHandle);
         if (!leetCodeData) return res.status(404).json({ error: "User not found on LeetCode" });
 
-        await usersCollection.insertOne(leetCodeData);
-        // After adding to Mongo, sync this specific user to Supabase
-        syncToSupabase([leetCodeData]);
+        const { error: insertError } = await supabase.from('leaderboard').insert([{
+            leetcode_handle: leetCodeData.username,
+            name: leetCodeData.name,
+            total_solved: leetCodeData.total_solved,
+            easy_solved: leetCodeData.easy_solved,
+            medium_solved: leetCodeData.medium_solved,
+            hard_solved: leetCodeData.hard_solved,
+            url: leetCodeData.url,
+            badge_icon: leetCodeData.badge_icon,
+            badge_name: leetCodeData.badge_name,
+            last_updated: leetCodeData.last_updated.toISOString()
+        }]);
+
+        if (insertError) throw insertError;
         
         res.json({ message: `Added ${leetCodeData.name}` });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
@@ -246,7 +244,7 @@ app.post('/api/trigger-update', async (req, res) => {
             body: JSON.stringify({ ref: 'main', inputs: { skip_followers: 'true' } })
         });
 
-        if (response.status === 204) res.json({ message: "Update Started! Pushing to Mongo and Supabase soon." });
+        if (response.status === 204) res.json({ message: "Update Started! Pushing to Supabase soon." });
         else res.status(500).json({ error: `GitHub Error: ${await response.text()}` });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
@@ -283,6 +281,46 @@ app.get('/api/user-stats/:username', async (req, res) => {
         res.json(data.data);
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// --- ACTUAL GEMINI AI CHATBOT API ENDPOINT ---
+app.post('/api/chat', async (req, res) => {
+    const { prompt, context } = req.body;
+    
+    if (!prompt) return res.status(400).json({ error: "Missing prompt" });
+
+    try {
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Using the exact version string provided by your API check
+        const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+
+        const engineeredPrompt = `
+          You are 'CodeX AI', a helpful, highly encouraging, and intelligent assistant 
+          for a coding community called CodeX Club. Keep your responses conversational, 
+          helpful, and concise (under 2 paragraphs).
+          
+          Here are the live LeetCode stats for the user the person is looking at right now:
+          - Username: ${context.username}
+          - Total Solved: ${context.totalSolved}
+          - Easy: ${context.easy} | Medium: ${context.medium} | Hard: ${context.hard}
+          - Contest Rating: ${context.rating}
+          - Global Rank Top %: ${context.topPercentage}%
+
+          Based ONLY on those stats and your knowledge of Data Structures and Algorithms, 
+          answer the following question from the community member: 
+          
+          "${prompt}"
+        `;
+
+        const result = await model.generateContent(engineeredPrompt);
+        const responseText = result.response.text();
+
+        res.json({ reply: responseText });
+
+    } catch (error) {
+        console.error("Gemini API Error:", error);
+        res.status(500).json({ error: "Failed to communicate with AI model. Check your API key!" });
     }
 });
 

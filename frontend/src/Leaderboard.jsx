@@ -138,7 +138,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.4-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.0" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.5-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.5" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -152,10 +152,19 @@ const Leaderboard = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
-        <div className="table-wrapper">
+
+        {/* COMBINED RESPONSIVE WRAPPER */}
+        <div className="table-wrapper table-responsive">
           <table className="leaderboard-table">
-            <thead><tr><th>S.no.</th><th>NAME</th><th>Solved</th><th>Profile</th><th>Stats</th></tr></thead>
+            <thead>
+              <tr>
+                <th>S.no.</th>
+                <th>NAME</th>
+                <th>Solved</th>
+                <th>Profile</th>
+                <th>Stats</th>
+              </tr>
+            </thead>
             <tbody>
               {loading && data.users.length === 0 ? (<tr><td colSpan="5" className="loading-text">Loading...</td></tr>) : (
                 filteredUsers.map((user, index) => (
