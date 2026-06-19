@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboard v5.7.5
+# 🏆 LeetCode Leaderboard v5.7.6
 
 An automated, full-stack tracking system designed to monitor competitive programming progress across a group of users. This project utilizes a specialized MERN architecture combined with multi-threaded Python automation to provide real-time stats, badges, and activity visualization.
 
@@ -114,11 +114,16 @@ Adds a new LeetCode handle to the tracking system.
 
 Contributions are welcome! To maintain the quality of the project, please follow these steps:
 
+### 🎯 Claiming an Issue
+1. Browse the Issues tab and find an **unassigned** issue you'd like to work on.
+2. Comment `/claim` on the issue. Our automated GitHub Actions bot will assign the issue to you!
+
+### � Making Changes
 1.  Fork the Project.
 2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
 3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
 4.  Push to the Branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+5.  Open a Pull Request linked to your claimed issue.
 
 ---
 
@@ -126,7 +131,7 @@ Contributions are welcome! To maintain the quality of the project, please follow
 * **v6.0.0**: Introduction of a **Global Authentication** system using OAuth for user logins.
 * **v7.0.0**: Migration of the entire codebase from JavaScript to **TypeScript** for enterprise-grade type safety.
 
-The project is currently operating at a **v5.7.0** level of technical maturity! 🚀
+The project is currently operating at a **v5.7.6** level of technical maturity! 🚀
 
-## 💖 Support
+## �� Support
 If this project helped you track your community's progress, consider supporting the development through the **Sponsors** section on the live dashboard.

@@ -58,10 +58,11 @@ async function fixNames() {
             
             const realName = data.data?.matchedUser?.profile?.realName;
             const finalName = (realName && realName.trim() !== "") ? realName : user.leetcode_handle;
+            const finalUrl = `https://leetcode.com/${user.leetcode_handle}/`;
 
             const { error: updateError } = await supabase
                 .from('leaderboard')
-                .update({ name: finalName })
+                .update({ name: finalName, url: finalUrl })
                 .eq('leetcode_handle', user.leetcode_handle);
 
             if (updateError) {
