@@ -2,8 +2,20 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
-## [5.7.6] - 2026-06-18
+## [5.7.6] - 2026-06-19
 ### Added
+- Integrated 37-tier fallback array for CodeX AI, prioritized by reasoning capability
+- Rewrote `followers.py` to utilize Selenium for direct LeetCode scraping and Supabase syncing
+
+### Changed
+- Refactored `server.js` to fully replace MongoDB with Supabase Edge architecture
+- Optimized `Leaderboard.jsx` with stale-while-revalidate caching and zero-latency loading
+- Patched `fix_names.js` environment variable loading and updated requirement configs
+- Bumped version to v5.7.6 across UI badges, `README.md`, and `CONTRIBUTING.md`
+
+### Fixed
+- Bump `js-yaml` from `4.1.1` to `4.2.0` in `/frontend` in the `npm_and_yarn` group across 1 directory
+- Replaced `fix_names.py` with `fix_names.js` in workflow
 
 ## [5.7.5] - 2026-06-15
 ### Added
