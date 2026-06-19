@@ -18,18 +18,52 @@ const AdminPanel = () => {
     setIsLoading(true);
     setMessage('');
 
+    let cleanHandle = username.trim();
+
+    // Extract username if a full URL is pasted
+    if (cleanHandle.includes('leetcode.com')) {
+      const parts = cleanHandle.split('/').filter(Boolean);
+      cleanHandle = parts[parts.length - 1];
+    }
+
+    // Validate username (only alphanumeric, underscores, and dashes allowed)
+    if (!/^[a-zA-Z0-9_-]+$/.test(cleanHandle)) {
+      setMessage('❌ Error: Invalid LeetCode username format.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      // 2. Fetch from LeetCode via Edge Function to get stats instantly
+      const { data: apiData, error: apiError } = await supabase.functions.invoke('get-user-stats', {
+        body: { username: cleanHandle }
+      });
+
+      if (apiError || !apiData || apiData.error || !apiData.matchedUser) {
+        throw new Error(apiData?.error || apiError?.message || 'User not found on LeetCode');
+      }
+
+      const matchedUser = apiData.matchedUser;
+      const stats = matchedUser.submitStats?.acSubmissionNum || [];
+      
+      const totalSolved = stats.find(s => s.difficulty === 'All')?.count || 0;
+      const easySolved = stats.find(s => s.difficulty === 'Easy')?.count || 0;
+      const mediumSolved = stats.find(s => s.difficulty === 'Medium')?.count || 0;
+      const hardSolved = stats.find(s => s.difficulty === 'Hard')?.count || 0;
+      const name = matchedUser.profile?.realName || matchedUser.username || cleanHandle;
+
       // 3. Direct insertion into the 'leaderboard' table
       const { data, error } = await supabase
         .from('leaderboard')
         .insert([
           { 
-            leetcode_handle: username.trim(),
-            total_solved: 0,
-            easy_solved: 0,
-            medium_solved: 0,
-            hard_solved: 0,
-            name: username.trim() // Initial name matches username
+            leetcode_handle: cleanHandle,
+            total_solved: totalSolved,
+            easy_solved: easySolved,
+            medium_solved: mediumSolved,
+            hard_solved: hardSolved,
+            name: name,
+            url: `https://leetcode.com/${cleanHandle}/`
           }
         ]);
 
@@ -41,12 +75,27 @@ const AdminPanel = () => {
           setMessage(`❌ Error: ${error.message}`);
         }
       } else {
-        setMessage('✅ Success: User added successfully! Sync stats on the main page.');
+        // 4. Log the insertion activity to the feed
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        
+        const { error: actError } = await supabase.from('activities').insert([{
+          text: `🎉 ${name} got added to the leaderboards.`,
+          time: timeString,
+          created_at: now.toISOString()
+        }]);
+
+        if (actError) {
+          console.error('Activity Error:', actError);
+          setMessage(`✅ Success: User added, but activity feed update failed: ${actError.message}`);
+        } else {
+          setMessage('✅ Success: User added successfully! Sync stats on the main page.');
+        }
         setUsername(''); 
       }
     } catch (error) {
       console.error('Admin Error:', error);
-      setMessage('❌ Connection Error: Could not connect to database.');
+      setMessage(`❌ Error: ${error.message || 'Could not connect to database.'}`);
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +126,6 @@ const AdminPanel = () => {
         <h1 style={{ color: '#4ade80', margin: '0 0 20px 0' }}>🛡️ ADMIN PANEL</h1>
         <p style={{ color: '#888', marginBottom: '30px', fontSize: '0.9em' }}>
             Add new users to the leaderboard.<br/>
-            (To force update stats, use the button on the main page)
         </p>
         
         <form onSubmit={handleAddUser} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -131,7 +179,7 @@ const AdminPanel = () => {
         )}
 
         <div style={{ marginTop: '30px' }}>
-          <Link to="/" style={{ color: '#888', textDecoration: 'none' }}>← Back to Leaderboard</Link>
+          <Link to="/" style={{ color: '#888', textDecoration: 'none' }}>Back to Leaderboard</Link>
         </div>
       </div>
     </div>

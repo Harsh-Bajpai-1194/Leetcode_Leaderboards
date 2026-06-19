@@ -89,14 +89,15 @@ const Leaderboard = () => {
     fetchAllData();
     
     let debounceTimer;
+    const handleChanges = () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => fetchAllData(), 1500);
+    };
+
     const channel = supabase
       .channel('schema-db-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          fetchAllData();
-        }, 1500);
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, handleChanges)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, handleChanges)
       .subscribe();
 
     return () => { 

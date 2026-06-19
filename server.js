@@ -224,28 +224,23 @@ app.post('/api/add-user', async (req, res) => {
 });
 
 app.post('/api/trigger-update', async (req, res) => {
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    const REPO_OWNER = "Harsh-Bajpai-1194"; 
-    const REPO_NAME = "Leetcode_Leaderboards";
-    const WORKFLOW_FILE = "scraper.yml"; 
-
     leaderboardCache.timestamp = 0; 
 
-    if (!GITHUB_TOKEN) return res.status(500).json({ error: "Missing GitHub Token" });
+    const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+    const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
     try {
-        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_FILE}/dispatches`, {
+        // Triggering your Supabase Edge Function directly!
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/hyper-api`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ ref: 'main', inputs: { skip_followers: 'true' } })
+            }
         });
 
-        if (response.status === 204) res.json({ message: "Update Started! Pushing to Supabase soon." });
-        else res.status(500).json({ error: `GitHub Error: ${await response.text()}` });
+        if (response.ok) res.json({ message: "Update Started in Edge Function! Pushing to DB soon." });
+        else res.status(500).json({ error: `Edge Function Error: ${await response.text()}` });
     } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });
     }
