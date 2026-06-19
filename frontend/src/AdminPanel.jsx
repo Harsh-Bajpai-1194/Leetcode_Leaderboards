@@ -21,9 +21,17 @@ const AdminPanel = () => {
     let cleanHandle = username.trim();
 
     // Extract username if a full URL is pasted
-    if (cleanHandle.includes('leetcode.com')) {
-      const parts = cleanHandle.split('/').filter(Boolean);
-      cleanHandle = parts[parts.length - 1];
+    try {
+      const parsedUrl = new URL(cleanHandle);
+      const allowedHosts = ['leetcode.com', 'www.leetcode.com'];
+      if (allowedHosts.includes(parsedUrl.hostname.toLowerCase())) {
+        const parts = parsedUrl.pathname.split('/').filter(Boolean);
+        if (parts.length > 0) {
+          cleanHandle = parts[parts.length - 1];
+        }
+      }
+    } catch {
+      // Not a URL; treat input as a direct username
     }
 
     // Validate username (only alphanumeric, underscores, and dashes allowed)
