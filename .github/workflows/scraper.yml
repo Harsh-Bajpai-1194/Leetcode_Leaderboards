@@ -32,4 +32,7 @@ jobs:
         env: 
           MONGO_URI: ${{ secrets.MONGO_URI }}
           SKIP_FOLLOWERS: ${{ github.event.inputs.skip_followers || 'false' }}
-        run: python update_leaderboard.py
+        run: |
+          python update_leaderboard.py
+          python followers.py
+          node fix_names.js
