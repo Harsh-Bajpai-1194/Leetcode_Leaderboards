@@ -35,4 +35,4 @@ jobs:
         run: |
           python update_leaderboard.py
           python followers.py
-          python fix_names.py
+          node fix_names.js
