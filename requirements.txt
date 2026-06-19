@@ -5,3 +5,4 @@ requests
 pymongo[srv]
 python-dotenv
 supabase
+create_client
