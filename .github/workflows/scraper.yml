@@ -2,7 +2,7 @@ name: LeetCode Leaderboard Update
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Runs every 10 minutes
+    - cron: '*/5 * * * *' # Runs every 10 minut
   workflow_dispatch:       # Allows manual trigger
     inputs:
       skip_followers:
@@ -13,7 +13,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,13 +23,24 @@ jobs:
           python-version: '3.10'
           cache: 'pip'
 
-      - name: Install dependencies
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
         run: |
           pip install -r requirements.txt
+          npm install
 
       - name: Run Scraper
         env: 
-          MONGO_URI: ${{ secrets.MONGO_URI }}
+          # Mapped your GitHub Secrets to the variables expected by your scripts
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_FOLLOWERS: ${{ github.event.inputs.skip_followers || 'false' }}
         run: |
           python update_leaderboard.py
