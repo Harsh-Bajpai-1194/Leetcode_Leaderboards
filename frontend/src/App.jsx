@@ -4,6 +4,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Leaderboard from './Leaderboard';
 import AdminPanel from './AdminPanel';
 import Stats from './Stats';
+import Sponsors from './Sponsors';
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
           
           {/* Stats Page */}
           <Route path="/stats/:username" element={<Stats />} />
+
+          {/* Sponsors Page */}
+          <Route path="/sponsors" element={<Sponsors />} />
         </Routes>
       </div>
     </Router>

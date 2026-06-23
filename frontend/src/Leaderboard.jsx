@@ -124,22 +124,40 @@ const Leaderboard = () => {
               <Link to="/admin" className="admin-link">
                 <button className="admin-btn">🔒 Admin Panel</button>
               </Link>
-
-              <div className="sponsor-container">
+                {/* The animated wrapper is now perfectly uniform */}
                 <div className="sponsor-banner-wrapper">
-                  <button className="sponsor-btn">💖 SPONSORS</button>
-                </div>
-                <img src="/QR.jpg" alt="QR" className="qr-img" />
-              </div>
-          </div>
-      </div>
+                  <div className="sponsor-container" style={{ margin: 0, padding: '15px' }}>
+                    
+                    {/* Link is applied ONLY to the button now */}
+                    <Link to="/sponsors" style={{ width: '100%', textDecoration: 'none' }}>
+                      <button className="sponsor-btn" style={{ marginBottom: '15px', width: '100%' }}>
+                        💵 SPONSORS 💵
+                      </button>
+                    </Link>
+                    
+                    <div style={{ fontSize: '0.9rem', color: '#ddd', textAlign: 'center', marginBottom: '10px' }}>
+                      🙏 Please donate 🙏
+                      <br />
+                      Even ₹1 helps!
+                    </div>
+
+                    <img src="/QR.jpg" alt="QR" className="qr-img" />
+
+                    <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '8px', textAlign: 'center' }}>
+                      Our Goal: $3/month for proxy servers <br />
+                      (☕ Keep the Server Alive)
+                    </div>
+                  </div></div>
+                  </div></div>
+                  
+                  
 
       {/* --- CENTER COLUMN --- */}
       <div className="leaderboard-container">
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.6-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.6" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.7-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.7" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -189,10 +207,7 @@ const Leaderboard = () => {
                     <td className="stats-btn-cell">
                       <button 
                         className="stats-btn" 
-                        onClick={() => navigate(`/stats/${user.leetcode_handle || user.username}`)}
-                      >
-                        Stats
-                      </button>
+                        onClick={() => navigate(`/stats/${user.leetcode_handle || user.username}`)}> Stats </button>
                     </td>
                   </tr>
                 ))

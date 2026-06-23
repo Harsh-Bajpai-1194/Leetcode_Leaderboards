@@ -69,8 +69,8 @@ body {
 
 .sponsor-banner-wrapper {
     width: 100%;
-    margin-bottom: 15px;
-    padding: 4px;
+    margin-top: 10px;
+    padding: 4px; /* This keeps the border exactly 4px on ALL sides */
     border-radius: 8px;
     background-image: url("/border.gif");
     background-size: cover;
@@ -93,6 +93,145 @@ body {
 .qr-img {
     width: 90%;
     border-radius: 8px;
+}
+
+/* --- SPONSORS PAGE STYLES --- */
+.sponsors-page-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    color: white;
+    text-align: center;
+}
+
+.sponsors-header h1 {
+    font-size: 2.5rem;
+    color: #facc15;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+}
+
+.sponsors-header p {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+.back-link {
+    display: inline-block;
+    color: #ec4899;
+    text-decoration: none;
+    margin-bottom: 40px;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* The Grid Layout */
+.sponsors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+/* Base Card Style (Glassmorphism) */
+.sponsor-card {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #333;
+}
+
+.sponsor-card:hover {
+    transform: translateY(-5px);
+}
+
+.sponsor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    background-color: #2c2c2c;
+    border: 3px solid #444;
+}
+
+.sponsor-avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.sponsor-name {
+    font-size: 1.3rem;
+    margin: 0 0 5px 0;
+    font-weight: bold;
+}
+
+.sponsor-amount {
+    font-size: 1.1rem;
+    font-family: monospace;
+    margin-bottom: 10px;
+}
+
+.sponsor-message {
+    font-size: 0.9rem;
+    color: #bbb;
+    font-style: italic;
+    margin: 0;
+}
+
+/* --- THE TIERS (The Magic Glow) --- */
+.tier-gold {
+    border-color: rgba(250, 204, 21, 0.5);
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.1);
+}
+.tier-gold .sponsor-avatar { border-color: #facc15; }
+.tier-gold .sponsor-amount { color: #facc15; }
+.tier-gold:hover { box-shadow: 0 0 30px rgba(250, 204, 21, 0.3); }
+
+.tier-silver {
+    border-color: rgba(161, 161, 170, 0.5);
+    box-shadow: 0 0 20px rgba(161, 161, 170, 0.1);
+}
+.tier-silver .sponsor-avatar { border-color: #a1a1aa; }
+.tier-silver .sponsor-amount { color: #a1a1aa; }
+.tier-silver:hover { box-shadow: 0 0 30px rgba(161, 161, 170, 0.3); }
+
+.tier-bronze {
+    border-color: rgba(217, 119, 6, 0.5);
+    box-shadow: 0 0 20px rgba(217, 119, 6, 0.1);
+}
+.tier-bronze .sponsor-avatar { border-color: #d97706; }
+.tier-bronze .sponsor-amount { color: #d97706; }
+.tier-bronze:hover { box-shadow: 0 0 30px rgba(217, 119, 6, 0.3); }
+
+/* Bottom Donate Section */
+.donate-section {
+    background: #111;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px dashed #333;
+}
+.sponsors-qr {
+    width: 200px;
+    border-radius: 10px;
+    margin-top: 15px;
 }
 
 /* --- CENTER SIDE: LEADERBOARD --- */
