@@ -6,4 +6,3 @@ frontend/node_modules/
 
 # Environment variables
 .env
-frontend/.env
