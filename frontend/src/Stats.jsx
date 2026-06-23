@@ -1,15 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-// import './style.css'; // Commented out to resolve compilation error in this environment
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import './style.css'; 
+import { createClient } from '@supabase/supabase-js';
 
-// Safe environment variable access for both local Vite and preview environments
-const env = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env : {};
-const supabaseUrl = env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = env.VITE_SUPABASE_ANON_KEY || 'placeholder';
+// --- CUSTOM HOOK FOR 5-SECOND NUMBER ANIMATION ---
+const useCountUp = (endValue, duration = 5000) => {
+  const [count, setCount] = useState(0);
 
-// 🛠️ FIX: Initialize Supabase OUTSIDE the component so it only runs once!
-// This instantly removes the "Multiple GoTrueClient instances" warning.
+  useEffect(() => {
+    let startTimestamp = null;
+    const finalValue = parseInt(endValue) || 0;
+    
+    if (finalValue === 0) {
+      setCount(0);
+      return;
+    }
+
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.floor(easeProgress * finalValue));
+
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      } else {
+        setCount(finalValue);
+      }
+    };
+
+    window.requestAnimationFrame(step);
+  }, [endValue, duration]);
+
+  return count;
+};
+
+// Initialize Supabase correctly for Vite
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Stats = () => {
@@ -25,28 +54,39 @@ const Stats = () => {
   const [isAiTyping, setIsAiTyping] = useState(false);
   const chatEndRef = useRef(null);
 
-  // Initialize welcome message dynamically based on the profile being viewed
+  // 1. SAFELY CALCULATE FINAL NUMBERS FIRST (To avoid Rule of Hooks violation)
+  const isPrivate = userData?.matchedUser?.submitStats === null;
+  const statsArray = userData?.matchedUser?.submitStats?.acSubmissionNum || [];
+  
+  const finalTotal = !userData ? 0 : (isPrivate ? (dbStats?.total_solved || 0) : (statsArray.find(s => s.difficulty === 'All')?.count || dbStats?.total_solved || 0));
+  const finalEasy = !userData ? 0 : (isPrivate ? (dbStats?.easy_solved || 0) : (statsArray.find(s => s.difficulty === 'Easy')?.count || dbStats?.easy_solved || 0));
+  const finalMedium = !userData ? 0 : (isPrivate ? (dbStats?.medium_solved || 0) : (statsArray.find(s => s.difficulty === 'Medium')?.count || dbStats?.medium_solved || 0));
+  const finalHard = !userData ? 0 : (isPrivate ? (dbStats?.hard_solved || 0) : (statsArray.find(s => s.difficulty === 'Hard')?.count || dbStats?.hard_solved || 0));
+
+  // 2. CALL HOOKS AT THE ABSOLUTE TOP LEVEL
+  const animatedTotal = useCountUp(finalTotal, 5000);
+  const animatedEasy = useCountUp(finalEasy, 5000);
+  const animatedMedium = useCountUp(finalMedium, 5000);
+  const animatedHard = useCountUp(finalHard, 5000);
+
+  // Initialize welcome message
   useEffect(() => {
     setChatMessages([
       { sender: 'ai', text: `🤖 Hello! I am CodeX AI. Want me to analyze ${username}'s performance or suggest topics for them to practice?` }
     ]);
   }, [username]);
 
-  // Auto-scroll chat to the bottom when new messages appear
+  // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatMessages, isAiTyping]);
 
-  // --- 🪄 MAGIC TEXT FORMATTER FOR GEMINI MARKDOWN ---
   const formatMessage = (text) => {
-    // Split the text by bold markers (**)
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
-      // If it's a bold segment, render it wrapped in <strong> with your brand color
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={index} style={{ color: '#ffa116' }}>{part.slice(2, -2)}</strong>;
       }
-      // Otherwise, handle normal text and convert \n to <br/> tags
       return (
         <span key={index}>
           {part.split('\n').map((line, i) => (
@@ -70,28 +110,22 @@ const Stats = () => {
     setIsAiTyping(true);
 
     try {
-      const isPrivate = !userData?.matchedUser?.submitStats;
-      const statsArray = userData?.matchedUser?.submitStats?.acSubmissionNum || [];
       const ranking = userData?.userContestRanking;
-
       const contextData = {
         username: username,
-        totalSolved: isPrivate ? (dbStats?.total_solved || 0) : (statsArray.find(s => s.difficulty === 'All')?.count || dbStats?.total_solved || 0),
-        easy: isPrivate ? (dbStats?.easy_solved || 0) : (statsArray.find(s => s.difficulty === 'Easy')?.count || dbStats?.easy_solved || 0),
-        medium: isPrivate ? (dbStats?.medium_solved || 0) : (statsArray.find(s => s.difficulty === 'Medium')?.count || dbStats?.medium_solved || 0),
-        hard: isPrivate ? (dbStats?.hard_solved || 0) : (statsArray.find(s => s.difficulty === 'Hard')?.count || dbStats?.hard_solved || 0),
+        totalSolved: finalTotal,
+        easy: finalEasy,
+        medium: finalMedium,
+        hard: finalHard,
         rating: ranking ? Math.round(ranking.rating) : 'Unrated',
         topPercentage: ranking?.topPercentage || 'N/A'
       };
 
-      // 🛠️ FIX: We now call the Supabase Edge Function directly! No backend URL needed!
-      const { data, error } = await supabase.functions.invoke('AI-Assistant', {
+      const { data, error: aiError } = await supabase.functions.invoke('AI-Assistant', {
         body: { prompt: userMessage, context: contextData }
       });
 
-      if (error) {
-        throw new Error(error.message);
-      }
+      if (aiError) throw new Error(aiError.message);
 
       if (data && data.reply) {
         setChatMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
@@ -111,15 +145,12 @@ const Stats = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-
         const [apiResponse, dbResponse] = await Promise.all([
           supabase.functions.invoke('get-user-stats', { body: { username } }),
           supabase.from('leaderboard').select('*')
         ]);
 
-        if (apiResponse.error) {
-          throw new Error(`Edge Function failed: ${apiResponse.error.message}`);
-        }
+        if (apiResponse.error) throw new Error(`Edge Function failed: ${apiResponse.error.message}`);
         
         let data = apiResponse.data;
         if (data && data.error) throw new Error(data.error);
@@ -130,9 +161,7 @@ const Stats = () => {
             u.username?.toLowerCase() === username.toLowerCase() ||
             u.leetcode_handle?.toLowerCase() === username.toLowerCase()
           );
-          if (matchedRecord) {
-            setDbStats(matchedRecord);
-          }
+          if (matchedRecord) setDbStats(matchedRecord);
         }
 
         setUserData(data);
@@ -153,7 +182,6 @@ const Stats = () => {
     const ratings = attended.map(h => h.rating);
     const max = Math.max(...ratings) + 100;
     const min = Math.max(0, Math.min(...ratings) - 100);
-    
     const width = 800;
     const height = 150;
     
@@ -219,32 +247,21 @@ const Stats = () => {
     );
   };
 
+  // 3. ALL EARLY RETURNS MUST HAPPEN HERE (After all Hooks)
   if (loading) return <div className="main-wrapper" style={{ justifyContent: 'center', alignItems: 'center' }}><h2 style={{ color: '#4ade80' }}>Loading Stats...</h2></div>;
   if (error || !userData || !userData.matchedUser) return <div className="main-wrapper" style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}><h2 style={{ color: '#ef4743' }}>{error || 'User not found'}</h2><Link to="/" style={{ color: '#888', marginTop: '20px', textDecoration: 'none' }}>← Back to Leaderboard</Link></div>;
 
   const { matchedUser, userContestRanking, userContestRankingHistory } = userData;
   const profile = matchedUser.profile || {};
-  
-  const isPrivate = matchedUser.submitStats === null;
-  const stats = matchedUser.submitStats?.acSubmissionNum || [];
   const badges = matchedUser.badges || [];
-
-  const totalSolved = isPrivate ? (dbStats?.total_solved || 0) : (stats.find(s => s.difficulty === 'All')?.count || dbStats?.total_solved || 0);
-  const easySolved = isPrivate ? (dbStats?.easy_solved || 0) : (stats.find(s => s.difficulty === 'Easy')?.count || dbStats?.easy_solved || 0);
-  const mediumSolved = isPrivate ? (dbStats?.medium_solved || 0) : (stats.find(s => s.difficulty === 'Medium')?.count || dbStats?.medium_solved || 0);
-  const hardSolved = isPrivate ? (dbStats?.hard_solved || 0) : (stats.find(s => s.difficulty === 'Hard')?.count || dbStats?.hard_solved || 0);
 
   return (
     <div className="main-wrapper" style={{ padding: '40px', boxSizing: 'border-box' }}>
       <div className="stats-container" style={{ backgroundColor: '#1a1a1a', padding: '30px', borderRadius: '12px', border: '1px solid #333', maxWidth: '1200px', margin: '0 auto', width: '100%', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
         
-        {/* --- MAIN 2-COLUMN LAYOUT WRAPPER --- */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px' }}>
-
-          {/* ====  LEFT COLUMN: STATS DASHBOARD  ==== */}
           <div style={{ flex: '2 1 650px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
-            {/* --- Header Profile Section --- */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
               <img src={profile.userAvatar || 'https://assets.leetcode.com/users/avatars/avatar_default.jpg'} alt="Profile Avatar" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #ffa116' }} />
               <div>
@@ -271,25 +288,27 @@ const Stats = () => {
               </div>
             </div>
 
-            {/* --- Problem Solving & Contest Details Grid --- */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
               <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444' }}>
                 <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>
                   Problem Solving {isPrivate && <span style={{ fontSize: '0.75em', color: '#888', fontWeight: 'normal' }}>(Database Sync)</span>}
                 </h3>
-                <p style={{ margin: '5px 0', color: 'white' }}><strong>Total:</strong> {totalSolved}</p>
+                <p style={{ margin: '5px 0', color: 'white', fontSize: '1.2em' }}><strong>Total:</strong> {animatedTotal}</p>
+                
                 <div style={{ marginTop: '15px' }}>
-                  <p style={{ margin: '5px 0', color: '#00af9b' }}>Easy: {easySolved}</p>
+                  <p style={{ margin: '5px 0', color: '#00af9b' }}>Easy: {animatedEasy}</p>
                   <div style={{ width: '100%', backgroundColor: '#444', height: '8px', borderRadius: '4px' }}>
-                    <div style={{ width: `${totalSolved ? (easySolved/totalSolved)*100 : 0}%`, backgroundColor: '#00af9b', height: '100%', borderRadius: '4px' }}></div>
+                    <div style={{ width: `${finalTotal ? (finalEasy/finalTotal)*100 : 0}%`, backgroundColor: '#00af9b', height: '100%', borderRadius: '4px' }}></div>
                   </div>
-                  <p style={{ margin: '10px 0 5px 0', color: '#ffb800' }}>Medium: {mediumSolved}</p>
+                  
+                  <p style={{ margin: '10px 0 5px 0', color: '#ffb800' }}>Medium: {animatedMedium}</p>
                   <div style={{ width: '100%', backgroundColor: '#444', height: '8px', borderRadius: '4px' }}>
-                    <div style={{ width: `${totalSolved ? (mediumSolved/totalSolved)*100 : 0}%`, backgroundColor: '#ffb800', height: '100%', borderRadius: '4px' }}></div>
+                    <div style={{ width: `${finalTotal ? (finalMedium/finalTotal)*100 : 0}%`, backgroundColor: '#ffb800', height: '100%', borderRadius: '4px' }}></div>
                   </div>
-                  <p style={{ margin: '10px 0 5px 0', color: '#ff2d55' }}>Hard: {hardSolved}</p>
+                  
+                  <p style={{ margin: '10px 0 5px 0', color: '#ff2d55' }}>Hard: {animatedHard}</p>
                   <div style={{ width: '100%', backgroundColor: '#444', height: '8px', borderRadius: '4px' }}>
-                    <div style={{ width: `${totalSolved ? (hardSolved/totalSolved)*100 : 0}%`, backgroundColor: '#ff2d55', height: '100%', borderRadius: '4px' }}></div>
+                    <div style={{ width: `${finalTotal ? (finalHard/finalTotal)*100 : 0}%`, backgroundColor: '#ff2d55', height: '100%', borderRadius: '4px' }}></div>
                   </div>
                 </div>
               </div>
@@ -309,36 +328,26 @@ const Stats = () => {
               </div>
             </div>
 
-            {/* --- Contest Rating History --- */}
             <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444' }}>
               <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>Contest Rating History</h3>
               {renderRatingGraph(userContestRankingHistory)}
             </div>
 
-            {/* --- Submissions Heatmap --- */}
             <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444' }}>
               <h3 style={{ margin: '0 0 15px 0', color: '#ffa116' }}>Submissions (Past Year)</h3>
               {renderHeatmap(matchedUser.userCalendar?.submissionCalendar)}
             </div>
           </div>
 
-          {/* =========================================
-              RIGHT COLUMN: STICKY AI CHATBOT
-          ========================================= */}
           <div style={{ flex: '1 1 350px', position: 'relative' }}>
-            {/* The sticky wrapper ensures it stays visible while scrolling the left column */}
             <div className="chatbot-container" style={{ position: 'sticky', top: '20px', height: 'calc(100vh - 120px)', maxHeight: '750px', minHeight: '500px', margin: 0, display: 'flex', flexDirection: 'column' }}>
-              
               <div className="chatbot-header">⚡ Ask CodeX AI about @{matchedUser.username}</div>
-              
               <div className="chatbot-messages" style={{ flexGrow: 1, maxHeight: 'none', overflowY: 'auto' }}>
                 {chatMessages.map((msg, index) => (
                   <div key={index} className={`chat-message ${msg.sender === 'ai' ? 'ai-msg' : 'user-msg'}`}>
-                    {/* Re-implemented dynamic markdown formatting */}
                     {msg.sender === 'ai' ? formatMessage(msg.text) : msg.text}
                   </div>
                 ))}
-                
                 {isAiTyping && (
                   <div className="chat-message ai-msg typing-indicator">
                     <span className="dot"></span><span className="dot"></span><span className="dot"></span>
@@ -346,7 +355,6 @@ const Stats = () => {
                 )}
                 <div ref={chatEndRef} />
               </div>
-
               <form className="chatbot-input-area" onSubmit={handleSendMessage}>
                 <input 
                   type="text" 
@@ -357,13 +365,10 @@ const Stats = () => {
                 />
                 <button type="submit" className="chatbot-send-btn">➤</button>
               </form>
-
             </div>
           </div>
-
         </div>
 
-        {/* --- Back Button --- */}
         <div style={{ marginTop: '40px', textAlign: 'center' }}>
           <Link to="/" style={{ color: '#888', textDecoration: 'none', display: 'inline-block', padding: '10px 20px', backgroundColor: '#2c2c2c', borderRadius: '5px' }}>
             ← Back to Leaderboard

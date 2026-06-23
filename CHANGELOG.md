@@ -2,6 +2,19 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.7.7] - 2026-06-23
+### Added
+- **Sponsors "Hall of Fame" Page**: Created a dedicated, professionally styled sponsors page to incentivize donations.
+- **Animated Statistics**: Implemented a 5-second count-up animation for user stats on the `Stats.jsx` page for a more dynamic UI.
+### Fixed
+- **Critical React Rendering Crash**: Resolved a "Rule of Hooks Violation" in `Stats.jsx` by correctly ordering state calculations and hook calls, fixing a blank page error.
+- **GitHub Actions Workflow**: Patched the `scraper.yml` workflow by adding a missing `npm install` step and providing the correct Supabase environment variables to resolve CI/CD failures.
+- **Python Dependencies**: Corrected the `requirements.txt` file by removing an invalid package entry (`create_client`) that was causing the scraper to crash.
+- **UI Layout Bugs**: Fixed multiple JSX/CSS structural issues, including incorrect nesting in `Leaderboard.jsx` columns and an uneven animated border on the sponsor section.
+### Changed
+- Bumped version to v5.7.7 across UI badges, `README.md`, and `CONTRIBUTING.md`.
+- **Simplified Configuration**: Refactored the frontend by updating `vite.config.js` to use the single root `.env` file, removing the need for a duplicate environment file in the `/frontend` directory.
+
 ## [5.7.6] - 2026-06-19
 ### Added
 - Integrated 37-tier fallback array for CodeX AI, prioritized by reasoning capability
