@@ -7,17 +7,27 @@ body {
     box-sizing: border-box;
 }
 
+/* --- OVERRIDE VITE'S DEFAULT CONSTRAINTS --- */
+/* This forces the app to actually use the full width of the monitor */
+#root {
+    max-width: 100% !important;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 /* --- LAYOUT WRAPPER --- */
 .main-wrapper {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 20px;
-    max-width: 98%;
+    gap: 20px;             
+    width: 100%;             /* Force wrapper to fill root */
+    max-width: 100%;         /* Ensure it can stretch */
+    box-sizing: border-box;  /* Prevent padding from breaking width */
     margin: 0 auto;
     padding: 20px;
     flex-wrap: wrap;
-    min-height: 100vh;
     background-color: #000;
 }
 
@@ -56,7 +66,6 @@ body {
 
 .sponsor-container {
     margin-top: 10px;
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -97,8 +106,6 @@ body {
 
 /* --- SPONSORS PAGE STYLES --- */
 .sponsors-page-container {
-    width: 100%;
-    max-width: 1000px;
     margin: 0 auto;
     padding: 40px 20px;
     color: white;
@@ -229,7 +236,7 @@ body {
     border: 1px dashed #333;
 }
 .sponsors-qr {
-    width: 200px;
+    width: 300px;
     border-radius: 10px;
     margin-top: 15px;
 }
@@ -383,7 +390,6 @@ h1 {
 }
 
 /* --- TABLE STYLES --- */
-/* --- TABLE STYLES --- */
 .table-wrapper {
     max-height: 480px;
     overflow-y: auto;
@@ -414,7 +420,7 @@ h1 {
     padding: 12px;
     text-align: left;
     vertical-align: middle; /* Centers content and fixes baseline shifts */
-}   /* Added to keep the rows tight */
+}   
 
 .leaderboard-table th:nth-child(1) { width: 8%; }
 .leaderboard-table th:nth-child(2) { width: 30%; }

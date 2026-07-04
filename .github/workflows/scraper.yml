@@ -45,4 +45,5 @@ jobs:
         run: |
           python update_leaderboard.py
           python followers.py
+          python ml_engine.py
           node fix_names.js

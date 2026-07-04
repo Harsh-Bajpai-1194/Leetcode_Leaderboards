@@ -52,7 +52,8 @@ async function buildLeaderboardData() {
             url: u.url,
             badge_icon: u.badge_icon,
             badge_name: u.badge_name,
-            streak: u.streak || 0
+            streak: u.streak || 0,
+            predicted_rating: u.predicted_rating
         }));
 
         const metadata = metadataRes.data;

@@ -5,3 +5,6 @@ requests
 pymongo[srv]
 python-dotenv
 supabase
+pandas
+scikit-learn
+numpy

@@ -2,6 +2,19 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.7.8] - 2026-07-04
+### Added
+- **Sponsors "Hall of Fame" Page**: Implements a dedicated, professionally styled sponsors page at `/sponsors` to incentivize donations and formally recognize supporters.
+- **Animated Statistics**: Adds a dynamic 5-second count-up animation to all key metrics on the user statistics page for a more engaging UI.
+### Fixed
+- **Critical React Rendering Crash**: Patches a "Rule of Hooks Violation" in `Stats.jsx` by correctly ordering state calculations and hook calls, which previously caused a blank page error.
+- **GitHub Actions Workflow**: Corrects the `scraper.yml` workflow by adding a missing `npm install` step and ensuring the correct Supabase environment variables are passed.
+- **Python Dependencies**: Removes an invalid package entry from `requirements.txt` that was causing the Python scraper to fail during dependency installation.
+- **UI Layout Bugs**: Addresses several minor UI layout bugs, including an uneven animated border on the sponsor section.
+### Changed
+- **Simplified Configuration**: Refactors the frontend by updating `vite.config.js` to use the single root `.env` file, removing the need for a duplicate environment file in the `/frontend` directory.
+- Bumped version to v5.7.8.
+
 ## [5.7.7] - 2026-06-23
 ### Added
 - **Sponsors "Hall of Fame" Page**: Created a dedicated, professionally styled sponsors page to incentivize donations.
