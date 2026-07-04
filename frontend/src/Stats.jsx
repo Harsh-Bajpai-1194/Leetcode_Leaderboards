@@ -118,7 +118,8 @@ const Stats = () => {
         medium: finalMedium,
         hard: finalHard,
         rating: ranking ? Math.round(ranking.rating) : 'Unrated',
-        topPercentage: ranking?.topPercentage || 'N/A'
+        topPercentage: ranking?.topPercentage || 'N/A',
+        predicted_rating: dbStats?.predicted_rating || 'Not available'
       };
 
       const { data, error: aiError } = await supabase.functions.invoke('AI-Assistant', {
@@ -254,6 +255,20 @@ const Stats = () => {
   const { matchedUser, userContestRanking, userContestRankingHistory } = userData;
   const profile = matchedUser.profile || {};
   const badges = matchedUser.badges || [];
+  
+  // --- PREDICTION LOGIC ---
+  const predictedRating = dbStats?.predicted_rating;
+  const currentRating = userContestRanking?.rating || 0;
+
+  const getRatingChange = () => {
+      if (!predictedRating || !currentRating) return { text: 'N/A', color: '#888' };
+      const diff = Math.round(predictedRating - currentRating);
+      if (diff > 0) return { text: `+${diff}`, color: '#4ade80' };
+      if (diff < 0) return { text: `${diff}`, color: '#ef4743' };
+      return { text: `~${diff}`, color: '#888' };
+  };
+
+  const ratingChange = getRatingChange();
 
   return (
     <div className="main-wrapper" style={{ padding: '40px', boxSizing: 'border-box' }}>
@@ -326,6 +341,21 @@ const Stats = () => {
                   <p style={{ color: '#888', fontStyle: 'italic', marginTop: '30px', textAlign: 'center' }}>No contest data available</p>
                 )}
               </div>
+
+              {/* --- AI PREDICTION CARD --- */}
+              {predictedRating && (
+                <div style={{ backgroundColor: 'rgba(74, 222, 128, 0.1)', border: '1px solid #4ade80', padding: '20px', borderRadius: '8px', gridColumn: '1 / -1' }}>
+                  <h3 style={{ margin: '0 0 15px 0', color: '#4ade80' }}>📈 AI Rating Prediction (30 Days)</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                    <span style={{ fontSize: '2.5em', fontWeight: 'bold', color: 'white' }}>
+                      {Math.round(predictedRating)}
+                    </span>
+                    <span style={{ fontSize: '1.5em', fontWeight: 'bold', color: ratingChange.color, backgroundColor: 'rgba(0,0,0,0.2)', padding: '4px 8px', borderRadius: '6px' }}>
+                      {ratingChange.text}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div style={{ backgroundColor: '#2c2c2c', padding: '20px', borderRadius: '8px', border: '1px solid #444' }}>
