@@ -1,5 +1,6 @@
 ### **📈 Versioning Timeline**
 
+* **v5.7.8**: Feature & Fixes. Adds Sponsors page, animated stats, and fixes critical rendering/CI bugs.
 * **v1.0.0**: Initial Repository Setup. First commit: Basic README.md and .gitignore. Creation of update_leaderboard.py (Version 1.0).
 * **v1.1.0**: Scraper Logic. Implementation of Selenium-based scraping for LeetCode profile pages.
 * **v1.1.1**: Patch: Fixed a typo in the LeetCode URL string.
@@ -107,6 +108,9 @@
 
 | Version | Milestone | Primary Reason for Change |
 | :--- | :--- | :--- |
+| **v5.7.8** | **Feature & Fixes** | Adds Sponsors page, animated stats, and fixes critical rendering/CI bugs. |
+| Version | Milestone | Primary Reason for Change |
+| :--- | :--- | :--- |
 | **v1.0.0** | **Initial Setup** | Basic repository setup and Python scraper creation. |
 | **v2.0.0** | **React Migration** | Transition to a Vite/React frontend and Express backend. |
 | **v3.0.0** | **Core UI Enhancements** | Refined the React frontend architecture for better state handling and search filtering. |
@@ -132,4 +136,3 @@
 | **v5.5.0** | **Architecture** | Added Supabase for hosting the backend as a backup for Render. |
 | **v5.6.0** | **UI Refinement** | Added table layout adjustments and Stats button for enhanced user analytics. |
 | **v5.7.0** | **UI Enhancement** | Added Stats button to leaderboard table with optimized column layout for better spacing. |
-
