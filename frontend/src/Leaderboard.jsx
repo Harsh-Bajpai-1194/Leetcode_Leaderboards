@@ -32,7 +32,7 @@ const Leaderboard = () => {
         supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
         supabase.from('metadata').select('date_string').eq('type', 'last_updated'),
         supabase.from('activities')
-          .select('created_at, text, time')
+          .select('created_at, text, time, submission_id')
           .gte('created_at', twentyOneDaysAgo.toISOString()) 
           .order('created_at', { ascending: false })
           .limit(5000)
@@ -157,7 +157,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.8-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.8" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.7.9-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.9" className="release-badge" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -225,7 +225,21 @@ const Leaderboard = () => {
             {data.activities && data.activities.length > 0 ? (
               data.activities.map((act, index) => (
                 <div key={index} className="activity-item">
-                  <span className="activity-text">{act.text}</span><br />
+                  <span className="activity-text">
+                    {act.text}
+                    {act.submission_id && (
+                      <a
+                        href={`https://leetcode.com/submissions/detail/${act.submission_id}/`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="View Submission"
+                        style={{ marginLeft: '8px', display: 'inline-block', verticalAlign: 'middle', cursor: 'pointer' }}
+                      >
+                        <img src="/submission.jpg" alt="View" style={{ width: '16px', height: '16px', borderRadius: '3px' }} />
+                      </a>
+                    )}
+                  </span>
+                  <br />
                   <span className="activity-time">{act.time}</span>
                 </div>
               ))

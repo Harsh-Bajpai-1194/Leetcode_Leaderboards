@@ -2,6 +2,16 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.7.9] - 2026-07-06
+### Added
+- **View Submission Button**: Adds a clickable icon next to activities in the feed, linking directly to the user's submission page on LeetCode if their profile settings allow it.
+### Fixed
+- **Follower Sync Duplicates**: Patched a bug in `update_leaderboard.py` that caused a crash when syncing followers if a user with a different capitalization already existed.
+- **Database Permissions**: Updated Supabase RLS policies to ensure the frontend can correctly read the new `submission_id` field.
+### Changed
+- **Scraper Logic**: The Python scraper now fetches the `submission_id` for new solutions and includes debugging output for users with private submission histories.
+- Bumped version to v5.7.9.
+
 ## [5.7.8] - 2026-07-04
 ### Added
 - **Sponsors "Hall of Fame" Page**: Implements a dedicated, professionally styled sponsors page at `/sponsors` to incentivize donations and formally recognize supporters.
