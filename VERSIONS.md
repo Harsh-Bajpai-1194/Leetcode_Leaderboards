@@ -1,5 +1,6 @@
 ### **📈 Versioning Timeline**
 
+* **v5.7.9**: Feature & Fixes. Adds a direct link to user submissions in the activity feed and fixes follower sync bugs.
 * **v5.7.8**: Feature & Fixes. Adds Sponsors page, animated stats, and fixes critical rendering/CI bugs.
 * **v1.0.0**: Initial Repository Setup. First commit: Basic README.md and .gitignore. Creation of update_leaderboard.py (Version 1.0).
 * **v1.1.0**: Scraper Logic. Implementation of Selenium-based scraping for LeetCode profile pages.
@@ -108,6 +109,7 @@
 
 | Version | Milestone | Primary Reason for Change |
 | :--- | :--- | :--- |
+| **v5.7.9** | **Feature & Fixes** | Adds a direct link to user submissions in the activity feed and fixes follower sync bugs. |
 | **v5.7.8** | **Feature & Fixes** | Adds Sponsors page, animated stats, and fixes critical rendering/CI bugs. |
 | Version | Milestone | Primary Reason for Change |
 | :--- | :--- | :--- |

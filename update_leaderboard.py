@@ -91,16 +91,49 @@ def process_user(user_doc):
 
         # Check for Activity (Progress)
         previous_solved = user_doc.get("total_solved", 0)
+        last_updated_time = user_doc.get("last_updated")
         diff = stats["total"] - previous_solved
 
-        if diff > 0 and previous_solved > 0:
+        # Log activity only if the user has been updated at least once before.
+        if diff > 0 and last_updated_time is not None:
             print(f"🔥 {real_name} solved +{diff}!")
             ist_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
+
+            # Fetch recent submission to get the ID
+            submission_id = None
+            try:
+                submission_query = """
+                query recentAcSubmissions($username: String!, $limit: Int!) {
+                  recentAcSubmissionList(username: $username, limit: $limit) {
+                    id
+                    timestamp
+                  }
+                }
+                """
+                sub_response = session.post(
+                    "https://leetcode.com/graphql",
+                    json={"query": submission_query, "variables": {"username": username, "limit": 1}},
+                    timeout=10
+                )
+                if sub_response.status_code == 200:
+                    sub_data = sub_response.json()
+                    # --- DEBUGGING ---
+                    print(f"DEBUG: Submission data for {username}: {sub_data}")
+                    if sub_data.get("data") and sub_data["data"].get("recentAcSubmissionList") and len(sub_data["data"]["recentAcSubmissionList"]) > 0:
+                        latest_submission = sub_data["data"]["recentAcSubmissionList"][0]
+                        submission_id = latest_submission.get("id")
+                        print(f"DEBUG: Found submission ID {submission_id} for {username}")
+                    else:
+                        print(f"DEBUG: No recent submission found for {username}")
+            except Exception as e:
+                print(f"⚠️ Could not fetch submission ID for {username}: {e}")
+
             activity_payload = {
                 "text": f"{real_name} solved +{diff} questions",
                 "time": ist_time,
                 "type": "up",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
+                "submission_id": submission_id
             }
             supabase.from_("activities").insert(activity_payload).execute()
 
@@ -131,25 +164,33 @@ def update_leaderboard():
         try:
             scraped_users = get_leetcode_data()
             if scraped_users:
+                # Fetch existing handles to prevent duplicates before insertion
+                response = supabase.from_("leaderboard").select("leetcode_handle").execute()
+                existing_handles = {user['leetcode_handle'].lower() for user in response.data}
+
                 new_users_payload = []
                 for username in scraped_users:
-                    new_users_payload.append({
-                        "leetcode_handle": username,
-                        "name": username,
-                        "url": f"https://leetcode.com/{username}/"
-                    })
+                    # Add user only if they don't already exist (case-insensitive check)
+                    if username.lower() not in existing_handles:
+                        new_users_payload.append({
+                            "leetcode_handle": username,
+                            "name": username,
+                            "url": f"https://leetcode.com/{username}/"
+                        })
+                        # Add to set to avoid adding duplicates from the scraped list itself
+                        existing_handles.add(username.lower())
                 
                 if new_users_payload:
-                    # Upsert new users, ignoring conflicts on existing handles
-                    supabase.from_("leaderboard").upsert(new_users_payload, on_conflict="leetcode_handle").execute()
-                    print(f"Synced {len(new_users_payload)} follower/following users.")
+                    # Use a simple insert since we have already filtered out duplicates
+                    supabase.from_("leaderboard").insert(new_users_payload).execute()
+                    print(f"Synced {len(new_users_payload)} new follower/following users.")
 
         except Exception as e:
             print(f"Follower sync error: {e}")
     else:
         print("⏩ Skipping follower sync for ultra-fast manual update...")
 
-    response = supabase.from_('leaderboard').select('leetcode_handle, total_solved').execute()
+    response = supabase.from_('leaderboard').select('leetcode_handle, total_solved, last_updated').execute()
     db_users = response.data
     print(f"Checking stats for {len(db_users)} users using 50 parallel workers...")
 
