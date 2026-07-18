@@ -61,59 +61,59 @@ This project uses a modern, serverless architecture centered around Supabase:
 | **CI/CD** | **GitHub Actions** | Automated scheduling and manual trigger execution. |
 
 ---
-
-## 📁 Project Structure
-
-Leetcode_Leaderboards/
-├── .github/
-│   ├── workflows/                # GitHub Actions workflows
-│   |   ├── assign-claim.yml
-│   |   ├── keep-alive.yml
-│   |   ├── scraper.yml
-│   |   └── unassign-stale.yml
-|   ├── dependabot.yml
-├── frontend/                     # React + Vite frontend application
-│   ├── public/                   # Static assets
-│   ├── src/                      # React UI components & styles
-│   │   ├── assets/
-│   │   ├── ActivityGraph.jsx
-│   │   ├── AdminPanel.jsx
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── Leaderboard.jsx
-│   │   ├── Stats.jsx
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   └── style.css
-│   ├── eslint.config.js          # ESLint configuration
-│   ├── index.html                # Main HTML template
-│   ├── package-lock.json         # Frontend dependency lockfile
-│   ├── package.json              # Frontend dependencies
-│   ├── README.md                 # Frontend documentation
-│   └── vite.config.js            # Vite configuration
-├── supabase/                     # Supabase Edge Functions & Config
-│   └── functions/
-│       ├── ai-assistant/
-│       ├── hyper-api/
-│       └── sync-engine/          # The new background scraper & proxy!
-├── .env                          # Environment variables
-├── .gitignore                    # Git ignored files list
-├── CHANGELOG.md                  # Version history and patches
-├── check_models.js               # Utility script
-├── CONTRIBUTING.md               # Guidelines for contributing
-├── fix_names.js                  # Utility script
-├── fix.py                        # Python utility script
-├── followers.py                  # Python utility script
-├── LICENSE                       # Open-source license
-├── package-lock.json             # Root dependency lockfile
-├── package.json                  # Root dependencies
-├── profiles.json                 # Static profile configuration data
-├── README.md                     # Main project documentation
-├── requirements.txt              # Python dependencies
-├── SECURITY.md                   # Security policies
-├── server.js                     # Legacy Express API server
-├── update_leaderboard.py         # Python automation script
-└── VERSIONS.md                   # Historical version timeline
+  
+## 📁 Project Structure  
+  
+Leetcode_Leaderboards/  
+├── .github/  
+│   ├── workflows/                # GitHub Actions workflows  
+│   |   ├── assign-claim.yml  
+│   |   ├── keep-alive.yml  
+│   |   ├── scraper.yml  
+│   |   └── unassign-stale.yml  
+|   ├── dependabot.yml  
+├── frontend/                     # React + Vite frontend application  
+│   ├── public/                   # Static assets  
+│   ├── src/                      # React UI components & styles  
+│   │   ├── assets/  
+│   │   ├── ActivityGraph.jsx  
+│   │   ├── AdminPanel.jsx  
+│   │   ├── App.css  
+│   │   ├── App.jsx  
+│   │   ├── Leaderboard.jsx  
+│   │   ├── Stats.jsx  
+│   │   ├── index.css  
+│   │   ├── main.jsx  
+│   │   └── style.css  
+│   ├── eslint.config.js          # ESLint configuration  
+│   ├── index.html                # Main HTML template  
+│   ├── package-lock.json         # Frontend dependency lockfile  
+│   ├── package.json              # Frontend dependencies  
+│   ├── README.md                 # Frontend documentation  
+│   └── vite.config.js            # Vite configuration  
+├── supabase/                     # Supabase Edge Functions & Config  
+│   └── functions/  
+│       ├── ai-assistant/  
+│       ├── hyper-api/  
+│       └── sync-engine/          # The new background scraper & proxy!  
+├── .env                          # Environment variables  
+├── .gitignore                    # Git ignored files list  
+├── CHANGELOG.md                  # Version history and patches  
+├── check_models.js               # Utility script  
+├── CONTRIBUTING.md               # Guidelines for contributing  
+├── fix_names.js                  # Utility script  
+├── fix.py                        # Python utility script  
+├── followers.py                  # Python utility script  
+├── LICENSE                       # Open-source license  
+├── package-lock.json             # Root dependency lockfile  
+├── package.json                  # Root dependencies  
+├── profiles.json                 # Static profile configuration data  
+├── README.md                     # Main project documentation  
+├── requirements.txt              # Python dependencies  
+├── SECURITY.md                   # Security policies  
+├── server.js                     # Legacy Express API server  
+├── update_leaderboard.py         # Python automation script  
+└── VERSIONS.md                   # Historical version timeline  
 ```
 
 ---
