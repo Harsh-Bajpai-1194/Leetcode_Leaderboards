@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Initialize Supabase client
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+// 1. Initialize Supabase client safely
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const AdminPanel = () => {
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // 2. Function to Add User directly to Supabase
+  // 2. Function to Add User
   const handleAddUser = async (e) => {
     e.preventDefault();
     if (!username.trim()) return;
@@ -34,77 +36,91 @@ const AdminPanel = () => {
       // Not a URL; treat input as a direct username
     }
 
-    // Validate username (only alphanumeric, underscores, and dashes allowed)
+    // Validate username
     if (!/^[a-zA-Z0-9_-]+$/.test(cleanHandle)) {
       setMessage('❌ Error: Invalid LeetCode username format.');
       setIsLoading(false);
       return;
     }
 
-    try {
-      // 2. Fetch from LeetCode via Edge Function to get stats instantly
-      const { data: apiData, error: apiError } = await supabase.functions.invoke('get-user-stats', {
-        body: { username: cleanHandle }
-      });
+    let addedViaSupabase = false;
 
-      if (apiError || !apiData || apiData.error || !apiData.matchedUser) {
-        throw new Error(apiData?.error || apiError?.message || 'User not found on LeetCode');
-      }
+    if (supabase) {
+      try {
+        const { data: apiData, error: apiError } = await supabase.functions.invoke('get-user-stats', {
+          body: { username: cleanHandle }
+        });
 
-      const matchedUser = apiData.matchedUser;
-      const stats = matchedUser.submitStats?.acSubmissionNum || [];
-      
-      const totalSolved = stats.find(s => s.difficulty === 'All')?.count || 0;
-      const easySolved = stats.find(s => s.difficulty === 'Easy')?.count || 0;
-      const mediumSolved = stats.find(s => s.difficulty === 'Medium')?.count || 0;
-      const hardSolved = stats.find(s => s.difficulty === 'Hard')?.count || 0;
-      const name = matchedUser.profile?.realName || matchedUser.username || cleanHandle;
+        if (!apiError && apiData && !apiData.error && apiData.matchedUser) {
+          const matchedUser = apiData.matchedUser;
+          const stats = matchedUser.submitStats?.acSubmissionNum || [];
+          
+          const totalSolved = stats.find(s => s.difficulty === 'All')?.count || 0;
+          const easySolved = stats.find(s => s.difficulty === 'Easy')?.count || 0;
+          const mediumSolved = stats.find(s => s.difficulty === 'Medium')?.count || 0;
+          const hardSolved = stats.find(s => s.difficulty === 'Hard')?.count || 0;
+          const name = matchedUser.profile?.realName || matchedUser.username || cleanHandle;
 
-      // 3. Direct insertion into the 'leaderboard' table
-      const { data, error } = await supabase
-        .from('leaderboard')
-        .insert([
-          { 
-            leetcode_handle: cleanHandle,
-            total_solved: totalSolved,
-            easy_solved: easySolved,
-            medium_solved: mediumSolved,
-            hard_solved: hardSolved,
-            name: name,
-            url: `https://leetcode.com/${cleanHandle}/`
+          const { error } = await supabase
+            .from('leaderboard')
+            .insert([
+              { 
+                leetcode_handle: cleanHandle,
+                total_solved: totalSolved,
+                easy_solved: easySolved,
+                medium_solved: mediumSolved,
+                hard_solved: hardSolved,
+                name: name,
+                url: `https://leetcode.com/${cleanHandle}/`
+              }
+            ]);
+
+          if (error) {
+            if (error.code === '23505') {
+              setMessage('❌ Error: User already exists in leaderboard.');
+            } else {
+              setMessage(`❌ Error: ${error.message}`);
+            }
+          } else {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            await supabase.from('activities').insert([{
+              text: `🎉 ${name} got added to the leaderboards.`,
+              time: timeString,
+              created_at: now.toISOString()
+            }]);
+
+            setMessage('✅ Success: User added successfully!');
+            setUsername(''); 
           }
-        ]);
-
-      if (error) {
-        // Handle unique constraint error (Postgres code 23505)
-        if (error.code === '23505') {
-          setMessage('❌ Error: User already exists in leaderboard.');
-        } else {
-          setMessage(`❌ Error: ${error.message}`);
+          addedViaSupabase = true;
         }
-      } else {
-        // 4. Log the insertion activity to the feed
-        const now = new Date();
-        const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-        
-        const { error: actError } = await supabase.from('activities').insert([{
-          text: `🎉 ${name} got added to the leaderboards.`,
-          time: timeString,
-          created_at: now.toISOString()
-        }]);
-
-        if (actError) {
-          console.error('Activity Error:', actError);
-          setMessage(`✅ Success: User added, but activity feed update failed: ${actError.message}`);
-        } else {
-          setMessage('✅ Success: User added successfully! Sync stats on the main page.');
-        }
-        setUsername(''); 
+      } catch (error) {
+        console.warn('Supabase add user failed, falling back to server API:', error);
       }
-    } catch (error) {
-      console.error('Admin Error:', error);
-      setMessage(`❌ Error: ${error.message || 'Could not connect to database.'}`);
-    } finally {
+    }
+
+    if (!addedViaSupabase) {
+      try {
+        const response = await fetch('/api/add-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: cleanHandle })
+        });
+        const resData = await response.json();
+        if (response.ok) {
+          setMessage(`✅ Success: ${resData.message || 'User added successfully!'}`);
+          setUsername('');
+        } else {
+          setMessage(`❌ Error: ${resData.error || 'Failed to add user'}`);
+        }
+      } catch (err) {
+        setMessage(`❌ Error: ${err.message || 'Connection failed'}`);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
       setIsLoading(false);
     }
   };
