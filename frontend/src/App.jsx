@@ -5,6 +5,7 @@ import Leaderboard from './Leaderboard';
 import AdminPanel from './AdminPanel';
 import Stats from './Stats';
 import Sponsors from './Sponsors';
+import SubmissionDetail from './SubmissionDetail';
 
 function App() {
   return (
@@ -22,6 +23,10 @@ function App() {
 
           {/* Sponsors Page */}
           <Route path="/sponsors" element={<Sponsors />} />
+
+          {/* Submissions Detail Page */}
+          <Route path="/submissions/:submissionId" element={<SubmissionDetail />} />
+          <Route path="/submissions/detail/:submissionId" element={<SubmissionDetail />} />
         </Routes>
       </div>
     </Router>

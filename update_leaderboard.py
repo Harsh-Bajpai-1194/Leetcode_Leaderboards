@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+import json
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor
@@ -43,6 +44,7 @@ def process_user(user_doc):
         activeBadge { displayName icon }
         badges { id displayName icon creationDate }
         submitStats { acSubmissionNum { difficulty count } }
+        userCalendar { submissionCalendar }
       }
     }
     """
@@ -55,6 +57,11 @@ def process_user(user_doc):
             return None
 
         user_data = data["data"]["matchedUser"]
+
+        # Extract and parse the calendar JSON string
+        raw_calendar = user_data.get("userCalendar", {}).get("submissionCalendar")
+        parsed_calendar = json.loads(raw_calendar) if raw_calendar and raw_calendar != "null" else {}
+
         real_name = user_data["profile"]["realName"] or user_data["username"].capitalize()
         solved_stats = user_data["submitStats"]["acSubmissionNum"]
 
@@ -94,63 +101,115 @@ def process_user(user_doc):
         last_updated_time = user_doc.get("last_updated")
         diff = stats["total"] - previous_solved
 
+        # This flag will be used to determine if the user's main record should be updated.
+        # It's set to False only when we detect API lag, to prevent "burning" a diff.
+        should_update_user_record = True
+
         # Log activity only if the user has been updated at least once before.
         if diff > 0 and last_updated_time is not None:
             print(f"🔥 {real_name} solved +{diff}!")
-            ist_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
 
-            # Fetch recent submission to get the ID
-            submission_id = None
             try:
+                # Fetch the 'diff' most recent submissions to create individual activity logs.
+                # Cap at 15 to avoid overly large requests.
+                limit = min(diff, 15)
+
                 submission_query = """
                 query recentAcSubmissions($username: String!, $limit: Int!) {
                   recentAcSubmissionList(username: $username, limit: $limit) {
                     id
+                    title
                     timestamp
                   }
                 }
                 """
                 sub_response = session.post(
                     "https://leetcode.com/graphql",
-                    json={"query": submission_query, "variables": {"username": username, "limit": 1}},
-                    timeout=10
+                    json={"query": submission_query, "variables": {"username": username, "limit": limit}},
+                    timeout=15
                 )
+
                 if sub_response.status_code == 200:
                     sub_data = sub_response.json()
-                    # --- DEBUGGING ---
-                    print(f"DEBUG: Submission data for {username}: {sub_data}")
-                    if sub_data.get("data") and sub_data["data"].get("recentAcSubmissionList") and len(sub_data["data"]["recentAcSubmissionList"]) > 0:
-                        latest_submission = sub_data["data"]["recentAcSubmissionList"][0]
-                        submission_id = latest_submission.get("id")
-                        print(f"DEBUG: Found submission ID {submission_id} for {username}")
+                    submission_list = sub_data.get("data", {}).get("recentAcSubmissionList")
+
+                    if submission_list:  # User has public, visible submissions
+                        user_last_updated_dt = datetime.fromisoformat(last_updated_time.replace('Z', '+00:00'))
+                        new_activities = []
+
+                        for sub in submission_list:
+                            submission_dt = datetime.fromtimestamp(int(sub['timestamp']), tz=timezone.utc)
+                            # Only log submissions that are genuinely new since the last update
+                            if submission_dt > user_last_updated_dt:
+                                ist_time = submission_dt.astimezone(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
+                                new_activities.append({
+                                    "leetcode_handle": username,
+                                    "text": f"{real_name} solved {sub.get('title')}",
+                                    "time": ist_time,
+                                    "type": "up",
+                                    "created_at": submission_dt.isoformat(),
+                                    "submission_id": sub.get('id')
+                                })
+
+                        if new_activities:
+                            # Insert oldest-first to maintain chronological order in the feed
+                            supabase.from_("activities").insert(new_activities[::-1]).execute()
+                            print(f"✅ Logged {len(new_activities)} new detailed activities for {real_name}.")
+                        else:
+                            # API LAG DETECTED: A diff exists, but the submission API hasn't caught up.
+                            # We will skip updating this user's record to try again on the next run.
+                            print(f"ℹ️ {real_name} has a diff of {diff}, but no new submissions were found. API might be lagging. Skipping DB update for this user.")
+                            should_update_user_record = False
+
                     else:
-                        print(f"DEBUG: No recent submission found for {username}")
+                        # This occurs for users with private submission history
+                        print(f"DEBUG: No recent submissions found for {real_name} (private profile?). Logging generically.")
+                        raise Exception("Submission list is null or empty.") # Force fallback
+                else:
+                    raise Exception(f"API request failed with status {sub_response.status_code}")
+
             except Exception as e:
-                print(f"⚠️ Could not fetch submission ID for {username}: {e}")
+                # Fallback for any error (private profile, API error): log a single generic activity.
+                # The user record will still be updated.
+                print(f"⚠️ Could not fetch submission details for {real_name}: {e}. Logging generically.")
+                ist_time = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%I:%M %p")
+                supabase.from_("activities").insert({
+                    "leetcode_handle": username,
+                    "text": f"{real_name} solved +{diff} questions",
+                    "time": ist_time,
+                    "submission_id": None,
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                    "type": "up"
+                }).execute()
 
-            activity_payload = {
-                "text": f"{real_name} solved +{diff} questions",
-                "time": ist_time,
-                "type": "up",
-                "created_at": datetime.now().isoformat(),
-                "submission_id": submission_id
-            }
-            supabase.from_("activities").insert(activity_payload).execute()
-
-        # Update Database
+        # Always prepare the main user data payload from the initial GraphQL query.
         user_payload = {
             "name": real_name,
             "url": f"https://leetcode.com/{username}/",
-            "total_solved": stats["total"],
-            "easy_solved": stats["easy"],
-            "medium_solved": stats["medium"],
-            "hard_solved": stats["hard"],
             "badge_icon": stats["badge_icon"],
             "badge_name": stats["badge_name"],
-            "last_updated": datetime.now().isoformat()
+            "calendar_data": parsed_calendar
         }
+
+        # Conditionally add solve counts and the last_updated timestamp.
+        # This is the fix: we only update these sensitive fields if we are NOT experiencing API lag.
+        # This prevents the "soft-lock" while still allowing calendar data to be updated.
+        if should_update_user_record:
+            user_payload["total_solved"] = stats["total"]
+            user_payload["easy_solved"] = stats["easy"]
+            user_payload["medium_solved"] = stats["medium"]
+            user_payload["hard_solved"] = stats["hard"]
+            # Only move the timestamp forward if we are updating the solve counts.
+            user_payload["last_updated"] = datetime.now(timezone.utc).isoformat()
+        
+        # Execute the update. The payload will either be partial (just profile info) or full.
         supabase.from_("leaderboard").update(user_payload).eq("leetcode_handle", username).execute()
-        return f"✅ {username}"
+
+        if should_update_user_record:
+            return f"✅ {username}"
+        else:
+            # This is the case where we skipped the solve count update due to API lag
+            return f"⏳ {username}: Skipped solve count update due to API lag, but synced calendar."
 
     except Exception as e:
         return f"❌ {username}: {e}"

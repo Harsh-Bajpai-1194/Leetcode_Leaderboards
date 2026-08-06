@@ -4,8 +4,10 @@ import './style.css';
 import ActivityGraph from './ActivityGraph';
 import { createClient } from '@supabase/supabase-js';
 
-// 1. Initialize Supabase
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+// 1. Initialize Supabase safely
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const Leaderboard = () => {
   const [data, setData] = useState({ users: [], activities: [], graph_data: [], last_updated: '--' });
@@ -14,74 +16,91 @@ const Leaderboard = () => {
   const navigate = useNavigate();
 
   const fetchAllData = async () => {
-    try {
-      // 1. STALE-WHILE-REVALIDATE: Instantly load cached data (0ms response time)
-      const cachedData = localStorage.getItem('leaderboard_cache');
-      if (cachedData) {
+    // 1. STALE-WHILE-REVALIDATE: Instantly load cached data (0ms response time)
+    const cachedData = localStorage.getItem('leaderboard_cache');
+    if (cachedData) {
+      try {
         setData(JSON.parse(cachedData));
-        setLoading(false); // Turn off loader instantly so users see data immediately
-      } else {
-        setLoading(true); // Only show loader on the very first visit
+        setLoading(false);
+      } catch (e) {
+        setLoading(true);
       }
+    } else {
+      setLoading(true);
+    }
 
-      // 2. PARALLEL PROMISE.ALL: Fetch all 3 heavy tables at the exact same time
-      const now = new Date();
-      const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
+    let fetchedViaSupabase = false;
 
-      const [usersResponse, metaResponse, activitiesResponse] = await Promise.all([
-        supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
-        supabase.from('metadata').select('date_string').eq('type', 'last_updated'),
-        supabase.from('activities')
-          .select('created_at, text, time, submission_id')
-          .gte('created_at', twentyOneDaysAgo.toISOString()) 
-          .order('created_at', { ascending: false })
-          .limit(5000)
-      ]);
+    if (supabase) {
+      try {
+        const now = new Date();
+        const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
 
-      if (usersResponse.error) throw usersResponse.error;
-      if (metaResponse.error) throw metaResponse.error;
-      if (activitiesResponse.error) throw activitiesResponse.error;
+        const [usersResponse, metaResponse, activitiesResponse] = await Promise.all([
+          supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
+          supabase.from('metadata').select('date_string').eq('type', 'last_updated'),
+          supabase.from('activities')
+            .select('created_at, text, time, submission_id')
+            .gte('created_at', twentyOneDaysAgo.toISOString()) 
+            .order('created_at', { ascending: false })
+            .limit(5000)
+        ]);
 
-      // 3. O(N) GRAPH CALCULATION
-      const supabaseActivities = activitiesResponse.data || [];
-      const daysToLookBack = 21;
-      const dailySolvedMap = {};
+        if (!usersResponse.error && usersResponse.data && usersResponse.data.length > 0) {
+          const supabaseActivities = activitiesResponse.data || [];
+          const daysToLookBack = 21;
+          const dailySolvedMap = {};
 
-      supabaseActivities.forEach(act => {
-        if (!act.text || !act.created_at) return;
-        const match = act.text.match(/\+(\d+)/);
-        const solved = match ? parseInt(match[1]) : 0;
-        
-        const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
-          month: 'short', day: 'numeric', timeZone: 'UTC' 
-        });
-        
-        if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-        dailySolvedMap[dateKey] += solved;
-      });
+          supabaseActivities.forEach(act => {
+            if (!act.text || !act.created_at) return;
+            const match = act.text.match(/\+(\d+)/);
+            const solved = match ? parseInt(match[1]) : 0;
+            
+            const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
+              month: 'short', day: 'numeric', timeZone: 'UTC' 
+            });
+            
+            if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
+            dailySolvedMap[dateKey] += solved;
+          });
 
-      const processedGraphData = [];
-      for (let i = daysToLookBack - 1; i >= 0; i--) {
-        const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
-        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-        processedGraphData.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
+          const processedGraphData = [];
+          for (let i = daysToLookBack - 1; i >= 0; i--) {
+            const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
+            const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+            processedGraphData.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
+          }
+
+          const freshData = {
+            users: usersResponse.data || [],
+            last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--",
+            activities: supabaseActivities.slice(0, 50),
+            graph_data: processedGraphData
+          };
+
+          setData(freshData);
+          localStorage.setItem('leaderboard_cache', JSON.stringify(freshData));
+          setLoading(false);
+          fetchedViaSupabase = true;
+        }
+      } catch (error) {
+        console.warn("Supabase fetch failed, falling back to server API:", error?.message || error);
       }
+    }
 
-      // 4. PREPARE FRESH DATA & UPDATE CACHE IN THE BACKGROUND
-      const freshData = {
-        users: usersResponse.data || [],
-        last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--",
-        activities: supabaseActivities.slice(0, 50),
-        graph_data: processedGraphData
-      };
-
-      setData(freshData); // Seamlessly swap the old cache with the fresh database pull
-      localStorage.setItem('leaderboard_cache', JSON.stringify(freshData)); // Save for next time
-      setLoading(false);
-
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-      setLoading(false);
+    if (!fetchedViaSupabase) {
+      try {
+        const response = await fetch('/api/leaderboard');
+        const apiData = await response.json();
+        if (apiData && apiData.users) {
+          setData(apiData);
+          localStorage.setItem('leaderboard_cache', JSON.stringify(apiData));
+        }
+      } catch (err) {
+        console.error("API Fetch Error:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -89,19 +108,27 @@ const Leaderboard = () => {
     fetchAllData();
     
     let debounceTimer;
+    let channel;
+
     const handleChanges = () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => fetchAllData(), 1500);
     };
 
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, handleChanges)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, handleChanges)
-      .subscribe();
+    if (supabase) {
+      try {
+        channel = supabase
+          .channel('schema-db-changes')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, handleChanges)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, handleChanges)
+          .subscribe();
+      } catch (e) {
+        console.warn('Supabase subscribe failed:', e);
+      }
+    }
 
     return () => { 
-      supabase.removeChannel(channel); 
+      if (supabase && channel) supabase.removeChannel(channel); 
       clearTimeout(debounceTimer);
     };
   }, []);
@@ -157,7 +184,10 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.7.9-deeppink?style=for-the-the-badge&logo=github" alt="v5.7.9" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.8.0-deeppink?style=for-the-the-badge&logo=github" alt="v5.8.0" className="release-badge" />
+          </a>
+          <a href="https://leetcode-leaderboards-status.betteruptime.com/" target="_blank" rel="noopener noreferrer" className="status-link" title="Website Status">
+            <img src="/status.jpg" alt="Status" className="status-btn" />
           </a>
         </h1>
         <div className="last-updated">Last updated: {data.last_updated}</div>
@@ -223,26 +253,45 @@ const Leaderboard = () => {
           <div className="activity-title">Activity Feed</div>
           <div id="activity-content"> 
             {data.activities && data.activities.length > 0 ? (
-              data.activities.map((act, index) => (
-                <div key={index} className="activity-item">
-                  <span className="activity-text">
-                    {act.text}
-                    {act.submission_id && (
-                      <a
-                        href={`https://leetcode.com/submissions/detail/${act.submission_id}/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="View Submission"
+              data.activities.map((act, index) => {
+                const subId = act.submission_id || (act.text && act.text.match(/submission[s]?\/detail\/(\d+)/)?.[1]) || '2096549016';
+                
+                // Helper to extract user name from activity text
+                let userName = act.user_name || act.name || act.username || '';
+                if (!userName && act.text) {
+                  const cleanText = act.text.replace(/^🎉\s*/, '').trim();
+                  if (cleanText.includes(' got added')) {
+                    userName = cleanText.split(' got added')[0].trim();
+                  } else if (cleanText.includes(' solved')) {
+                    userName = cleanText.split(' solved')[0].trim();
+                  }
+                }
+
+                const targetUrl = `/submissions/${subId}${userName ? `?user=${encodeURIComponent(userName)}` : ''}`;
+
+                return (
+                  <div key={index} className="activity-item">
+                    <span className="activity-text">
+                      {act.text}
+                      <Link
+                        to={targetUrl}
+                        title="View Submission Details"
+                        className="activity-submission-link"
                         style={{ marginLeft: '8px', display: 'inline-block', verticalAlign: 'middle', cursor: 'pointer' }}
                       >
-                        <img src="/submission.jpg" alt="View" style={{ width: '16px', height: '16px', borderRadius: '3px' }} />
-                      </a>
-                    )}
-                  </span>
-                  <br />
-                  <span className="activity-time">{act.time}</span>
-                </div>
-              ))
+                        <img 
+                          src="/submission.jpg" 
+                          alt="View Submission" 
+                          className="submission-icon-img"
+                          style={{ width: '18px', height: '18px', borderRadius: '4px', transition: 'transform 0.2s ease, filter 0.2s ease' }} 
+                        />
+                      </Link>
+                    </span>
+                    <br />
+                    <span className="activity-time">{act.time}</span>
+                  </div>
+                );
+              })
             ) : (<div className="no-activity">NO ACTIVITY CURRENTLY</div>)}
           </div>
         </div>

@@ -14,7 +14,9 @@ SUPABASE_URL = os.environ.get("VITE_SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") # Use service key for write access
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-URL = "https://leetcode.com/u/harsh_bajpai1/"
+# Use an environment variable for the target username, with a sensible default.
+TARGET_USERNAME = os.environ.get("LEETCODE_TARGET_USERNAME", "harsh_bajpai1")
+URL = f"https://leetcode.com/u/{TARGET_USERNAME}/"
 
 def get_leetcode_data():
     """Scrapes Followers and Following directly from your LeetCode profile using Selenium."""
@@ -51,7 +53,7 @@ def get_leetcode_data():
                 for el in user_elements:
                     href = el.get_attribute("href")
                     username = href.split('/u/')[-1].strip('/')
-                    if username and username != "harsh_bajpai1" and username not in all_names:
+                    if username and username != TARGET_USERNAME and username not in all_names:
                         all_names.append(username)
                         global_names.add(username)
                         print(f"Page {page_num}: Found {username}")
@@ -99,51 +101,3 @@ def get_leetcode_data():
         driver.quit()
         print("\nScraping finished.")
         return list(global_names)
-
-
-def sync_to_supabase(scraped_names):
-    """Takes the scraped LeetCode names and inserts missing ones into Supabase."""
-    print("\n🔍 Checking existing users in Supabase...")
-    
-    # Fetch existing users from Supabase to avoid duplicates
-    response = supabase.table("leaderboard").select("leetcode_handle").execute()
-    existing_users = [user["leetcode_handle"] for user in response.data]
-    
-    # Compare and find missing users
-    new_users = [u for u in scraped_names if u not in existing_users]
-    print(f"🌟 Found {len(new_users)} completely new users to add to the leaderboard!")
-    
-    if not new_users:
-        print("Everything is up to date! Exiting.")
-        return
-        
-    # Prepare the payload for Supabase
-    payload = []
-    for user in new_users:
-        payload.append({
-            "leetcode_handle": user,
-            "total_solved": 0,
-            "easy_solved": 0,
-            "medium_solved": 0,
-            "hard_solved": 0,
-            # The Supabase Edge Function will fill in the actual stats later!
-        })
-    
-    # Insert into Supabase in safe batches of 50
-    batch_size = 50
-    for i in range(0, len(payload), batch_size):
-        batch = payload[i:i+batch_size]
-        supabase.table("leaderboard").insert(batch).execute()
-        print(f"⬆️ Inserted batch {i//batch_size + 1}...")
-        
-    print("\n🎉 Sync Complete! Your Supabase Edge Function will automatically scrape their LeetCode stats on its next run.")
-
-
-if __name__ == "__main__":
-    # 1. Scrape all usernames using your Selenium logic
-    names = get_leetcode_data()
-    print(f"\nFound {len(names)} unique followers/following from LeetCode.")
-    
-    # 2. Push any new ones to your Supabase database
-    if names:
-        sync_to_supabase(names)

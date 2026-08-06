@@ -2,6 +2,20 @@
 
 All notable changes to the LeetCode Leaderboard project will be documented in this file.
 
+## [5.8.0] - 2026-08-06
+### Added
+- **Machine Learning Engine**: Introduced `ml_engine.py` with a Scikit-Learn linear regression model to forecast 30-day contest rating trajectories.
+- **Predictive Analytics**: Added a new data pipeline in GitHub Actions to retrain and store rating predictions in the Supabase database.
+- **Submission Calendar**: The scraper now fetches and stores the `submissionCalendar` data for each user, enabling future activity heatmaps.
+### Changed
+- **Architecture Overhaul**: Completed the full migration from a MERN stack (MongoDB, Express) to a serverless architecture centered on **Supabase** (PostgreSQL, Edge Functions). The `server.js` is now considered a legacy component.
+- **Admin Panel Enhancement**: The Admin Panel (`AdminPanel.jsx`) now uses a Supabase Edge Function (`get-user-stats`) to fetch user data in real-time upon addition, ensuring new users are fully populated from the start.
+- **Scraper Resilience**: The `update_leaderboard.py` script is now more resilient to LeetCode API lag. It intelligently detects when recent submissions are not yet available and avoids updating a user's solve count to prevent incorrect activity logging, while still syncing other data like the submission calendar.
+### Removed
+- **MERN Stack Dependency**: The project is no longer reliant on MongoDB or the Express `server.js` for its core functionality, fully embracing the BaaS model.
+### Fixed
+- **API Soft-Lock**: Resolved a persistent issue where a user's progress could be "soft-locked" if the LeetCode submission API lagged behind the profile stats API. The scraper now correctly handles this scenario.
+
 ## [5.7.9] - 2026-07-06
 ### Added
 - **View Submission Button**: Adds a clickable icon next to activities in the feed, linking directly to the user's submission page on LeetCode if their profile settings allow it.
