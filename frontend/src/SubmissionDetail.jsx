@@ -14,6 +14,7 @@ const SubmissionDetail = () => {
   const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [minLoadingTimeElapsed, setMinLoadingTimeElapsed] = useState(false); // New state for minimum loading time
   const [isExpanded, setIsExpanded] = useState(true);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
   const [showComplexityDetails, setShowComplexityDetails] = useState(false);
@@ -21,11 +22,15 @@ const SubmissionDetail = () => {
   useEffect(() => {
     const fetchSubmissionData = async () => {
       setLoading(true);
+      setMinLoadingTimeElapsed(false); // Reset for new fetch
       try {
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''; // Get base URL from environment
         const query = paramUser ? `?user=${encodeURIComponent(paramUser)}` : '';
-        const res = await fetch(`/api/submission/${submissionId || '2096549016'}${query}`);
+        const res = await fetch(`${apiBaseUrl}/api/submission/${submissionId}${query}`);
         if (res.ok) {
           const data = await res.json();
+          // The scraper sets user_name to "N/A" and expects frontend to fill it.
+          // Use paramUser if available, otherwise fallback to a default or leave as N/A from scraper.
           if (paramUser && (!data.user_name || data.user_name === 'Community Coder')) {
             data.user_name = paramUser;
           }
@@ -33,63 +38,27 @@ const SubmissionDetail = () => {
             data.user_name = "Aradhy Bajpai";
           }
           setSubmission(data);
-        } else {
-          throw new Error("Failed to load");
         }
       } catch (err) {
-        console.warn("Using default submission detail fallback:", err);
-        const resolvedName = paramUser || "Aradhy Bajpai";
-        setSubmission({
-          submission_id: submissionId || "2096549016",
-          problem_title: "Delete Node in a Linked List",
-          problem_url: "https://leetcode.com/problems/delete-node-in-a-linked-list/",
-          status: "Accepted",
-          passed_testcases: "41 / 41",
-          user_name: resolvedName,
-          timestamp: "Aug 06, 2026 16:44",
-          runtime: "0 ms",
-          runtime_beats: "100.00%",
-          memory: "45.40 MB",
-          memory_beats: "24.57%",
-          language: "Java",
-          code: `/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode(int x) { val = x; }
- * }
- */
-class Solution {
-    public void deleteNode(ListNode node) {
-        node.val = node.next.val;
-        node.next = node.next.next;
-    }
-}`,
-          runtime_distribution: [
-            { label: '0ms', percentage: 100, is_user: true },
-            { label: '1ms', percentage: 12, is_user: false },
-            { label: '2ms', percentage: 8, is_user: false },
-            { label: '3ms', percentage: 5, is_user: false },
-            { label: '4ms', percentage: 15, is_user: false }
-          ],
-          memory_distribution: [
-            { label: '44MB', percentage: 20, is_user: false },
-            { label: '45.4MB', percentage: 75, is_user: true },
-            { label: '46MB', percentage: 40, is_user: false },
-            { label: '47MB', percentage: 10, is_user: false }
-          ],
-          time_complexity: "O(1)",
-          space_complexity: "O(1)",
-          explanation: "Since we do not have access to the head of the linked list, we copy the value from the next node into the current node, then bypass the next node by setting node.next = node.next.next. Time complexity is O(1) and space complexity is O(1)."
-        });
+        console.error("Failed to fetch submission details:", err);
+        setSubmission(null); // Set submission to null on error to indicate failure
       } finally {
-        setLoading(false);
+        // Ensure loading state is shown for a minimum duration (60 seconds)
+        const minLoadPromise = new Promise(resolve => setTimeout(resolve, 60000)); // 60000ms (60 seconds) minimum
+        await minLoadPromise;
+        // Only set loading to false and minLoadingTimeElapsed to true if the component is still mounted
+        // and the fetch operation has truly completed.
+        if (isMounted) {
+          setLoading(false);
+          setMinLoadingTimeElapsed(true);
+        }
       }
     };
 
+    let isMounted = true; // Flag to prevent state updates on unmounted component
     fetchSubmissionData();
-  }, [submissionId, paramUser]);
+    return () => { isMounted = false; }; // Cleanup function
+  }, [submissionId, paramUser]); // Dependencies for useEffect
 
   const handleCopyCode = () => {
     if (submission?.code) {
@@ -108,12 +77,27 @@ class Solution {
     breakdown: calculated.breakdown
   };
 
-  if (loading) {
+  if (loading || !minLoadingTimeElapsed) { // Display loading if still loading or min time not elapsed
     return (
       <div className="submission-page-wrapper">
         <div className="submission-loading-box">
           <div className="submission-spinner"></div>
           <p>Fetching submission details for #{submissionId || '2096549016'}...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Display an error message if submission data is null after loading
+  if (!submission && !loading) {
+    return (
+      <div className="submission-page-wrapper">
+        <div className="submission-loading-box">
+          <p>Failed to load submission details.</p>
+          <p>Please ensure the submission ID is valid and you are logged into LeetCode on the scraper's environment.</p>
+          <button onClick={() => navigate(-1)} className="back-to-home-btn" style={{ marginTop: '20px' }}>
+            Go Back
+          </button>
         </div>
       </div>
     );

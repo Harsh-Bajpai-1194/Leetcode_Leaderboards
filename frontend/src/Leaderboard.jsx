@@ -184,7 +184,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.8.0-deeppink?style=for-the-the-badge&logo=github" alt="v5.8.0" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.8.1-deeppink?style=for-the-the-badge&logo=github" alt="v5.8.1" className="release-badge" />
           </a>
           <a href="https://leetcode-leaderboards-status.betteruptime.com/" target="_blank" rel="noopener noreferrer" className="status-link" title="Website Status">
             <img src="/status.jpg" alt="Status" className="status-btn" />
@@ -273,19 +273,22 @@ const Leaderboard = () => {
                   <div key={index} className="activity-item">
                     <span className="activity-text">
                       {act.text}
-                      <Link
-                        to={targetUrl}
-                        title="View Submission Details"
-                        className="activity-submission-link"
-                        style={{ marginLeft: '8px', display: 'inline-block', verticalAlign: 'middle', cursor: 'pointer' }}
-                      >
-                        <img 
-                          src="/submission.jpg" 
-                          alt="View Submission" 
-                          className="submission-icon-img"
-                          style={{ width: '18px', height: '18px', borderRadius: '4px', transition: 'transform 0.2s ease, filter 0.2s ease' }} 
-                        />
-                      </Link>
+                      {/* Conditionally render the submission link only if the text does not contain '+' */}
+                      {!act.text.includes('+') && (
+                        <Link
+                          to={targetUrl}
+                          title="View Submission Details"
+                          className="activity-submission-link"
+                          style={{ marginLeft: '8px', display: 'inline-block', verticalAlign: 'middle', cursor: 'pointer' }}
+                        >
+                          <img 
+                            src="/submission.jpg" 
+                            alt="View Submission" 
+                            className="submission-icon-img"
+                            style={{ width: '18px', height: '18px', borderRadius: '4px', transition: 'transform 0.2s ease, filter 0.2s ease' }} 
+                          />
+                        </Link>
+                      )}
                     </span>
                     <br />
                     <span className="activity-time">{act.time}</span>
