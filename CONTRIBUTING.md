@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboard v5.7.9
+# 🏆 LeetCode Leaderboard v5.8.1
 
 An automated, full-stack tracking system designed to monitor competitive programming progress across a group of users. This project utilizes a specialized MERN architecture combined with multi-threaded Python automation to provide real-time stats, badges, and activity visualization.
 

@@ -1,9 +1,7 @@
-selenium
-webdriver-manager
-beautifulsoup4
-requests
-pymongo[srv]
+playwright
 python-dotenv
+requests
+selenium
 supabase
 pandas
 scikit-learn
