@@ -16,33 +16,37 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Simple lock to prevent multiple concurrent scraping processes
-let isScrapingInProgress = false;
-
 // In-memory cache to store successfully scraped submission data.
 // This prevents re-scraping the same submission ID repeatedly.
 const submissionCache = new Map();
+
+// Queue to hold multiple requests for the same submission ID
+const activeScrapes = new Map();
 
 app.get('/api/submission/:submissionId', (req, res) => {
   console.log(`Received request for /api/submission/${req.params.submissionId}`);
   const { submissionId } = req.params;
 
-  // First, check if we have a cached result for this submission.
+  // 1. Check if we already have the cached JSON
   if (submissionCache.has(submissionId)) {
     console.log(`Returning cached result for submission ID: ${submissionId}`);
     return res.json(submissionCache.get(submissionId));
   }
 
-  if (isScrapingInProgress) {
-    console.log('Scraping is already in progress. Ignoring new request.');
-    return res.status(429).json({ error: 'Too many requests. A scraping process is already running.' });
+  // 2. Queue Duplicate Requests (The Waiting Room)
+  if (activeScrapes.has(submissionId)) {
+    console.log(`Request queued for ${submissionId}. Waiting for Python to finish...`);
+    activeScrapes.get(submissionId).push(res);
+    return; // We return here so we DON'T spawn a second Python script
   }
+
+  // 3. Start a New Scrape
+  activeScrapes.set(submissionId, [res]);
   
   const pythonScriptPath = path.join(__dirname, 'working_scraper.py');
   console.log(`Attempting to spawn Python script: python "${pythonScriptPath}" "${submissionId}"`);
   
   const pythonProcess = spawn('python', [pythonScriptPath, submissionId]);
-  isScrapingInProgress = true; 
 
   let pythonOutput = '';
   let pythonError = '';
@@ -57,13 +61,18 @@ app.get('/api/submission/:submissionId', (req, res) => {
   });
 
   pythonProcess.on('close', (code) => {
-    isScrapingInProgress = false; 
-
     if (code !== 0) {
       console.error(`Python script exited with code ${code}`);
       console.error(`Python stdout: ${pythonOutput}`);
       console.error(`Python stderr: ${pythonError}`);
-      return res.status(500).json({ error: 'Failed to scrape submission details', details: pythonError });
+      
+      const errorMsg = { error: 'Failed to scrape submission details', details: pythonError };
+      const waitingClients = activeScrapes.get(submissionId) || [];
+      waitingClients.forEach(clientRes => {
+        if (!clientRes.headersSent) clientRes.status(500).json(errorMsg);
+      });
+      activeScrapes.delete(submissionId);
+      return;
     }
 
     try {
@@ -110,21 +119,40 @@ app.get('/api/submission/:submissionId', (req, res) => {
         // Add the newly scraped data to the cache for future requests
         submissionCache.set(submissionId, parsedSubmission);
 
-        res.json(parsedSubmission);
-        console.log("Successfully mapped submission data:\n", JSON.stringify(parsedSubmission, null, 2));
+        console.log("Successfully mapped submission data!");
+
+        // 4. Send the success data to EVERYONE in the waiting room
+        const waitingClients = activeScrapes.get(submissionId) || [];
+        waitingClients.forEach(clientRes => {
+            if (!clientRes.headersSent) {
+                clientRes.json(parsedSubmission);
+            }
+        });
+        activeScrapes.delete(submissionId);
 
     } catch (error) {
         console.error("Failed to parse or map JSON from Python script:", error.message);
         console.error("Raw stdout was:", pythonOutput);
         console.error("Raw stderr was:", pythonError);
-        return res.status(500).json({ error: 'Failed to parse submission details.', details: error.message, stderr: pythonError });
+        
+        const errorMsg = { error: 'Failed to parse submission details.', details: error.message, stderr: pythonError };
+        const waitingClients = activeScrapes.get(submissionId) || [];
+        waitingClients.forEach(clientRes => {
+            if (!clientRes.headersSent) clientRes.status(500).json(errorMsg);
+        });
+        activeScrapes.delete(submissionId);
     }
   });
 
   pythonProcess.on('error', (err) => {
-    isScrapingInProgress = false; 
     console.error('Failed to start Python subprocess:', err);
-    res.status(500).json({ error: 'Failed to start scraper process', details: err.message });
+    const errorMsg = { error: 'Failed to start scraper process', details: err.message };
+    
+    const waitingClients = activeScrapes.get(submissionId) || [];
+    waitingClients.forEach(clientRes => {
+        if (!clientRes.headersSent) clientRes.status(500).json(errorMsg);
+    });
+    activeScrapes.delete(submissionId);
   });
 });
 

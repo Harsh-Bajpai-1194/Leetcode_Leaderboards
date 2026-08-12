@@ -3,6 +3,55 @@ import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { calculateCodeComplexity } from './utils/complexityCalculator';
 
+export function RuntimeGraph({ distributionData, userRuntime }) {
+  // 1. Safety check in case data is missing
+  if (!distributionData || distributionData.length === 0) {
+    return <p style={{ textAlign: 'center', color: '#888' }}>No distribution data available.</p>;
+  }
+
+  // 2. Format the data for Recharts
+  // Translates: ["2", 0.1675] -> { runtime: 2, percent: 0.1675 }
+  const chartData = distributionData.map(([timeStr, percent]) => ({
+    runtime: parseInt(timeStr, 10),
+    percent: percent
+  }));
+
+  // 3. Clean the user's runtime string so we can highlight it (e.g., "9 ms" -> 9)
+  const activeRuntime = parseInt(userRuntime, 10);
+
+  return (
+    <div style={{ width: '100%', height: 200, marginTop: '20px' }}>
+      <ResponsiveContainer>
+        <BarChart data={chartData}>
+          <XAxis 
+            dataKey="runtime" 
+            tickFormatter={(tick) => `${tick}ms`} 
+            stroke="#888888"
+          />
+          <YAxis 
+            hide={true} 
+          />
+          <Tooltip 
+            cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }} 
+            contentStyle={{ backgroundColor: '#1e1e1e', border: '1px solid #444', borderRadius: '8px', color: '#fff' }}
+            formatter={(value) => [`${value.toFixed(2)}%`, 'Users']}
+            labelFormatter={(label) => `Runtime: ${label} ms`}
+          />
+          <Bar dataKey="percent" radius={[4, 4, 0, 0]}>
+            {chartData.map((entry, index) => (
+              <Cell 
+                key={`cell-${index}`} 
+                // Highlight the user's specific runtime in green, keep others gray
+                fill={entry.runtime === activeRuntime ? '#10b981' : '#334155'} 
+              />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
 const SubmissionDetail = () => {
   const { submissionId } = useParams();
   const navigate = useNavigate();
@@ -14,40 +63,38 @@ const SubmissionDetail = () => {
   const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [minLoadingTimeElapsed, setMinLoadingTimeElapsed] = useState(false); // New state for minimum loading time
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [minLoadingTimeElapsed, setMinLoadingTimeElapsed] = useState(false);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
   const [showComplexityDetails, setShowComplexityDetails] = useState(false);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
       setLoading(true);
-      setMinLoadingTimeElapsed(false); // Reset for new fetch
+      setMinLoadingTimeElapsed(false);
+      
       try {
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''; // Get base URL from environment
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || ''; 
         const query = paramUser ? `?user=${encodeURIComponent(paramUser)}` : '';
         const res = await fetch(`${apiBaseUrl}/api/submission/${submissionId}${query}`);
+        
         if (res.ok) {
           const data = await res.json();
-          // The scraper sets user_name to "N/A" and expects frontend to fill it.
-          // Use paramUser if available, otherwise fallback to a default or leave as N/A from scraper.
           if (paramUser && (!data.user_name || data.user_name === 'Community Coder')) {
             data.user_name = paramUser;
           }
           if (!data.user_name) {
-            data.user_name = "Aradhy Bajpai";
+            data.user_name = "Unknown User";
           }
           setSubmission(data);
         }
       } catch (err) {
         console.error("Failed to fetch submission details:", err);
-        setSubmission(null); // Set submission to null on error to indicate failure
+        setSubmission(null);
       } finally {
-        // Ensure loading state is shown for a minimum duration (60 seconds)
-        const minLoadPromise = new Promise(resolve => setTimeout(resolve, 60000)); // 60000ms (60 seconds) minimum
+        // FIXED: Changed from 60000ms (60 seconds) to 600ms (0.6 seconds)
+        const minLoadPromise = new Promise(resolve => setTimeout(resolve, 600)); 
         await minLoadPromise;
-        // Only set loading to false and minLoadingTimeElapsed to true if the component is still mounted
-        // and the fetch operation has truly completed.
+        
         if (isMounted) {
           setLoading(false);
           setMinLoadingTimeElapsed(true);
@@ -55,10 +102,10 @@ const SubmissionDetail = () => {
       }
     };
 
-    let isMounted = true; // Flag to prevent state updates on unmounted component
+    let isMounted = true; 
     fetchSubmissionData();
-    return () => { isMounted = false; }; // Cleanup function
-  }, [submissionId, paramUser]); // Dependencies for useEffect
+    return () => { isMounted = false; }; 
+  }, [submissionId, paramUser]); 
 
   const handleCopyCode = () => {
     if (submission?.code) {
@@ -77,18 +124,17 @@ const SubmissionDetail = () => {
     breakdown: calculated.breakdown
   };
 
-  if (loading || !minLoadingTimeElapsed) { // Display loading if still loading or min time not elapsed
+  if (loading || !minLoadingTimeElapsed) {
     return (
       <div className="submission-page-wrapper">
         <div className="submission-loading-box">
           <div className="submission-spinner"></div>
-          <p>Fetching submission details for #{submissionId || '2096549016'}...</p>
+          <p>Fetching submission details for #{submissionId}...</p>
         </div>
       </div>
     );
   }
 
-  // Display an error message if submission data is null after loading
   if (!submission && !loading) {
     return (
       <div className="submission-page-wrapper">
@@ -109,14 +155,12 @@ const SubmissionDetail = () => {
     <div className="submission-page-wrapper">
       <div className="submission-container">
         
-        {/* Navigation back bar */}
         <div className="submission-nav-bar">
           <div className="submission-id-badge">
             Submission #{submission?.submission_id}
           </div>
         </div>
 
-        {/* Title Header */}
         <div className="submission-header">
           <h1 className="submission-title">
             Submissions Detail - {submission?.problem_title}
@@ -125,7 +169,7 @@ const SubmissionDetail = () => {
           <div className="submission-sub-header">
             <div className="status-badge-wrapper">
               <span className="accepted-badge">
-                <span className="dot"></span> Accepted
+                <span className="dot"></span> {submission?.status || 'Accepted'}
               </span>
               <span className="testcases-info">
                 {submission?.passed_testcases} testcases passed
@@ -150,11 +194,9 @@ const SubmissionDetail = () => {
           </div>
         </div>
 
-        {/* Performance Metrics Cards */}
         <div className="performance-card">
           <div className="metrics-grid">
             
-            {/* Runtime Box */}
             <div className="metric-box highlighted">
               <div className="metric-label">
                 <span className="metric-icon">⏱️</span> Runtime
@@ -167,7 +209,6 @@ const SubmissionDetail = () => {
               </div>
             </div>
 
-            {/* Memory Box */}
             <div className="metric-box">
               <div className="metric-label">
                 <span className="metric-icon">💾</span> Memory
@@ -182,39 +223,24 @@ const SubmissionDetail = () => {
 
           </div>
 
-          {/* Runtime Bar Graph Distribution */}
           <div className="distribution-chart-container">
             <div className="chart-header">
               <span>Runtime Distribution</span>
-              <span className="chart-user-mark">🔵 Their Submission ({submission?.runtime})</span>
+              <span className="chart-user-mark" style={{color: "#10b981"}}>
+                🟢 Their Submission ({submission?.runtime})
+              </span>
             </div>
 
             <div className="chart-wrapper">
-              <ResponsiveContainer width="100%" height={160}>
-                <BarChart data={submission?.runtime_distribution || []}>
-                  <XAxis dataKey="label" stroke="#777" tick={{ fontSize: 12 }} />
-                  <YAxis hide={true} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#1e1e1e', border: '1px solid #444', borderRadius: '8px' }}
-                    labelStyle={{ color: '#fff' }}
-                    formatter={(value) => [`${value}% of submissions`, 'Frequency']}
-                  />
-                  <Bar dataKey="percentage" radius={[4, 4, 0, 0]}>
-                    {(submission?.runtime_distribution || []).map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={entry.is_user ? '#007aff' : '#334155'} 
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              <RuntimeGraph 
+                distributionData={submission?.runtime_distribution} 
+                userRuntime={submission?.runtime} 
+              />
             </div>
           </div>
 
         </div>
 
-        {/* Code Box Container */}
         <div className="code-container">
           <div className="code-header">
             <div className="code-lang-tag">
@@ -228,7 +254,6 @@ const SubmissionDetail = () => {
             </div>
           </div>
 
-          {/* Code Editor view */}
           <div className="code-body">
             <div className="line-numbers">
               {codeLines.map((_, i) => (
@@ -260,7 +285,6 @@ const SubmissionDetail = () => {
           </div>
         </div>
 
-        {/* Bottom Navigation button */}
         <div className="submission-bottom-actions">
           <a 
             href={submission?.problem_url || "https://leetcode.com"} 
@@ -278,7 +302,6 @@ const SubmissionDetail = () => {
 
       </div>
 
-      {/* Complexity Calculator Breakdown Modal */}
       {showComplexityDetails && (
         <div className="solution-modal-overlay" onClick={() => setShowComplexityDetails(false)}>
           <div className="solution-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -316,7 +339,6 @@ const SubmissionDetail = () => {
         </div>
       )}
 
-      {/* Solution Explanation Modal */}
       {showSolutionModal && (
         <div className="solution-modal-overlay" onClick={() => setShowSolutionModal(false)}>
           <div className="solution-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -325,7 +347,7 @@ const SubmissionDetail = () => {
               <button className="close-modal-btn" onClick={() => setShowSolutionModal(false)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="explanation-text">{submission?.explanation}</p>
+              <p className="explanation-text">{submission?.explanation || "No explanation provided for this submission."}</p>
               <div className="complexity-badge">
                 <span><strong>Time Complexity:</strong> {complexities.time}</span>
                 <span><strong>Space Complexity:</strong> {complexities.space}</span>
