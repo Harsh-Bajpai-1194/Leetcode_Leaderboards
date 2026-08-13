@@ -13,7 +13,7 @@ RUN npm install
 
 # Copy your Python requirements and install them
 COPY requirements.txt ./
-RUN pip3 install --break-system-packages -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Install Playwright browsers (CRITICAL for your scraper)
 RUN playwright install chromium
