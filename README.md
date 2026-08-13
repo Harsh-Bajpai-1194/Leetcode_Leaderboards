@@ -1,4 +1,4 @@
-# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.8.2-deeppink?style=for-the-the-badge&logo=github)  
+# 🏆 LeetCode Leaderboards 🏆  ![Version](https://img.shields.io/badge/Release-v5.8.3-deeppink?style=for-the-the-badge&logo=github)  
 ![Status](https://img.shields.io/badge/Status-Live-success?style=for-the-the-badge)  
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -91,6 +91,19 @@ flowchart TB
 | **Backend & Storage** | `Supabase` • `PostgreSQL` • `Edge Functions` | • Persistent user profiles, submission histories & activity logs<br>• Row Level Security (RLS) & REST/Realtime subscriptions<br>• Serverless proxy functions for admin triggers |
 | **Data Ingestion Engine** | `Python` • `ThreadPoolExecutor` • `GraphQL` | • Concurrent worker thread pool scraping 75+ profiles in < 10 seconds<br>• Automated profile, submission detail, and badge extraction |
 | **Machine Learning Pipeline** | `Python` • `Scikit-Learn` | • Contest rating trajectory forecasting (30-day projection)<br>• Automated model retraining on historical contest performance |
+
+---
+
+### 🏗️ The Hybrid Architecture (Microservices Architecture)
+
+1. **The Frontend (React App) ➔ Hosted Serverless (Netlify/Vercel)**
+* The React code remains a static, serverless deployment. It loads instantly for users anywhere in the world.
+
+2. **The Database & Auth ➔ Hosted Serverless (Supabase)**
+* All the leaderboards, user names, and AI chat logs remain on Supabase. The React frontend talks *directly* to Supabase for 90% of the app's needs.
+
+3. **The Scraper Microservice ➔ Hosted on Render (Docker Web Service)**
+* Created a GitHub repository that contains backend files: `server.js`, `working_scraper.py`, `package.json`, `requirements.txt`, and the `Dockerfile`.
 
 ---
 
