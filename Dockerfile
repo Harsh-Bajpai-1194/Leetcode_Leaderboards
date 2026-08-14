@@ -1,10 +1,12 @@
+# Start with a base image that has Node.js
 FROM node:18-bullseye
 
-# Install Python, pip, and Xvfb (Virtual Screen for headless=False)
+# Install Python, pip, Xvfb, and xauth (CRITICAL for xvfb-run)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     xvfb \
+    xauth \
     libnss3 \
     libatk-bridge2.0-0 \
     libcups2 \
@@ -31,4 +33,5 @@ COPY . .
 
 EXPOSE 10000
 
-CMD xvfb-run --server-args="-screen 0 1280x1024x24" node server.js
+# Start server normally (we will trigger the virtual screen dynamically inside server.js)
+CMD ["node", "server.js"]
