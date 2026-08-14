@@ -12,53 +12,56 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-// Automatically use Render's assigned port in production, or 10000 locally
 const port = process.env.PORT || 10000; 
 
 app.use(cors());
 app.use(express.json());
 
-// In-memory cache to store successfully scraped submission data.
 const submissionCache = new Map();
-
-// Queue to hold multiple requests for the same submission ID
 const activeScrapes = new Map();
 
 app.get('/api/submission/:submissionId', (req, res) => {
   console.log(`Received request for /api/submission/${req.params.submissionId}`);
   const { submissionId } = req.params;
 
-  // 1. Check if we already have the cached JSON
   if (submissionCache.has(submissionId)) {
     console.log(`Returning cached result for submission ID: ${submissionId}`);
     return res.json(submissionCache.get(submissionId));
   }
 
-  // 2. Queue Duplicate Requests (The Waiting Room)
   if (activeScrapes.has(submissionId)) {
     console.log(`Request queued for ${submissionId}. Waiting for Python to finish...`);
     activeScrapes.get(submissionId).push(res);
-    return; // We return here so we DON'T spawn a second Python script
+    return;
   }
 
-  // 3. Start a New Scrape
   activeScrapes.set(submissionId, [res]);
   
   const pythonScriptPath = path.join(__dirname, 'working_scraper.py');
   
-  // Automatically use 'python' on Windows, and 'python3' on Linux/Mac/Render
+  // Automatically use 'python' on Windows, and dynamically wrap in xvfb-run on Linux
   const isWindows = os.platform() === 'win32';
-  const pythonCommand = isWindows ? 'python' : 'python3';
   
-  console.log(`OS detected as: ${os.platform()}. Using command: ${pythonCommand}`);
-  console.log(`Attempting to spawn Python script: ${pythonCommand} "${pythonScriptPath}" "${submissionId}"`);
+  let command;
+  let args;
+
+  if (isWindows) {
+      command = 'python';
+      args = [pythonScriptPath, submissionId];
+  } else {
+      command = 'xvfb-run';
+      // The '-a' flag is CRITICAL. It tells Linux to find an available free screen automatically!
+      args = ['-a', 'python3', pythonScriptPath, submissionId]; 
+  }
   
-  const pythonProcess = spawn(pythonCommand, [pythonScriptPath, submissionId]);
+  console.log(`OS detected as: ${os.platform()}.`);
+  console.log(`Attempting to spawn: ${command} ${args.join(' ')}`);
+  
+  const pythonProcess = spawn(command, args);
 
   let pythonOutput = '';
   let pythonError = '';
 
-  // Collect chunked data streams
   pythonProcess.stdout.on('data', (data) => {
     pythonOutput += data.toString();
   });
@@ -83,7 +86,6 @@ app.get('/api/submission/:submissionId', (req, res) => {
     }
 
     try {
-        // Extract only the JSON portion from stdout (ignores random print statements)
         const jsonStartIndex = pythonOutput.indexOf('{');
         const jsonEndIndex = pythonOutput.lastIndexOf('}');
         
@@ -99,12 +101,10 @@ app.get('/api/submission/:submissionId', (req, res) => {
             throw new Error("Missing 'submissionDetails' block in parsed JSON.");
         }
 
-        // Convert the title-slug (e.g., "move-zeroes") into Title Case ("Move Zeroes")
         const formattedTitle = details.question?.titleSlug 
             ? details.question.titleSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
             : 'Unknown Problem Title';
 
-        // Map LeetCode's GraphQL schema to your exact backend schema
         const parsedSubmission = {
             problem_title: formattedTitle,
             status: details.statusCode === 10 ? 'Accepted' : (details.statusCode === 11 ? 'Wrong Answer' : 'Other/Error'),
@@ -123,12 +123,9 @@ app.get('/api/submission/:submissionId', (req, res) => {
             runtime_distribution: details.runtimeDistribution ? JSON.parse(details.runtimeDistribution).distribution : []
         };
 
-        // Add the newly scraped data to the cache for future requests
         submissionCache.set(submissionId, parsedSubmission);
-
         console.log("Successfully mapped submission data!");
 
-        // 4. Send the success data to EVERYONE in the waiting room
         const waitingClients = activeScrapes.get(submissionId) || [];
         waitingClients.forEach(clientRes => {
             if (!clientRes.headersSent) {
