@@ -155,19 +155,27 @@ def main():
 
             target_json_to_print = None
             if captured_responses:
-                for r in captured_responses:
-                    response_str = json.dumps(r)
-                    if "submissionDetails" in response_str and "response_json" in response_str:
-                        target_json_to_print = r.get("response_json")
-                        if target_json_to_print:
+                # Read the responses backwards to grab the final, most complete GraphQL payload
+                for r in reversed(captured_responses):
+                    req_data = r.get("request_post_data", "") or ""
+                    res_json = r.get("response_json", {})
+                    
+                    # 1. Did the request ask for submissionDetails?
+                    if "submissionDetails" in req_data:
+                        data_block = res_json.get("data") or {}
+                        details = data_block.get("submissionDetails")
+                        
+                        # 2. Does the response actually contain the real data (like statusCode)?
+                        if isinstance(details, dict) and "statusCode" in details:
+                            target_json_to_print = res_json
                             break 
 
             if target_json_to_print:
                 sys.stdout.write(json.dumps(target_json_to_print) + "\n")
                 sys.stdout.flush()
-                log("✅ Found and printed the submissionDetails GraphQL response to stdout.")
+                log("✅ Found and printed the full submissionDetails GraphQL response.")
             else:
-                log("❌ Could not find the target GraphQL response in the intercepted traffic.")
+                log("❌ Could not find the complete GraphQL response. LeetCode may have blocked it.")
                 
         except Exception as e:
             log(f"Error: {e}")
