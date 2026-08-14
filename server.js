@@ -4,6 +4,7 @@ import path, { dirname } from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 dotenv.config();
 
@@ -11,13 +12,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 5000; 
+// Automatically use Render's assigned port in production, or 10000 locally
+const port = process.env.PORT || 10000; 
 
 app.use(cors());
 app.use(express.json());
 
 // In-memory cache to store successfully scraped submission data.
-// This prevents re-scraping the same submission ID repeatedly.
 const submissionCache = new Map();
 
 // Queue to hold multiple requests for the same submission ID
@@ -44,9 +45,15 @@ app.get('/api/submission/:submissionId', (req, res) => {
   activeScrapes.set(submissionId, [res]);
   
   const pythonScriptPath = path.join(__dirname, 'working_scraper.py');
-  console.log(`Attempting to spawn Python script: python "${pythonScriptPath}" "${submissionId}"`);
   
-  const pythonProcess = spawn('python', [pythonScriptPath, submissionId]);
+  // Automatically use 'python' on Windows, and 'python3' on Linux/Mac/Render
+  const isWindows = os.platform() === 'win32';
+  const pythonCommand = isWindows ? 'python' : 'python3';
+  
+  console.log(`OS detected as: ${os.platform()}. Using command: ${pythonCommand}`);
+  console.log(`Attempting to spawn Python script: ${pythonCommand} "${pythonScriptPath}" "${submissionId}"`);
+  
+  const pythonProcess = spawn(pythonCommand, [pythonScriptPath, submissionId]);
 
   let pythonOutput = '';
   let pythonError = '';
