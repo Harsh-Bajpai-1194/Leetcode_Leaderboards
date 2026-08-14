@@ -31,5 +31,4 @@ COPY . .
 
 EXPOSE 10000
 
-# Start server wrapped in xvfb-run so Playwright can use headless=False
-CMD ["xvfb-run", "--server-args='-screen 0 1280x1024x24'", "node", "server.js"]
+CMD xvfb-run --server-args="-screen 0 1280x1024x24" node server.js
