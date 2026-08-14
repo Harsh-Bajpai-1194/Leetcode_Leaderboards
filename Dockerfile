@@ -1,12 +1,13 @@
 # Start with a base image that has Node.js
 FROM node:18-bullseye
 
-# Install Python, pip, Xvfb, and xauth (CRITICAL for xvfb-run)
+# Install Python, pip, Xvfb, xauth, and dumb-init (CRITICAL for xvfb-run in Docker)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     xvfb \
     xauth \
+    dumb-init \
     libnss3 \
     libatk-bridge2.0-0 \
     libcups2 \
@@ -33,5 +34,8 @@ COPY . .
 
 EXPOSE 10000
 
-# Start server normally (we will trigger the virtual screen dynamically inside server.js)
+# Use dumb-init to manage the xvfb processes correctly
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Start server normally (server.js triggers xvfb-run dynamically)
 CMD ["node", "server.js"]
