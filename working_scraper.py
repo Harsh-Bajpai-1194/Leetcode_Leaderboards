@@ -13,6 +13,7 @@ target_url = f"https://leetcode.com/submissions/detail/{submission_id}/"
 
 CONFIG = {
     "submissionUrl": target_url,
+    # Keep headless=False to bypass LeetCode bot detection, but use xvfb/off-screen arguments
     "headless": False,
     "credentials": {
         "email": os.getenv("LEETCODE_EMAIL"),
@@ -97,6 +98,7 @@ def main():
                 log(f"DEBUG: Captured response. Total captured: {len(captured_responses)}")
             except Exception as e:
                 log(f"DEBUG: Error while processing/capturing response: {e}")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=CONFIG["headless"],
@@ -104,22 +106,20 @@ def main():
                 "--disable-blink-features=AutomationControlled",
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
-                "--app=about:blank",  # Opens as a minimal app window without standard toolbar/maximize/close buttons easily accessible
-                "--window-size=200,200" # A nice compact window size that won't break LeetCode's layout
+                "--app=about:blank",  
+                "--window-position=-3000,-3000", # Keeps window tucked away off-screen
+                "--window-size=1280,1024" 
             ]
         )
         context = browser.new_context(
-            viewport={"width": 200, "height": 200}, # High resolution viewport so everything fits
+            viewport={"width": 1280, "height": 1024},
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         )
         page = context.new_page()
-        page.on("load", lambda: page.evaluate("document.body.style.zoom = '0.25'")) 
         page.set_default_navigation_timeout(90000)
         page.on("response", handle_response)
         
         try:
-            # Ensure no cookie file is persisted. If one exists from a previous
-            # version or other process, delete it to guarantee a fresh session.
             cookie_file = Path("cookies.json")
             if cookie_file.exists():
                 cookie_file.unlink()
@@ -155,17 +155,14 @@ def main():
 
             target_json_to_print = None
             if captured_responses:
-                # Find the first response that matches all criteria
                 for r in captured_responses:
                     response_str = json.dumps(r)
-                    if "submissionDetails" in response_str and "Solution" in response_str and "response_json" in response_str:
-                        # We found our target. Extract the actual data payload.
+                    if "submissionDetails" in response_str and "response_json" in response_str:
                         target_json_to_print = r.get("response_json")
                         if target_json_to_print:
-                            break # Found it, stop looking
+                            break 
 
             if target_json_to_print:
-                # Print the JSON to standard output for the Node.js server to capture
                 sys.stdout.write(json.dumps(target_json_to_print) + "\n")
                 sys.stdout.flush()
                 log("✅ Found and printed the submissionDetails GraphQL response to stdout.")
