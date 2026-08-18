@@ -184,7 +184,7 @@ const Leaderboard = () => {
         <h1>
           LEETCODE LEADERBOARDS
           <a href="https://github.com/Harsh-Bajpai-1194/Leetcode_Leaderboards" target="_blank" rel="noopener noreferrer" className="release-link">
-            <img src="https://img.shields.io/badge/Release-v5.8.10-deeppink?style=for-the-the-badge&logo=github" alt="v5.8.10" className="release-badge" />
+            <img src="https://img.shields.io/badge/Release-v5.8.11-deeppink?style=for-the-the-badge&logo=github" alt="v5.8.11" className="release-badge" />
           </a>
           <a href="https://leetcode-leaderboards-status.betteruptime.com/" target="_blank" rel="noopener noreferrer" className="status-link" title="Website Status">
             <img src="/status.jpg" alt="Status" className="status-btn" />

@@ -38,26 +38,11 @@ app.get('/api/submission/:submissionId', (req, res) => {
   activeScrapes.set(submissionId, [res]);
   
   const pythonScriptPath = path.join(__dirname, 'working_scraper.py');
+  const pythonCommand = (os.platform() === 'win32') ? 'python' : 'python3';
   
-  // Automatically use 'python' on Windows, and dynamically wrap in xvfb-run on Linux
-  const isWindows = os.platform() === 'win32';
+  console.log(`Attempting to spawn: ${pythonCommand} "${pythonScriptPath}" "${submissionId}"`);
   
-  let command;
-  let args;
-
-  if (isWindows) {
-      command = 'python';
-      args = [pythonScriptPath, submissionId];
-  } else {
-      command = 'xvfb-run';
-      // The '-a' flag is CRITICAL. It tells Linux to find an available free screen automatically!
-      args = ['-a', 'python3', pythonScriptPath, submissionId]; 
-  }
-  
-  console.log(`OS detected as: ${os.platform()}.`);
-  console.log(`Attempting to spawn: ${command} ${args.join(' ')}`);
-  
-  const pythonProcess = spawn(command, args);
+  const pythonProcess = spawn(pythonCommand, [pythonScriptPath, submissionId]);
 
   let pythonOutput = '';
   let pythonError = '';

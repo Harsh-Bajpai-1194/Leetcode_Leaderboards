@@ -28,7 +28,6 @@ def main():
         "x-csrftoken": csrf_token
     }
 
-    # LeetCode's official GraphQL query for submission details
     query = """
     query submissionDetails($submissionId: Int!) {
       submissionDetails(submissionId: $submissionId) {
