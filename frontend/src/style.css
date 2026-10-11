@@ -1372,3 +1372,62 @@ a:hover { text-decoration: underline; }
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* --- GROUP PROGRESS TABLE STYLES --- */
+.progress-table-container {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.progress-table-container .section-title {
+  color: #ffa116;
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e0e0e0;
+  font-size: 14px;
+}
+
+.progress-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #ffa116;
+  color: #ffa116;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.progress-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.progress-table tbody tr:hover {
+  background-color: #252525;
+}
+
+.progress-table .today-row {
+  background-color: rgba(255, 161, 22, 0.12);
+  font-weight: bold;
+}
+
+.progress-count {
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.progress-count.highlight {
+  color: #ffa116;
+  font-weight: bold;
+}

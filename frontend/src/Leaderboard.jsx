@@ -10,13 +10,19 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 const Leaderboard = () => {
-  const [data, setData] = useState({ users: [], activities: [], graph_data: [], last_updated: '--' });
+  const [data, setData] = useState({ 
+    users: [], 
+    activities: [], 
+    graph_data: [], 
+    last_updated: '--',
+    today_progress: 0 
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchAllData = async () => {
-    // 1. STALE-WHILE-REVALIDATE: Instantly load cached data (0ms response time)
+    // 1. Instantly load cached data
     const cachedData = localStorage.getItem('leaderboard_cache');
     if (cachedData) {
       try {
@@ -34,48 +40,61 @@ const Leaderboard = () => {
     if (supabase) {
       try {
         const now = new Date();
-        const twentyOneDaysAgo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 21));
 
-        const [usersResponse, metaResponse, activitiesResponse] = await Promise.all([
+        // Fetch leaderboard, metadata, recent activities (50 items for feed), and 21 days of group_progress
+        const [usersResponse, metaResponse, activitiesResponse, progressResponse] = await Promise.all([
           supabase.from('leaderboard').select('*').order('total_solved', { ascending: false }),
           supabase.from('metadata').select('date_string').eq('type', 'last_updated'),
           supabase.from('activities')
             .select('created_at, text, time, submission_id')
-            .gte('created_at', twentyOneDaysAgo.toISOString()) 
             .order('created_at', { ascending: false })
-            .limit(5000)
+            .limit(50),
+          supabase.from('group_progress')
+            .select('*')
+            .order('date', { ascending: false })
+            .limit(21)
         ]);
 
         if (!usersResponse.error && usersResponse.data && usersResponse.data.length > 0) {
           const supabaseActivities = activitiesResponse.data || [];
-          const daysToLookBack = 21;
-          const dailySolvedMap = {};
+          const progressRows = progressResponse.data || [];
 
-          supabaseActivities.forEach(act => {
-            if (!act.text || !act.created_at) return;
-            const match = act.text.match(/\+(\d+)/);
-            const solved = match ? parseInt(match[1]) : 0;
-            
-            const dateKey = new Date(act.created_at).toLocaleDateString('en-US', { 
-              month: 'short', day: 'numeric', timeZone: 'UTC' 
-            });
-            
-            if (!dailySolvedMap[dateKey]) dailySolvedMap[dateKey] = 0;
-            dailySolvedMap[dateKey] += solved;
+          // 2. Map historical database progress by UTC date
+          const progressMap = {};
+          progressRows.forEach(row => {
+            const dateObj = new Date(row.date);
+            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+            progressMap[dateStr] = row.problems_solved;
           });
 
+          // 3. Calculate TODAY's live progress from user differences
+          const todayGroupProgress = usersResponse.data.reduce((sum, user) => {
+            const current = user.total_solved || 0;
+            const previous = user.previous_day_total_solved ?? current;
+            return sum + (current > previous ? current - previous : 0);
+          }, 0);
+
+          // 4. Build 21-day array for graph and table (including today's live count on the latest day)
           const processedGraphData = [];
+          const daysToLookBack = 21;
           for (let i = daysToLookBack - 1; i >= 0; i--) {
             const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - i));
             const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-            processedGraphData.push({ date: dateStr, solved: dailySolvedMap[dateStr] || 0 });
+            
+            // If i === 0 (today), use live progress if midnight snapshot hasn't occurred yet
+            const solved = (i === 0) 
+              ? (todayGroupProgress || progressMap[dateStr] || 0) 
+              : (progressMap[dateStr] || 0);
+
+            processedGraphData.push({ date: dateStr, solved });
           }
 
           const freshData = {
             users: usersResponse.data || [],
             last_updated: (metaResponse.data && metaResponse.data.length > 0) ? metaResponse.data[0].date_string : "--",
-            activities: supabaseActivities.slice(0, 50),
-            graph_data: processedGraphData
+            activities: supabaseActivities,
+            graph_data: processedGraphData,
+            today_progress: todayGroupProgress
           };
 
           setData(freshData);
@@ -121,6 +140,7 @@ const Leaderboard = () => {
           .channel('schema-db-changes')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'leaderboard' }, handleChanges)
           .on('postgres_changes', { event: '*', schema: 'public', table: 'activities' }, handleChanges)
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'group_progress' }, handleChanges)
           .subscribe();
       } catch (e) {
         console.warn('Supabase subscribe failed:', e);
@@ -247,7 +267,7 @@ const Leaderboard = () => {
         </div>
       </div>
       
-      {/* --- RIGHT COLUMN --- */}
+            {/* --- RIGHT COLUMN --- */}
       <div className="right-section">
         <div className="activity-container">
           <div className="activity-title">Activity Feed</div>
@@ -256,7 +276,6 @@ const Leaderboard = () => {
               data.activities.map((act, index) => {
                 const subId = act.submission_id || (act.text && act.text.match(/submission[s]?\/detail\/(\d+)/)?.[1]) || '2096549016';
                 
-                // Helper to extract user name from activity text
                 let userName = act.user_name || act.name || act.username || '';
                 if (!userName && act.text) {
                   const cleanText = act.text.replace(/^🎉\s*/, '').trim();
@@ -273,7 +292,6 @@ const Leaderboard = () => {
                   <div key={index} className="activity-item">
                     <span className="activity-text">
                       {act.text}
-                      {/* Conditionally render the submission link only if the text does not contain '+' */}
                       {!act.text.includes('+') && (
                         <Link
                           to={targetUrl}
@@ -298,12 +316,42 @@ const Leaderboard = () => {
             ) : (<div className="no-activity">NO ACTIVITY CURRENTLY</div>)}
           </div>
         </div>
-        <div className="graph-wrapper">
-             {data.graph_data && data.graph_data.length > 0 ? (
-               <ActivityGraph data={data.graph_data} />
-             ) : (
-               <div className="graph-loading">Loading graph data...</div>
-             )}
+
+        {/* 21-Day Activity Graph */}
+        <div className="graph-wrapper" style={{ width: '100%', marginTop: '20px' }}>
+          {data.graph_data && data.graph_data.length > 0 ? (
+            <ActivityGraph data={data.graph_data} />
+          ) : (
+            <div className="graph-loading">Loading graph data...</div>
+          )}
+        </div>
+
+        {/* Group Progress Analytics Table */}
+        <div className="progress-table-container">
+          <h3 className="section-title">📊 Daily Progress Ledger</h3>
+          <table className="progress-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Problems Solved</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Live Today Tracker */}
+              <tr className="today-row">
+                <td>Today (Live)</td>
+                <td className="progress-count highlight">+{data.today_progress || 0}</td>
+              </tr>
+              
+              {/* Historical Days (slice(1) skips duplicate today from reversed 21-day array) */}
+              {data.graph_data && [...data.graph_data].reverse().slice(1).map((day, idx) => (
+                <tr key={idx}>
+                  <td>{day.date}</td>
+                  <td className="progress-count">{day.solved > 0 ? `+${day.solved}` : '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
